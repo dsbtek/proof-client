@@ -1,0 +1,13 @@
+.setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.set-con {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}

@@ -1,0 +1,84 @@
+.history-button {
+  width: 100%;
+  padding: 8px 16px;
+  height: 50px;
+  border: 1px solid rgba(119, 119, 119, 0.3);
+  color: rgba(12, 22, 23, 1);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  background-color: transparent;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.history-button-container {
+  width: 100%;
+  height: 200px;
+}
+
+.history-title {
+  font-size: 20px;
+  font-weight: 400;
+  color: rgba(78, 85, 93, 1);
+}
+
+.history-link {
+  width: 100%;
+}
+
+.history-header-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 10%;
+}
+
+.icon-container {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.title-container {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.login-history-container {
+  width: 100%;
+  height: 90%;
+}
+
+.login-history-title {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14.52px;
+  letter-spacing: -0.01em;
+  text-align: start;
+  color: rgba(149, 163, 180, 1);
+  /* margin-bottom: 10px; */
+  align-self: flex-start;
+}
+
+.bac-test-items {
+  text-align: left;
+  width: Fixed (382px) px;
+  height: Hug (59px) px;
+  padding: 0px 0px 8px 0px;
+  gap: 12px;
+  border: 0px 0px 1px 0px;
+  margin-top: 10px;
+  border-bottom: 1px solid rgba(149, 163, 180, 0.5);
+}
+
+.login-history-container h4 {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  color: rgba(12, 22, 23, 1);
+}

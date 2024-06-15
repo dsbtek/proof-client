@@ -1,0 +1,18 @@
+.layout-container-menu {
+  /* position: absolute; */
+  height: 100%;
+  width: 100%;
+  padding: 0 20px;
+  /* background: rgba(250, 250, 250, 1); */
+  background: transparent;
+  /* background: rgb(7, 196, 89); */
+}
+.layout-child-wrap {
+  height: 90%;
+  width: 100%;
+}
+.menu-bar {
+  /* background: rgb(233, 56, 56); */
+  height: 10%;
+  width: 100%;
+}

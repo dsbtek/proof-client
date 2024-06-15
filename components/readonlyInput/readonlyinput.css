@@ -1,0 +1,16 @@
+.set-input {
+    background: 'white';
+}
+
+.set-label {
+    color: #95A3B4;
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.set-text {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #0C1617;
+}

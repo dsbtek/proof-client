@@ -1,0 +1,34 @@
+@media screen and (min-width: 700px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 600px;
+    height: 100vh;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    position: absolute;
+  }
+
+  .layout:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .main-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(180deg,
+        rgb(49, 152, 221) 0%,
+        rgba(148, 148, 164, 0) 100%);
+    background: linear-gradient(180deg, #009cf9 0%, #24527b 100%);
+  }
+
+  .container {
+    width: 600px;
+  }
+}

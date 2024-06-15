@@ -1,0 +1,31 @@
+.dialog-box {
+    width: 320px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgb(0, 156, 249);
+    border: 1px solid #009CF9;
+}
+
+.dialog-box-header {
+    width: 100%;
+    border-bottom: 1px solid #adadad;
+    padding: 8px;
+    margin-bottom: 12px;
+
+    font-weight: 400;
+}
+
+.dialog-box-content {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+
+    color: #24527b;
+}
+
+.dialog-box-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px;
+}

@@ -1,0 +1,117 @@
+.sign-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  text-align: center;
+  background: #f8f8f8;
+  position: relative;
+  /* margin-left: "-20px"; */
+}
+
+.sign-items-wrap {
+  width: 100%;
+  color: #4e555d;
+}
+
+.signBg-with-img {
+  display: flex;
+  align-items: flex-end;
+  width: 100vw;
+  height: 32%;
+  background: #009cf9;
+  padding: 24px;
+}
+
+
+
+.signBg-with {
+  width: 100%;
+  height: 300px;
+  background: #009cf9;
+}
+
+.wrap-signature {
+  width: 100%;
+}
+
+.sign-text {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.overLay {
+  display: flex;
+  align-items: flex-end;
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(12, 22, 24, 0.9);
+  z-index: 1000;
+}
+
+.prompt {
+  width: 100%;
+  height: 240px;
+  border-radius: 24px 24px 0px 0px;
+  opacity: 1;
+  background: #FFFFFF;
+}
+
+.prompt-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 20px;
+  height: 70%;
+  width: 100%;
+  border-radius: 24px 24px 0px 0px;
+  gap: 20px;
+  text-align: left;
+}
+
+.prompt-btn {
+  display: flex;
+  flex-direction: row;
+  /* align-items: center; */
+  justify-content: flex-end;
+  padding: 0 20px;
+  height: 30%;
+  width: 100%;
+  gap: 20px;
+}
+
+.prompt-cancel-btn {
+  font-size: 16px;
+  font-weight: 400;
+  color: #4E555D;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.prompt-yes-btn {
+  width: 96px;
+  height: 35px;
+  padding: 8px 20px 8px 20px;
+  gap: 10px;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1px solid #77777780;
+  cursor: pointer;
+  color: #4E555D;
+}
+
+@media screen and (min-width: 700px) {
+  .signBg-with-img {
+    width: 100%;
+  }
+
+  .signBg-with {
+    height: 180px;
+  }
+}

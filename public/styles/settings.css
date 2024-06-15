@@ -1,0 +1,66 @@
+.settings-header {
+    display: flex;
+}
+
+.user-avi {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.avi {
+    width: 200px;
+    height: 100px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.settings-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.set-sec-title {
+    color: #4E555D;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+.toggle-tutorial {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #777777;
+    border-radius: 12px;
+    margin-top: 32px;
+}
+
+.privacy-policy-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 182px;
+}
+
+.privacy-text {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24px;
+    color: #4E555D;
+}
+
+.privacy-list {
+    padding-left: 28px;
+}
+
+.privacy-list li {
+    margin-bottom: 8px;
+}

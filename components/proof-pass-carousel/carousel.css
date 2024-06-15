@@ -1,0 +1,41 @@
+.proof-pass-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 600px;
+    margin: auto;
+}
+
+.proof-pass-carousel-content {
+    text-align: center;
+}
+
+.proof-pass-carousel-image {
+    width: 500px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.proof-pass-carousel-title {
+    margin-top: 10px;
+}
+
+.carousel-button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.carousel-button.prev {
+    left: 0;
+}
+
+.carousel-button.next {
+    right: 0;
+}

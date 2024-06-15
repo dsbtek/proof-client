@@ -1,0 +1,94 @@
+.id-detection-container {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+    background: #f8f8f8;
+    height: 100vh;
+}
+
+.camera-container {
+    display: flex;
+    /* flex-direction: column; */
+    position: relative;
+}
+
+.vid-items-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+.move-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.vid-frame {
+    position: absolute;
+    border: 1.5px solid #009cf9;
+    width: 85%;
+    height: 60%;
+    border-radius: 15px;
+}
+
+.vid-text {
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    color: #0C1617;
+}
+
+.face-frame-guide {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.m-5 {
+    margin-top: 15px;
+}
+
+.id-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid #009cf9;
+    margin-top: 32px;
+}
+
+.face-image {
+    width: 30%;
+    height: 20%;
+}
+
+.captured-ids {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.captured-id {
+    width: 300px;
+    height: 200px;
+    border-radius: 12px;
+    border: 1px solid #009cf9;
+}
+
+/* Responsive design */
+@media screen and (min-width: 700px) {
+    .id-detection-container> :nth-child(4) {
+        position: relative;
+    }
+
+    .vid-text {
+        margin-top: 4em;
+    }
+}

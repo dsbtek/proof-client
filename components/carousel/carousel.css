@@ -1,0 +1,55 @@
+.pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.pagination .dot,
+.active-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #adadad;
+  transition: all 0.3s ease-in-out;
+}
+
+.active-dot {
+  background: #009cf9;
+}
+
+.page-btn {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  transition: all 0.3s ease-in-out;
+  color: #adadad;
+  align-items: center;
+  cursor: pointer;
+}
+
+.active-dot {
+  background: #009cf9;
+}
+
+.page-btn {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  transition: all 0.3s ease-in-out;
+  color: #adadad;
+  align-items: center;
+  cursor: pointer;
+}
+
+.active-dot {
+  background: #009cf9;
+}
+
+.page-btn:hover {
+  color: #009cf9;
+  font-size: 16px;
+}

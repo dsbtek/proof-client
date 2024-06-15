@@ -1,0 +1,138 @@
+.pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.pagination .dot,
+.active-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #adadad;
+  transition: all 0.3s ease-in-out;
+}
+
+.pagination .active-dot {
+  background: #009cf9;
+}
+
+.page-btn {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  transition: all 0.3s ease-in-out;
+  color: #adadad;
+  align-items: center;
+  cursor: pointer;
+}
+
+.page-btn:hover {
+  color: #009cf9;
+  font-size: 16px;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.pagination .dot,
+.active-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #adadad;
+  transition: all 0.3s ease-in-out;
+}
+
+.pagination .active-dot {
+  background: #009cf9;
+}
+
+.page-btn {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  transition: all 0.3s ease-in-out;
+  color: #adadad;
+  align-items: center;
+  cursor: pointer;
+}
+
+.page-btn:hover {
+  color: #009cf9;
+  font-size: 16px;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.pagination .dot,
+.active-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #adadad;
+  transition: all 0.3s ease-in-out;
+}
+
+.pagination .active-dot {
+  background: #009cf9;
+}
+
+.page-btn {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  transition: all 0.3s ease-in-out;
+  color: #adadad;
+  align-items: center;
+  cursor: pointer;
+}
+
+.page-btn:hover {
+  color: #009cf9;
+  font-size: 16px;
+}
+
+.qe-btn-cont {
+  display: flex;
+  margin-top: 20px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qe-btn {
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: #009cf9;
+  color: white;
+  font-size: 32px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qe-btn:hover {
+  background: #24527b;
+}

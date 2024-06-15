@@ -1,0 +1,162 @@
+.proof-pass-list-container {
+    margin-top: 16px;
+    width: 100%;
+    overflow-y: scroll;
+    height: 600px;
+}
+
+.proof-pass-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 124px;
+    padding: 16px;
+    gap: 16px;
+    border: 0px 0px 1px 0px;
+    border-bottom: 1px solid #4E555D4D;
+}
+
+.wrap-proof-pass-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+    padding: 16px;
+}
+
+.Pending {
+    background-color: #E5FAFF;
+}
+
+.Positive {
+    background-color: #FEE2E2;
+}
+
+.Negative {
+    background-color: #10B98133;
+}
+
+.Inconclusive {
+    background-color: #eaeaea;
+}
+
+.proofpass-detail {
+    display: flex;
+    flex-direction: column;
+    margin-top: 30%;
+    margin-bottom: 15%;
+    width: 90%;
+    height: 400px;
+    padding: 32px 16px 32px 16px;
+    gap: 16px;
+    border-radius: 8px;
+}
+
+.proofpass-text {
+    font-size: 1em;
+}
+
+.proof-pass-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+    gap: 16px;
+}
+
+.border-green {
+    border-bottom: 1px solid #10B98180;
+}
+
+.border-light {
+    border-bottom: 1px solid #FFFFFF;
+}
+
+.proof-pass-item-border {
+    width: 100%;
+    /* height: 68px; */
+    /* padding: 24px 0px 24px 0px; */
+    border: 0px 0px 1px 0px;
+}
+
+.proof-pass-header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+/* select.css or your global CSS file */
+.proof-pass-camera-wrapper {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.proof-pass-camera-container {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    /* border-radius: 10px; */
+    top: 0;
+    left: 0;
+}
+
+.proof-pass-id-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.proof-pass-vid-text {
+    color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.proof-pass-button-container {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.w-scan-btn {
+    width: 50px !important;
+}
+
+.no-results-message {
+    text-align: center;
+}
+
+.wrap-selections {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.image-selection-checkbox {
+    position: relative;
+    right: 5px;
+    top: 0;
+}
+
+.loading-images {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
