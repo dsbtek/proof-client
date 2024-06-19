@@ -1,0 +1,12 @@
+.radio-button {
+    margin: 10px 0;
+}
+
+.radio-button input {
+    margin-right: 10px;
+}
+
+.radio-button label {
+    font-size: 16px;
+    cursor: pointer;
+}

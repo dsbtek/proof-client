@@ -36,7 +36,7 @@ const HomeMain = () => {
               title={"Test/Collection"}
             />
           </Link>
-          <Link href="/history" className="home-link">
+          <Link href="/feedback/rate-experience" className="home-link">
             <HomeGridView
               imgUrl="/images/bac-test.png"
               title={"Bac Test"}

@@ -61,6 +61,7 @@ const ImageScanReport = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [formValues, setFormValues] = useState<ProofPassUploadType | null>(null);
     const [formInitialized, setFormInitialized] = useState(false);
+    const [submitFlag, setSubmitFlag] = useState(false);
     const router = useRouter();
 
     // Selectors
@@ -186,6 +187,7 @@ const ImageScanReport = () => {
                 });
 
                 setFormInitialized(true);
+                setSubmitFlag(true)
             }
         };
 
@@ -217,6 +219,7 @@ const ImageScanReport = () => {
             });
 
             if (response.ok) {
+                setSubmitFlag(false)
                 toast.success("Data submitted successfully");
                 setTimeout(() => {
                     router.push('/home');
@@ -234,11 +237,12 @@ const ImageScanReport = () => {
             }, 5000);
         } finally {
             setIsLoading(false);
+            setSubmitFlag(false)
         }
     }, [compressImages, extractImages, formValues, router]);
 
     useEffect(() => {
-        if (formInitialized) {
+        if (formInitialized && submitFlag) {
             handleSubmit();
         }
     }, [formInitialized, handleSubmit]);

@@ -14,6 +14,8 @@ const IDCardScanResult = () => {
     return (
         <div className="container">
             <AgreementHeader title="PIP - ID Scan Result" />
+            <br />
+            <br />
             <div className="vid-items-wrap">
                 <div className='captured-ids' style={{ marginTop: '40px' }}>
                     <p style={{ color: '#009cf9' }}>Front</p>

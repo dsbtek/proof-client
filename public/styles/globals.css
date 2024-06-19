@@ -21,6 +21,7 @@
 @import url("./loader_.css");
 @import url("./proof-pass.css");
 @import url("./collection-summary.css");
+@import url("./feedback.css");
 
 :root {
   --max-width: 1100px;

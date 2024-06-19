@@ -39,3 +39,5 @@ export { default as ThumbnailGallery } from "./thumbnail-gallery/index";
 export { default as DocumentTypeModal } from "./modal/documentTypeModal";
 export { default as ImagePreviewModal } from "./modal/ImagePreviewModal";
 export { default as TextInput } from "./text-field/textInput";
+export { default as RadioButton } from "./radio-btn/index";
+export { default as TextAreaField } from "./text-input/index";

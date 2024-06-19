@@ -76,7 +76,7 @@ const FacialCapture = () => {
             toast.error('Face not detected in one or both images, Please re-capture both.');
             setTimeout(() => {
                 router.push('/identity-profile/id-detection/step-1');
-            }, 5000);
+            }, 3000);
         }
     };
 
@@ -109,35 +109,35 @@ const FacialCapture = () => {
     const frameStyle = {
         border: faceDetected ? '5px solid green' : '5px solid red',
         borderRadius: '10px',
-        width: '65%',
-        height: '400px',
+        width: '80%',
+        height: '200px',
         position: 'absolute',
     };
 
     return (
         <div className="container">
             <AgreementHeader title='PIP - Step 3' />
+            <br />
             {!capturedImage && (
                 <p className="vid-text">
                     Please position your head and body in the silhouette you see on screen. Please be as still as possible and look directly at the screen.
                 </p>
             )}
             {/* <div className="vid-items-wrap" style={frameStyle}> */}
+            <br />
             {!capturedImage ? (
                 <div className='camera-container'>
-                    <div className="vid-items-wrap" >
-                        <Webcam
-                            className=''
-                            ref={cameraRef}
-                            audio={false}
-                            screenshotFormat="image/png"
-                            videoConstraints={{
-                                facingMode: "user"
-                            }}
-                            imageSmoothing={true}
-                        />
-                        <div style={frameStyle as any}>
-                        </div>
+                    <Webcam
+                        className='camera'
+                        ref={cameraRef}
+                        audio={false}
+                        screenshotFormat="image/png"
+                        videoConstraints={{
+                            facingMode: "user"
+                        }}
+                        imageSmoothing={true}
+                    />
+                    <div style={frameStyle as any}>
                     </div>
                 </div>
             ) : (

@@ -23,37 +23,39 @@ const CameraIDCardDetection = () => {
     return (
         <div className="container" style={{ position: 'relative' }}>
             <AgreementHeader title="PIP - Step 2 " />
+            <br />
             {!capturedImage &&
                 <p className="vid-text">
                     Please position the rear side of your ID <br />
                     in the camera frame below.
                 </p>
             }
-            <div className="vid-items-wrap">
-                {!capturedImage ?
-                    <>
-                        <Webcam
-                            className='camera-container'
-                            ref={cameraRef}
-                            audio={false}
-                            screenshotFormat="image/png"
-                            videoConstraints={{
-                                facingMode: "user"
-                            }}
-                            imageSmoothing={true}
-                        />
-                        <div className='vid-frame'></div>
-                    </>
-                    :
-                    <Image className='id-image' src={capturedImage} alt="captured Image" width={5000} height={5000} loading='lazy' />
-                }
-                {capturedImage &&
-                    <p className="vid-text m-5">
-                        Please tap the `Next` button to see the result of your scanning.
-                    </p>
-                }
+            <br />
+            {/* <div className="vid-items-wrap"> */}
+            {!capturedImage ?
+                <div className='camera-container'>
+                    <Webcam
+                        className='camera'
+                        ref={cameraRef}
+                        audio={false}
+                        screenshotFormat="image/png"
+                        videoConstraints={{
+                            facingMode: "user"
+                        }}
+                        imageSmoothing={true}
+                    />
+                    <div className='vid-frame'></div>
+                </div>
+                :
+                <Image className='id-image-2' src={capturedImage} alt="captured Image" width={5000} height={5000} loading='lazy' />
+            }
+            {capturedImage &&
+                <p className="vid-text m-5">
+                    Please tap the `Next` button to see the result of your scanning.
+                </p>
+            }
 
-            </div>
+            {/* </div> */}
             {capturedImage ?
                 <AgreementFooter
                     onPagination={false}

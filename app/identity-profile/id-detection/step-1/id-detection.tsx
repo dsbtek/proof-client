@@ -40,7 +40,6 @@ const CameraIDCardDetection = () => {
             const detector = await ml5.objectDetector('cocossd');
             setFaceDetector(detector);
         };
-
         loadFaceDetector();
     }, []);
 
@@ -119,54 +118,56 @@ const CameraIDCardDetection = () => {
     const frameStyle = {
         border: faceDetected ? '5px solid green' : '5px solid red',
         borderRadius: '10px',
-        width: '60%',
-        height: '250px',
+        width: '80%',
+        height: '200px',
         position: 'absolute',
     };
 
     return (
         <div className="container" style={{ position: 'relative' }}>
             <AgreementHeader title="PIP - Step 1 " />
+            <br />
             {!capturedImage &&
                 <p className="vid-text">
                     Please position the front side of your ID <br />
                     in the camera frame below.
                 </p>
             }
+            <br />
             {permissionsGranted ? (
                 !capturedImage ?
                     <div className='camera-container'>
-                        <div className="vid-items-wrap" >
-                            <Webcam
-                                className=''
-                                ref={cameraRef}
-                                audio={false}
-                                screenshotFormat="image/png"
-                                videoConstraints={{
-                                    facingMode: "user"
-                                }}
-                                imageSmoothing={true}
-                            />
-                            <div style={frameStyle as any}>
-                            </div>
+                        <Webcam
+                            className='camera'
+                            ref={cameraRef}
+                            audio={false}
+                            screenshotFormat="image/png"
+                            videoConstraints={{
+                                facingMode: "user"
+                            }}
+                            imageSmoothing={true}
+                        />
+                        <div style={frameStyle as any}>
                         </div>
                     </div>
                     :
                     <>
                         {capturedImage && (
-                            <Image
-                                className='id-image'
-                                src={capturedImage}
-                                alt="Captured Image"
-                                layout="responsive"
-                                width={500}
-                                height={500}
-                            />
+                            <div className='id-image'>
+                                <Image
+                                    className='img-border'
+                                    src={capturedImage}
+                                    alt="Captured Image"
+                                    layout="responsive"
+                                    width={500}
+                                    height={500}
+                                />
+                            </div>
                         )}
                         {faceImage && (
                             <div className='face-image'>
                                 <Image
-                                    className='id-image'
+                                    className='img-border'
                                     src={faceImage}
                                     alt="Extracted Face Image"
                                     layout="responsive"

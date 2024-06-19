@@ -85,9 +85,7 @@ const ProofPassUpload = () => {
 
     if (formValid) {
       try {
-        console.log(JSON.stringify(formValues, null, 2));
         dispatch(setProofPassData(formValues));
-        toast.success("Form data saved successfully");
         setUploadFlag(true);
       } catch (error) {
         toast.error("Something went wrong");
