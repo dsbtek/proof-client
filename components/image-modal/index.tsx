@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react';
 import Image from "next/image";
 import './modal.css';
@@ -44,8 +44,16 @@ const ImageModal = ({ isOpen, onClose, imageUrls, imageNames }: ProofPassUploadT
   const handleShareSelectedImages = () => {
     const selectedImageUrls = imageUrls.filter((_, index) => selectedImages[index]);
     const formattedImageUrls = selectedImageUrls.map(img => `data:image/png;base64,${img}`);
-    const emailBody = `Check out these images:\n\n${formattedImageUrls.join('\n')}`;
-    window.location.href = `mailto:?subject=Shared Images&body=${encodeURIComponent(emailBody)}`;
+    const emailBody = `
+      <p>Check out these images:</p>
+      ${formattedImageUrls.map((img, index) => `<div><img src="${img}" alt="Image ${index + 1}" style="max-width: 100%; height: auto;"/></div>`).join('<br/>')}
+    `;
+    window.location.href = `mailto:dsbtek@gmail.com?subject=Shared Images&body=${encodeURIComponent(emailBody)}`;
+  };
+
+  const handleUnshare = () => {
+    setFileShare(false);
+    setSelectedImages(new Array(imageUrls.length).fill(false));
   };
 
   return (
@@ -54,7 +62,7 @@ const ImageModal = ({ isOpen, onClose, imageUrls, imageNames }: ProofPassUploadT
         <div className='modal-wrap'>
           <div className="btn-doc-share-wrap" onClick={e => e.stopPropagation()}>
             {!fileShare && <Button classname='btn-share' onClick={() => { setFileShare(true) }}>Share</Button>}
-            {fileShare && <Button classname='btn-unshare' onClick={() => { setFileShare(false) }}>Unshare</Button>}
+            {fileShare && <Button classname='btn-unshare' onClick={handleUnshare}>Unshare</Button>}
             {fileShare && <Button classname='btn-send' onClick={handleShareSelectedImages}>Send</Button>}
           </div>
 
