@@ -7,15 +7,12 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { Suspense, useEffect } from "react";
 
 import Toastify from "@/components/toastify";
-import { Loader } from "@/components";
-import { loadModel } from "@/redux/slices/detectionModelSlice";
 
 const environment = process.env.NODE_ENV;
 
 export default function LayoutProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // const dispatch = useDispatch<AppDispatch>();
 
   const queryClient = new QueryClient();
 
