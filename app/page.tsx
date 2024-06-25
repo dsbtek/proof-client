@@ -10,7 +10,6 @@ import { setCookie } from "@/utils/utils";
 import Checkbox from "@/components/checkBox";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { loadModel } from "@/redux/slices/detectionModelSlice";
 
 function Welcome() {
   const welcomeCookie = Cookies.get("welView");
@@ -25,10 +24,7 @@ function Welcome() {
       setChecked(true)
     }
   };
-  const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    dispatch(loadModel());
-  }, [dispatch]);
+
   return (
     <div className="container">
       <HeaderText title="Welcome" text='PROOF is a mobile solution that simplifies data management and facilitates customized testing programs. You have received an account to PROOF to perform one or more of the following tasks.' />
