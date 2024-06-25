@@ -26,7 +26,7 @@ function SetNewPin() {
         try {
             const { pin, confirm_pin } = values;
 
-            const response = await fetch("/api/enter-otp", {
+            const response = await fetch("/api/set-pin", {
                 method: 'POST',
                 headers: {
                     change_code: pin as string,
@@ -52,7 +52,8 @@ function SetNewPin() {
         <div className="container">
             <div className="items-wrap">
                 <div className="back">
-                    <Link href="/auth/enter-otp/">
+                    {/* <Link href="/auth/enter-otp/"> */}
+                    <Link href="/auth/forgot-pin">
                         <Image
                             src="/images/arrow-back.png"
                             alt="image"
@@ -77,7 +78,8 @@ function SetNewPin() {
                                 <div>
                                     <TextField
                                         type="password"
-                                        placeholder="Pin"
+                                        // placeholder="Pin"
+                                        placeholder="OTP Code"
                                         value={values.pin}
                                         startIcon={
                                             <Image src="/images/lock.png" alt="image" width={20} height={20} loading='lazy' />
@@ -89,7 +91,8 @@ function SetNewPin() {
                                     />
                                     <TextField
                                         type="password"
-                                        placeholder="Confirm Pin"
+                                        // placeholder="Confirm Pin"
+                                        placeholder="New Pin"
                                         value={values.confirm_pin}
                                         startIcon={
                                             <Image src="/images/lock.png" alt="proof image" width={20} height={20} loading='lazy' />

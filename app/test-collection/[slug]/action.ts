@@ -7,6 +7,8 @@ import { RekognitionClient, DetectTextCommand } from "@aws-sdk/client-rekognitio
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
+import ffmpeg from 'ffmpeg.js';
+import { fileToBase64 } from "@/utils/utils";
 
 //Creates an S3 client used to upload videos to the S3 bucket.
 const s3Client = new S3Client({
@@ -87,3 +89,26 @@ export const createPresignedUrl = (key: string) => {
     const command = new PutObjectCommand({ Bucket: process.env.NEXT_AWS_S3_BUCKET_NAME, Key: key });
     return getSignedUrl(client, command, { expiresIn: 600000 });
 };
+
+// Encode stream feed
+export const videoEncoder = async (testData: Uint8Array) => {
+    try {
+        const fileName = 'initstream.webm';
+        const outputFileName = 'outputstream.mp4';
+
+        const encodedVideo = ffmpeg({
+            MEMFS: [{ name: fileName, data: testData }],
+            arguments: ['-i', fileName, '-r', '30', '-c:v', 'libx264', '-c:a', 'aac', outputFileName],
+        });
+
+        const videoBitArray = encodedVideo.MEMFS[0];
+
+        const processedBlob = new Blob([videoBitArray.data], { type: 'video/mp4' });
+
+        const file = new File([processedBlob], 'video.mp4', { type: 'video/mp4' });
+        const fileData = await fileToBase64(file);
+        return { fileData, processedBlob };
+    } catch (error) {
+        console.error('Server Encoding Failed:', error);
+    }
+}

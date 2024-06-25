@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ data: res.data }, { status: 200 });
         } else {
             console.error(res.data.message);
+            return NextResponse.json({ data: res.data }, { status: res.status });
         }
     } catch (error: any) {
         console.error(error.response?.data?.msg);

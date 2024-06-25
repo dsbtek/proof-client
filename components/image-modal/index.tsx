@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useEffect, useState } from 'react';
 import Image from "next/image";
 import './modal.css';
@@ -48,7 +48,7 @@ const ImageModal = ({ isOpen, onClose, imageUrls, imageNames }: ProofPassUploadT
       <p>Check out these images:</p>
       ${formattedImageUrls.map((img, index) => `<div><img src="${img}" alt="Image ${index + 1}" style="max-width: 100%; height: auto;"/></div>`).join('<br/>')}
     `;
-    window.location.href = `mailto:dsbtek@gmail.com?subject=Shared Images&body=${encodeURIComponent(emailBody)}`;
+    window.location.href = `mailto:?subject=Shared Images&body=${encodeURIComponent(emailBody)}`;
   };
 
   const handleUnshare = () => {

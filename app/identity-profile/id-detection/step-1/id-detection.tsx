@@ -1,24 +1,21 @@
 "use client";
 import { useState, useRef, useCallback, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
 import * as ml5 from 'ml5';
 import Image from 'next/image';
 import Webcam from 'react-webcam';
-
 import { AgreementFooter, AgreementHeader, Button } from '@/components';
 import { setIDFront, setExtractedFaceImage } from '@/redux/slices/appConfig';
 import { uploadFileToS3 } from './action';
 
 const CameraIDCardDetection = () => {
-    const [capturedImage, setCapturedImage] = useState<string | null | undefined>(null);
+    const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [faceImage, setFaceImage] = useState<string | null>(null);
     const [permissionsGranted, setPermissionsGranted] = useState<boolean>(false);
     const [faceDetector, setFaceDetector] = useState<any>(null);
     const [faceDetected, setFaceDetected] = useState<boolean>(false);
     const cameraRef = useRef<Webcam | null>(null);
-    const imageRef = useRef<HTMLImageElement | null>(null);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -29,7 +26,6 @@ const CameraIDCardDetection = () => {
                 stream.getTracks().forEach(track => track.stop());
             } catch (error) {
                 toast.error('Error accessing camera. Please allow camera access to continue.');
-                console.error('Error accessing camera:', error);
             }
         };
 
@@ -37,8 +33,12 @@ const CameraIDCardDetection = () => {
 
         // Load the face detector model
         const loadFaceDetector = async () => {
-            const detector = await ml5.objectDetector('cocossd');
-            setFaceDetector(detector);
+            try {
+                const detector = await ml5.objectDetector('cocossd');
+                setFaceDetector(detector);
+            } catch (error) {
+                toast.error('Error loading face detector model.');
+            }
         };
         loadFaceDetector();
     }, []);
@@ -52,7 +52,7 @@ const CameraIDCardDetection = () => {
                 img.onload = () => {
                     faceDetector.detect(img, (err: any, results: any[]) => {
                         if (err) {
-                            console.error(err);
+                            console.error('Detection error:', err);
                             return;
                         }
                         const face = results.find((obj: { label: string; }) => obj.label === 'person');
@@ -71,8 +71,8 @@ const CameraIDCardDetection = () => {
     const captureFrame = useCallback(async () => {
         try {
             const imageSrc = cameraRef?.current?.getScreenshot();
-            setCapturedImage(imageSrc);
-            dispatch(setIDFront(imageSrc! as any));
+            setCapturedImage(imageSrc as any);
+            dispatch(setIDFront(imageSrc!));
 
             if (imageSrc && faceDetector) {
                 const img = new window.Image();
@@ -80,7 +80,6 @@ const CameraIDCardDetection = () => {
                 img.onload = () => {
                     faceDetector.detect(img, (err: any, results: any[]) => {
                         if (err) {
-                            console.error(err);
                             toast.error('Error detecting face.');
                             return;
                         }
@@ -95,18 +94,17 @@ const CameraIDCardDetection = () => {
                                 const faceBase64 = canvas.toDataURL('image/png');
                                 setFaceImage(faceBase64);
                                 dispatch(setExtractedFaceImage(faceBase64));
-                                uploadFileToS3(faceBase64, '8554443303-ManualCapture-1712042780.png').catch((error) => { console.error(error) });
+                                uploadFileToS3(faceBase64, '8554443303-ManualCapture-1712042780.png').catch((error) => {
+                                });
                             }
                         } else {
                             toast.error('No face detected. Please try again.');
                         }
                     });
                 };
-                imageRef.current = img;
             }
         } catch (error) {
             toast.error('Error capturing image. Please try again.');
-            console.error(error);
         }
     }, [cameraRef, dispatch, faceDetector]);
 
@@ -191,7 +189,6 @@ const CameraIDCardDetection = () => {
                     </p>
                 </div>
             }
-            {/* </div> */}
             {capturedImage ?
                 <AgreementFooter
                     onPagination={false}

@@ -16,7 +16,7 @@ function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
 
     useEffect(() => {
         // Checks if the user is logged in and the token is valid
-        if (pathname !== "/" && pathname !== "/auth/forgot-pin" && pathname !== "/auth/enter-otp" && pathname !== "/auth/set-new-pin" && pathname !== "/auth/sign-in" && tokenCookie === undefined && token === false) {
+        if (pathname !== "/" && pathname !== "/auth/forgot-pin" && pathname !== "/auth/enter-otp" && pathname !== "/auth/set-new-pin" && pathname !== "/auth/sign-in" && pathname !== "/new-to-proof" && tokenCookie === undefined && token === false) {
             !loggedOut ? toast.warning("Invalid Session! Please login again") : null;
             router.push("/auth/sign-in");
         } else if (pathname === "/auth/sign-in" && token === true && tokenCookie === "true") {
@@ -28,7 +28,7 @@ function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
         //Checks if the user reloads the page
         if (pathname !== "/" && pathname !== "/auth/forgot-pin" && pathname !== "/auth/enter-otp" && pathname !== "/auth/set-new-pin" && pathname !== "/auth/sign-in" && participant_id === 0 && tokenCookie === "true") {
             toast.error("Session Invalidated! Please login again.");
-            toast.warning("Do not reload the page!");
+            toast.warning("Do not reload the page! Or use the back button!");
             Cookies.remove("token");
             router.push("/auth/sign-in");
         }

@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ data: res.data }, { status: 200 });
         } else {
             console.error(res.data);
+            return NextResponse.json({ data: res.data }, { status: res.status });
         }
     } catch (error: any) {
         console.error('SP Server Error:', error);

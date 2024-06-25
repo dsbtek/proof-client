@@ -32,12 +32,11 @@ function EnterOTP() {
 
             const data = await response.json();
 
-            if (data.data.statusCode === 200) {
+            if (data.data.statusCode === 200 && data.data.message === "success") {
                 toast.success("OTP verified successfully!");
                 router.push("/auth/set-new-pin");
             } else {
                 toast.warning(`Error ${data.data.statusCode}: ${data.data.message}`);
-                router.push("/auth/set-new-pin");
             }
         } catch (error) {
             toast.error("Something went wrong");

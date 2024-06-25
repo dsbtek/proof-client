@@ -208,6 +208,18 @@ export function fileToBase64(file: File) {
     });
 }
 
+export function blobToUint8Array(blob: Blob): Promise<Uint8Array> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const arrayBuffer = reader.result as ArrayBuffer;
+            resolve(new Uint8Array(arrayBuffer));
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(blob);
+    });
+}
+
 /* DATE HANDLERS */
 
 export function dateTimeInstance() {

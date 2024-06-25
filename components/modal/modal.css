@@ -14,6 +14,7 @@
     background-color: rgba(0, 0, 0, 0.75);
 }
 
+/* Barcode Modal Styles */
 .barcode-cap-modal {
     position: absolute;
     box-sizing: border-box;

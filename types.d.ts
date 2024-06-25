@@ -12,6 +12,8 @@ declare module "@aws-sdk/credential-provider-cognito-identity";
 
 declare module 'quagga';
 
+declare module 'html5-qrcode-scanner-dinte'
+
 declare module 'crypto-js';
 
 declare module "fast-speedtest-api";

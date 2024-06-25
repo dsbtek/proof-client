@@ -10,6 +10,7 @@ import { AgreementFooter, AgreementHeader, Loader_ } from '@/components';
 import { appData, setIdCardFacialPercentageScore, IdCardFacialPercentageScoreString, extractedFaceImageString, idFrontString, ReDirectToProofPass, userIdString } from '@/redux/slices/appConfig';
 import { testingKit } from '@/redux/slices/drugTest';
 import { toast } from 'react-toastify';
+import { uploadFileToS3 } from '../id-detection/step-1/action';
 
 const FacialCapture = () => {
     const router = useRouter();
@@ -101,6 +102,7 @@ const FacialCapture = () => {
                     toast.error('Error capturing frame. Please re-capture');
                 }
             }
+            uploadFileToS3(facialCaptureBase64!, '8554443303-FacialCapture.png').catch((error) => { console.error(error) });
         } catch (error) {
             toast.error('Error capturing frame. Please try again.');
         }

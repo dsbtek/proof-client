@@ -34,7 +34,8 @@ function ForgotPin() {
 
             if (data.data.statusCode === 200) {
                 toast.success("Code sent successfully");
-                router.push("/auth/enter-otp/");
+                // router.push("/auth/enter-otp/");
+                router.push("/auth/set-new-pin");
             } else {
                 toast.warning(`Error ${data.data.statusCode}: ${data.data.message}`);
             }
@@ -86,7 +87,8 @@ function ForgotPin() {
                                 <div className="buttons">
                                     <Button
                                         white
-                                        onClick={() => { router.push("/auth/enter-otp/") }}
+                                        // onClick={() => { router.push("/auth/enter-otp/") }}
+                                        onClick={() => { router.push("/auth/set-new-pin") }}
                                     >I already have a code</Button>
                                     <Button
                                         blue

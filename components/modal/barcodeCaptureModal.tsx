@@ -14,7 +14,6 @@ import { saveBarcode } from '@/redux/slices/drugTest';
 interface BarcodeCaptureProps {
     show: boolean;
     barcode: string;
-    barcode2?: string;
     barcodeImage: string;
     barcodeUploaded: boolean | undefined;
     step: number;
@@ -24,8 +23,9 @@ interface BarcodeCaptureProps {
 }
 
 
-function BarcodeCaptureModal({ show, barcode, barcode2, barcodeImage, barcodeUploaded, step, totalSteps, recapture, closeModal }: BarcodeCaptureProps) {
+function BarcodeCaptureModal({ show, barcode, barcodeImage, barcodeUploaded, step, totalSteps, recapture, closeModal }: BarcodeCaptureProps) {
     const [enterBarcode, setEnterBarcode] = useState(false);
+    const [barcodeValue, setBarcodeValue] = useState('');
 
     const dispatch = useDispatch();
 
@@ -38,6 +38,7 @@ function BarcodeCaptureModal({ show, barcode, barcode2, barcodeImage, barcodeUpl
 
     const barcodeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const barcode = e.target.value;
+        setBarcodeValue(barcode);
         dispatch(saveBarcode(barcode));
     };
 
@@ -45,15 +46,30 @@ function BarcodeCaptureModal({ show, barcode, barcode2, barcodeImage, barcodeUpl
         show && <div className='barcode-cap-modal'>
             {!barcodeUploaded && !enterBarcode && <div className='bc-content'>
                 <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>
-                {barcodeUploaded === undefined ? <div className='bc-upload-stats'><h2 style={{ color: '#24527b' }}>Processing Barcode Image...</h2> <MiniLoader size='50px' /></div>
-                    : <div className='bc-upload-stats'><h2 style={{ color: '#24527b' }}>Barcode not detected</h2> <Button classname='cap-btn' onClick={recapture}><TbCapture /> Recapture</Button>
+                {barcodeUploaded === undefined ?
+                    <div className='bc-upload-stats'>
+                        <h2 style={{ color: '#24527b' }}>Processing Barcode Image...</h2>
+                        <MiniLoader size='50px' />
+                    </div>
+                    : <div className='bc-upload-stats'>
+                        <h2 style={{ color: '#24527b' }}>Barcode not deteected</h2>
+                        <Button classname='cap-btn' onClick={recapture}><TbCapture /> Recapture</Button>
                     </div>}
             </div>}
 
-            {barcodeUploaded && !enterBarcode && <div className='bc-content'>
+            {barcodeUploaded && !enterBarcode && barcode === '' &&
+                <div className='bc-content'>
+                    <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>
+                    <div className='bc-upload-stats'>
+                        <h2 style={{ color: '#24527b' }}>Barcode not detected</h2>
+                        <Button classname='cap-btn' onClick={recapture}><TbCapture /> Recapture</Button>
+                    </div>
+                </div>}
+
+            {barcodeUploaded && !enterBarcode && barcode !== '' && <div className='bc-content'>
                 <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>
                 <div className='sum-text'>
-                    <h2 style={{ color: '#24527b' }}>{barcode === '' ? barcode2 : barcode}</h2>
+                    <h2 style={{ color: '#24527b' }}>{barcode}</h2>
                     <Button classname='td-right' onClick={handleSaveBarcode}>Confirm</Button>
                 </div>
             </div>}
@@ -61,16 +77,15 @@ function BarcodeCaptureModal({ show, barcode, barcode2, barcodeImage, barcodeUpl
             {enterBarcode && <div className='bc-content'>
                 <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>
                 <div className='sum-text'>
-                    <h4 style={{ color: '#24527b' }}>Enter Barcode without spaces</h4>
-                    <Button classname='td-right' onClick={handleSaveBarcode}>Confirm</Button>
+                    <h4 style={{ color: '#24527b' }}>Enter Barcode without spaces <span style={{ color: 'red' }}>*</span></h4>
+                    <Button classname='td-right' onClick={handleSaveBarcode} disabled={barcodeValue === '' ? true : false}>Confirm</Button>
                 </div>
-                <input className='bc-input' type='text' placeholder='Enter Barcode' onChange={barcodeInput} />
+                <input className='bc-input' type='text' placeholder='Enter Barcode or N/A, if no text is present.' onChange={barcodeInput} />
             </div>}
             <div className='barcode-cap-img'>
-                {/* <div id="reader" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}></div> */}
-                {/* <Image src={barcodeImage!} alt="barcode" width={5000} height={5000} className="barcode-img" loading='lazy' /> */}
+                <Image src={barcodeImage!} alt="barcode" width={5000} height={5000} className="barcode-img" loading='lazy' />
             </div>
-            {barcodeUploaded && !enterBarcode && <div className='barcode-btns' style={{ flexDirection: 'column', alignItems: 'center' }}>
+            {!enterBarcode && <div className='barcode-btns' style={{ flexDirection: 'column', alignItems: 'center' }}>
                 <Button classname='cap-btn' onClick={recapture}><TbCapture /> Recapture</Button>
                 <Button classname='man-btn' onClick={() => setEnterBarcode(true)}><FiEdit /> Enter Manually</Button>
             </div>}

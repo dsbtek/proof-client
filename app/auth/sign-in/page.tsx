@@ -73,7 +73,8 @@ function LoginForm() {
       if (data.data.statusCode === 200) {
         dispatch(login({ token: true, participant_id: localId !== '' ? localId : participant_id, pin: localPin !== '' ? localPin : pin }));
         dispatch(setAppData({ ...data.data }));
-        appDispatch(fetchS3Image(data.data.proof_id_value));
+        // appDispatch(fetchS3Image(data.data.proof_id_value));
+        appDispatch(fetchS3Image('8554443303-FacialCapture.png'));
         landingCookie !== undefined && landingCookie === 'true' ? router.push("/") : router.push("/home");
       } else {
         toast.warning(`Error ${data.data.statusCode}: ${data.data.message}`);
@@ -164,7 +165,7 @@ function LoginForm() {
           )}
         </Formik>
       </div>
-      <Link className="links" href="/">
+      <Link className="links" href="/new-to-proof">
         <Button classname="custom-button-1">{"New to Proof?"}</Button>
       </Link>
     </div>
