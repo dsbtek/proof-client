@@ -5,18 +5,14 @@ import { toast } from 'react-toastify';
 import * as ml5 from 'ml5';
 import Image from 'next/image';
 import Webcam from 'react-webcam';
-import { AgreementFooter, AgreementHeader, Button } from '@/components';
+
+import { AgreementFooter, AgreementHeader, Button, Loader_ } from '@/components';
 import { setIDFront, setExtractedFaceImage } from '@/redux/slices/appConfig';
 import { uploadFileToS3 } from './action';
+import useFaceMesh from '@/hooks/faceMesh';
 
-const CameraIDCardDetection = () => {
-    const [capturedImage, setCapturedImage] = useState<string | null>(null);
-    const [faceImage, setFaceImage] = useState<string | null>(null);
-    const [permissionsGranted, setPermissionsGranted] = useState<boolean>(false);
-    const [faceDetector, setFaceDetector] = useState<any>(null);
-    const [faceDetected, setFaceDetected] = useState<boolean>(false);
-    const cameraRef = useRef<Webcam | null>(null);
-    const dispatch = useDispatch();
+const usePermissions = () => {
+    const [permissionsGranted, setPermissionsGranted] = useState(false);
 
     useEffect(() => {
         const checkPermissions = async () => {
@@ -30,38 +26,70 @@ const CameraIDCardDetection = () => {
         };
 
         checkPermissions();
-
-        // Load the face detector model
-        const loadFaceDetector = async () => {
-            try {
-                const detector = await ml5.objectDetector('cocossd');
-                setFaceDetector(detector);
-            } catch (error) {
-                toast.error('Error loading face detector model.');
-            }
-        };
-        loadFaceDetector();
     }, []);
 
+    return permissionsGranted;
+};
+
+
+
+const extractFaceImage = (img: HTMLImageElement, face: any, paddingRatio = 0.5) => {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) return null;
+
+    const keypoints = face.scaledMesh;
+    const xCoords = keypoints.map((point: number[]) => point[0]);
+    const yCoords = keypoints.map((point: number[]) => point[1]);
+    const minX = Math.min(...xCoords);
+    const maxX = Math.max(...xCoords);
+    const minY = Math.min(...yCoords);
+    const maxY = Math.max(...yCoords);
+
+    const paddingX = (maxX - minX) * paddingRatio;
+    const paddingY = (maxY - minY) * paddingRatio;
+
+    const startX = Math.max(minX - paddingX, 0);
+    const startY = Math.max(minY - paddingY, 0);
+    const endX = Math.min(maxX + paddingX, img.width);
+    const endY = Math.min(maxY + paddingY, img.height);
+
+    canvas.width = endX - startX;
+    canvas.height = endY - startY;
+    context.drawImage(img, startX, startY, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
+    // Apply sharpening filter to improve image quality
+    // context.filter = 'contrast(1.2) brightness(1.1)'; // Adjust contrast and brightness
+    // context.drawImage(canvas, 0, 0);
+
+    return canvas.toDataURL('image/png');
+};
+
+const CameraIDCardDetection = () => {
+    const [capturedImage, setCapturedImage] = useState<string | null>(null);
+    const [faceImage, setFaceImage] = useState<string | null>(null);
+    const [faces, setFaces] = useState<any[]>([]);
+    const [faceDetected, setFaceDetected] = useState<boolean>(false);
+    const cameraRef = useRef<Webcam | null>(null);
+    const dispatch = useDispatch();
+
+    const permissionsGranted = usePermissions();
+    const faceMesh = useFaceMesh();
+
     const checkForFace = useCallback(async () => {
-        if (cameraRef.current && faceDetector) {
+        if (cameraRef.current && faceMesh) {
             const screenshot = cameraRef.current.getScreenshot();
             if (screenshot) {
                 const img = new window.Image();
                 img.src = screenshot;
-                img.onload = () => {
-                    faceDetector.detect(img, (err: any, results: any[]) => {
-                        if (err) {
-                            console.error('Detection error:', err);
-                            return;
-                        }
-                        const face = results.find((obj: { label: string; }) => obj.label === 'person');
-                        setFaceDetected(!!face);
-                    });
+                img.onload = async () => {
+                    const predictions = await faceMesh.predict(img);
+                    setFaces(predictions);
+                    setFaceDetected(predictions.length > 0);
                 };
             }
         }
-    }, [faceDetector]);
+    }, [faceMesh]);
 
     useEffect(() => {
         const interval = setInterval(checkForFace, 1000);
@@ -74,81 +102,60 @@ const CameraIDCardDetection = () => {
             setCapturedImage(imageSrc as any);
             dispatch(setIDFront(imageSrc!));
 
-            if (imageSrc && faceDetector) {
+            if (imageSrc && faceMesh) {
                 const img = new window.Image();
                 img.src = imageSrc;
-                img.onload = () => {
-                    faceDetector.detect(img, (err: any, results: any[]) => {
-                        if (err) {
-                            toast.error('Error detecting face.');
-                            return;
-                        }
-                        const face = results.find((obj: { label: string; }) => obj.label === 'person');
-                        if (face) {
-                            const canvas = document.createElement('canvas');
-                            const context = canvas.getContext('2d');
-                            if (context) {
-                                canvas.width = face.width;
-                                canvas.height = face.height;
-                                context.drawImage(img, face.x, face.y, face.width, face.height, 0, 0, face.width, face.height);
-                                const faceBase64 = canvas.toDataURL('image/png');
-                                setFaceImage(faceBase64);
-                                dispatch(setExtractedFaceImage(faceBase64));
-                                uploadFileToS3(faceBase64, '8554443303-ManualCapture-1712042780.png').catch((error) => {
-                                });
-                            }
+                img.onload = async () => {
+                    const predictions = await faceMesh.predict(img);
+                    const face = predictions[0];
+                    if (face) {
+                        const faceBase64 = extractFaceImage(img, face);
+                        if (faceBase64) {
+                            setFaceImage(faceBase64);
+                            dispatch(setExtractedFaceImage(faceBase64));
+                            await uploadFileToS3(faceBase64, '8554443303-ManualCapture-1712042780.png');
                         } else {
-                            toast.error('No face detected. Please try again.');
+                            toast.error('Error extracting face image.');
                         }
-                    });
+                    } else {
+                        toast.error('No face detected. Please try again.');
+                    }
                 };
             }
         } catch (error) {
             toast.error('Error capturing image. Please try again.');
         }
-    }, [cameraRef, dispatch, faceDetector]);
+    }, [cameraRef, dispatch, faceMesh]);
 
     const recaptureImage = () => {
         setCapturedImage(null);
         setFaceImage(null);
     };
 
-    const frameStyle = {
-        border: faceDetected ? '5px solid green' : '5px solid red',
-        borderRadius: '10px',
-        width: '80%',
-        height: '200px',
-        position: 'absolute',
+    const recapture = () => {
+        setCapturedImage('');
+        setFaceImage('');
     };
 
     return (
         <div className="container" style={{ position: 'relative' }}>
             <AgreementHeader title="PIP - Step 1 " />
             <br />
-            {!capturedImage &&
-                <p className="vid-text">
-                    Please position the front side of your ID <br />
-                    in the camera frame below.
-                </p>
-            }
+            {!capturedImage && <p className="vid-text">Please position the front side of your ID <br />in the camera frame below.</p>}
             <br />
             {permissionsGranted ? (
-                !capturedImage ?
+                !capturedImage ? (
                     <div className='camera-container'>
                         <Webcam
                             className='camera'
                             ref={cameraRef}
                             audio={false}
                             screenshotFormat="image/png"
-                            videoConstraints={{
-                                facingMode: "user"
-                            }}
                             imageSmoothing={true}
                         />
-                        <div style={frameStyle as any}>
-                        </div>
+                        <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`} />
                     </div>
-                    :
+                ) : (
                     <>
                         {capturedImage && (
                             <div className='id-image'>
@@ -163,50 +170,44 @@ const CameraIDCardDetection = () => {
                             </div>
                         )}
                         {faceImage && (
-                            <div className='face-image'>
+                            <div className='face-image-wrap'>
+                                <p className="vid-text" style={{ color: '#009cf9', marginBottom: '8px', whiteSpace: 'nowrap' }}>Extracted ID Face</p>
                                 <Image
-                                    className='img-border'
+                                    className='face-image'
                                     src={faceImage}
                                     alt="Extracted Face Image"
                                     layout="responsive"
-                                    width={500}
-                                    height={500}
+                                    width={200}
+                                    height={200}
                                 />
                             </div>
                         )}
-                        {!faceImage && (
-                            <Button blue onClick={recaptureImage} style={{ marginTop: '2em' }}>Recapture</Button>
-                        )}
+                        {!faceImage && <Button blue onClick={recaptureImage} style={{ marginTop: '2em' }}>Recapture</Button>}
                     </>
+                )
             ) : (
-                <p className="vid-text">Camera access is not granted. Please allow camera access to continue.</p>
+                <>
+                    <p className="vid-text">Camera access is not granted. Please allow camera access to continue.</p>
+                    <Loader_ />
+                </>
             )}
             <br />
-            {capturedImage &&
+            {capturedImage && (
                 <div>
-                    <p className="vid-text">
-                        Please tap the `Next` button to move to step 2 <br /> where you will position the rear side of your ID.
-                    </p>
+                    <p className="vid-text">Please tap the `Next` button to move to step 2 <br /> where you will position the rear side of your ID.</p>
                 </div>
-            }
-            {capturedImage ?
-                <AgreementFooter
-                    onPagination={false}
-                    onLeftButton={false}
-                    onRightButton={true}
-                    btnRightLink={'/identity-profile/id-detection/step-2'}
-                    btnRightText={"Next"}
-                />
-                :
-                <AgreementFooter
-                    onPagination={false}
-                    onLeftButton={false}
-                    onRightButton={true}
-                    btnRightText={"Capture"}
-                    onClickBtnRightAction={captureFrame}
-                    rightdisabled={!faceDetected}
-                />
-            }
+            )}
+            <AgreementFooter
+                onPagination={false}
+                onLeftButton={faceImage ? true : false}
+                onRightButton={true}
+                btnLeftText={'Recapture'}
+                onClickBtnLeftAction={faceImage ? recapture : () => { }}
+                btnRightText={capturedImage ? "Next" : "Capture"}
+                onClickBtnRightAction={capturedImage ? undefined : captureFrame}
+                rightdisabled={!faceDetected}
+                btnRightLink={capturedImage ? '/identity-profile/id-detection/step-2' : undefined}
+            />
         </div>
     );
 };

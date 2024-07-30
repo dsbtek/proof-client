@@ -1,19 +1,23 @@
+import { CSSProperties } from 'react';
 import './text-input.css';
 
 interface TextInputProps {
     placeholder: string;
     value: string;
     onChange: (value: string) => void;
+    style?: CSSProperties | undefined;
+    textareaLabel?: string;
 }
 
-const TextAreaField = ({ value, onChange, placeholder }: TextInputProps) => {
+const TextAreaField = ({ value, onChange, placeholder, style }: TextInputProps) => {
     return (
-        <div className="text-input">
+        <div className="textarea-wrap">
             <textarea
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                rows={4}  // You can adjust the number of rows as needed
+                rows={5}
+                style={style}
             />
         </div>
     );

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
+import { IoMdCloseCircleOutline } from "react-icons/io";
 
 import { HeaderText, Menu, Switch, TutorialGridView, TutorialListView, Modal, ListViewLoader, GridViewLoader } from "@/components";
 import { authToken } from "@/redux/slices/auth";
@@ -24,14 +25,19 @@ const Tutorial = () => {
     const { permissions } = useSelector(appData);
     const tutorialPermissions = permissions ? permissions.split(";") : undefined;
 
-    const handleModal = () => setShowModal(!showModal);
+    const handleModal = () => {
+        const tutorialVid = document.getElementById('tut-vid') as HTMLVideoElement;
+        tutorialVid.pause();
+        setShowModal(false);
+    };
+
     const handleSwitch = () => {
         if (tutsViewCookie === 'false') {
             setCookie('tutsView', 'true', 2000);
-            setChecked(true)
+            setChecked(true);
         } else {
             setCookie('tutsView', 'false', 2000);
-            setChecked(false)
+            setChecked(false);
         }
     };
 
@@ -42,7 +48,7 @@ const Tutorial = () => {
 
     const playTutorial = (vidUrl: string, vidPoster: string) => {
         setVideoMetadata(vidUrl, vidPoster);
-        handleModal();
+        setShowModal(true);
     }
 
     const { data: tutsData, isLoading, refetch } = useQuery("tutorial", {
@@ -54,6 +60,7 @@ const Tutorial = () => {
                     pin: pin as string
                 }
             })
+
             const data = await response.json();
             return data;
         },
@@ -71,7 +78,6 @@ const Tutorial = () => {
         }
     });
 
-
     useEffect(() => {
         if (tutorial.app_tutorial === undefined) {
             refetch();
@@ -80,8 +86,11 @@ const Tutorial = () => {
 
     return (
         <>
-            <Modal show={showModal} onClose={handleModal}>
-                <video className="tutorial-video" src={videoUrl} controls poster={videoPoster}></video>
+            <Modal show={showModal} onClose={() => { }}>
+                <IoMdCloseCircleOutline size={40} color='#009cf9' className="vid-close" onClick={handleModal} />
+                <video id='tut-vid' className="tutorial-video" src={videoUrl} controls poster={videoPoster} >
+                    Your browser does not support the video tag
+                </video>
             </Modal>
             <div className="container">
                 <HeaderText

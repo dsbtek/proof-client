@@ -3,11 +3,13 @@ import Cookies from "js-cookie";
 // import FastSpeedtest from 'fast-speedtest-api';
 
 /* COOKIE HANDLERS */
+import Crypto from "crypto-js";
+
 export const setCookie = (key: string, value: string, life: number) => {
-    Cookies.set(key, value, {
-        expires: life,
-        sameSite: "strict",
-    })
+  Cookies.set(key, value, {
+    expires: life,
+    sameSite: "strict",
+  });
 };
 
 export const homeViewCookie = Cookies.get("homeView");
@@ -18,224 +20,352 @@ export const tutorialViewCookie = Cookies.get("tutsView");
 
 export const welcomeCookie = Cookies.get("welView");
 
-
 /* SYSTEM CHECKS */
-
-//Checks Internet Speed
-// export const FastTest = new FastAPI({
-//     measureUpload: true,
-//     downloadUnit: SpeedUnits.MBps,
-//     timeout: 30000
-// });
-
-// export const speedtest = new FastSpeedtest({
-//     token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm", // required
-//     verbose: false, // default: false
-//     timeout: 10000, // default: 5000
-//     https: false, // default: true
-//     urlCount: 5, // default: 5
-//     bufferSize: 8, // default: 8
-//     unit: FastSpeedtest.UNITS.Mbps // default: Bps
-// });
-
 // Checks storage level
 export async function checkAvailableStorage() {
-    try {
-        if (typeof navigator !== 'undefined') {
-            if ('storage' in navigator && 'estimate' in navigator.storage) {
-                const { usage, quota } = await navigator.storage.estimate();
-                const availableStorage = quota! - usage!;
-                return (availableStorage / 1073741824).toFixed(0);
-            } else {
-                console.log("Storage estimation not supported.");
-                return null;
-            }
-        }
-    } catch (error: any) {
-        console.error(error);
+  try {
+    if (typeof navigator !== "undefined") {
+      if ("storage" in navigator && "estimate" in navigator.storage) {
+        const { usage, quota } = await navigator.storage.estimate();
+        const usageInMB = Number((usage! / (1024 * 1024)).toFixed(0));
+        const quotaInMB = Number((quota! / (1024 * 1024)).toFixed(0));
+        const availableStorage = quotaInMB - usageInMB;
+        return (availableStorage / 10000).toFixed(0);
+      } else {
+        console.log("Storage estimation not supported.");
+        return null;
+      }
     }
+  } catch (error: any) {
+    console.error(error);
+  }
+}
+
+// Checks the effective bandwidth estimate in megabits per second
+export async function checkSignalStrength() {
+  try {
+    if (typeof navigator !== "undefined") {
+      if ("connection" in navigator) {
+        const connection = navigator.connection as any;
+        const downlink = connection.downlink as number;
+        return downlink;
+      } else {
+        console.log(
+          "The Network Information API is not supported by your browser."
+        );
+        return null;
+      }
+    }
+  } catch (error: any) {
+    console.error(error);
+  }
 }
 
 // Generates system checks data
-export async function generateSystemChecks(battery: number, storageLevel: number, signalStrenght: string, downloadSpeed: number) {
-    return [
-        {
-            imgUrl: battery > 50 ? '/images/good-battery-level.png' : '/images/low-battery.png',
-            title: "Battery Life is at least 50%",
-            subTitle: battery > 50 ? `${battery}%. Looks good!` : `${battery}%. Please charge your device.`,
-            status: battery > 50 ? 'pass' : 'fail',
-        },
-        {
-            imgUrl: storageLevel > 1 ? '/images/good-disk-size.png' : '/images/low-disk-size.png',
-            title: "At least 1GB of storage available",
-            subTitle: storageLevel > 1 ? `${storageLevel}GB. Looks good!` : `${storageLevel}%. Consider deleting some items.`,
-            status: storageLevel > 1 ? 'pass' : 'fail',
-        },
-        {
-            imgUrl: downloadSpeed > 10 ? '/images/strong-network.png' : '/images/week-network.png',
-            title: "Strong network signal",
-            subTitle: downloadSpeed > 10 ? `${signalStrenght}%. Looks good!` : `${signalStrenght}%. Please move to a better location.`,
-            status: downloadSpeed > 10 ? 'pass' : 'fail',
-        },
-    ];
+export async function generateSystemChecks(
+  battery: number,
+  storageLevel: number,
+  effectiveBandwidth: number
+) {
+  return [
+    {
+      imgUrl:
+        battery > 50 ? "/icons/battery-good.svg" : "/icons/battery-bad.svg",
+      title: "Battery Life is at least 50%",
+      subTitle:
+        battery > 50
+          ? `${battery}%. Looks good!`
+          : `${battery}%. Please charge your device.`,
+      status: battery > 50 ? "pass" : "fail",
+    },
+    {
+      imgUrl:
+        storageLevel > 1 ? "/icons/memory-good.svg" : "/icons/memory-bad.svg",
+      title: "At least 1GB of storage available",
+      subTitle:
+        storageLevel > 1
+          ? `${storageLevel}GB. Looks good!`
+          : `${storageLevel}%. Consider deleting some items.`,
+      status: storageLevel > 1 ? "pass" : "fail",
+    },
+    {
+      imgUrl:
+        effectiveBandwidth > 1
+          ? "/icons/networ-strenght-good.svg"
+          : "/icons/network-strenght-bad.svg",
+      title: "Strong network signal",
+      subTitle:
+        effectiveBandwidth > 1
+          ? `Bandwidth: ${effectiveBandwidth}MB. Looks good!`
+          : `Bandwidth: ${effectiveBandwidth}MB. Please move to a better location.`,
+      status: effectiveBandwidth > 1 ? "pass" : "fail",
+    },
+  ];
 }
-
 
 /* DATA HANDLERS */
 // Convert Blob to Base64
 export const blobToBase64 = (blob: Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-            const base64data = reader.result as string;
-            resolve(base64data.split(',')[1]);
-        };
-        reader.onerror = reject;
-    });
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      const base64data = reader.result as string;
+      resolve(base64data);
+    };
+    reader.onerror = reject;
+  });
 };
 
 // Convert Blob to Buffer
 export function blobToBuffer(blob: Blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(blob);
-        reader.onloadend = () => {
-            resolve(Buffer.from(reader.result as ArrayBuffer));
-        };
-        reader.onerror = (error) => {
-            reject(error);
-        };
-    });
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(blob);
+    reader.onloadend = () => {
+      resolve(Buffer.from(reader.result as ArrayBuffer));
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+  });
 }
 
 // Convert Base64 to Blob
-export function base64ToBlob(base64String: string, contentType = '', sliceSize = 512) {
+export async function base64ToBlob(
+  base64String: string,
+  contentType = "",
+  sliceSize = 512
+) {
+  try {
     const byteCharacters = atob(base64String);
     const byteArrays = [];
 
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+      const byteNumbers = new Array(slice.length);
 
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
 
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
     }
 
     return new Blob(byteArrays, { type: contentType });
+  } catch (error: any) {
+    console.error("Base64ToBlob Error:", error);
+  }
 }
 
 // Function to convert stream to base64
 export const streamToBase64 = async (stream: any) => {
-    const chunks = [];
-    for await (const chunk of stream) {
-        chunks.push(chunk);
-    }
-    const buffer = Buffer.concat(chunks);
-    return buffer.toString('base64');
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+  const buffer = Buffer.concat(chunks);
+  return buffer.toString("base64");
 };
 
 export function base64ToBuffer(base64: string): Buffer {
+  if (!base64) {
+    throw new Error("The input string is empty.");
+  }
 
-    if (!base64) {
-        throw new Error("The input string is empty.");
+  try {
+    // Decode base64 to a buffer
+    const buffer = Buffer.from(base64, "base64");
+
+    // Check if the buffer is empty, which could indicate invalid base64 input
+    if (buffer.length === 0) {
+      throw new Error(
+        "The resulting buffer is empty, which might indicate invalid base64 input."
+      );
     }
 
-    try {
-        // Decode base64 to a buffer
-        const buffer = Buffer.from(base64, 'base64');
-
-        // Check if the buffer is empty, which could indicate invalid base64 input
-        if (buffer.length === 0) {
-            throw new Error("The resulting buffer is empty, which might indicate invalid base64 input.");
-        }
-
-        return buffer;
-    } catch (error: unknown) {
-        // Handle any other errors that may occur during the conversion
-        throw new Error(`Failed to convert base64 to buffer: ${(error as Error).message}`);
-    }
+    return buffer;
+  } catch (error: unknown) {
+    // Handle any other errors that may occur during the conversion
+    throw new Error(
+      `Failed to convert base64 to buffer: ${(error as Error).message}`
+    );
+  }
 }
 
-export async function base64ToFile(base64: string, fileName: string, mimeType: string): Promise<File | null> {
-    try {
-        // Decode the base64 string, atob runs in the browser only
-        const byteString = atob(base64.split(',')[1]);
+export async function base64ToFile(
+  base64: string,
+  fileName: string,
+  mimeType: string
+): Promise<File | null> {
+  try {
+    // Decode the base64 string, atob runs in the browser only
+    const byteString = atob(base64.split(",")[1]);
 
-        // Create an array of bytes
-        const byteNumbers = new Array(byteString.length);
-        for (let i = 0; i < byteString.length; i++) {
-            byteNumbers[i] = byteString.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-
-        // Create a Blob from the byte array
-        const blob = new Blob([byteArray], { type: mimeType });
-
-        // Create a File from the Blob
-        const file = new File([blob], fileName, { type: mimeType, lastModified: Date.now() });
-
-        return file;
-    } catch (error) {
-        console.error("Error converting base64 string to file:", error);
-        return null;
+    // Create an array of bytes
+    const byteNumbers = new Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+      byteNumbers[i] = byteString.charCodeAt(i);
     }
-}
+    const byteArray = new Uint8Array(byteNumbers);
 
-export function bufferToFile(buffer: Buffer, fileName: string, mimeType: string): File {
-    // Create a Blob from the buffer
-    const blob = new Blob([buffer], { type: mimeType });
+    // Create a Blob from the byte array
+    const blob = new Blob([byteArray], { type: mimeType });
 
     // Create a File from the Blob
-    const file = new File([blob], fileName, { type: mimeType });
+    const file = new File([blob], fileName, {
+      type: mimeType,
+      lastModified: Date.now(),
+    });
 
     return file;
+  } catch (error) {
+    console.error("Error converting base64 string to file:", error);
+    return null;
+  }
+}
+
+export function bufferToFile(
+  buffer: Buffer,
+  fileName: string,
+  mimeType: string
+): File {
+  // Create a Blob from the buffer
+  const blob = new Blob([buffer], { type: mimeType });
+
+  // Create a File from the Blob
+  const file = new File([blob], fileName, { type: mimeType });
+
+  return file;
 }
 
 export function fileToBase64(file: File) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const base64data = reader.result as string;
-            resolve(base64data.split(',')[1]);
-        }
-        reader.onerror = error => reject(error);
-        reader.readAsDataURL(file);
-    });
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64data = reader.result as string;
+      resolve(base64data.split(",")[1]);
+    };
+    reader.onerror = (error) => reject(error);
+    reader.readAsDataURL(file);
+  });
 }
 
 export function blobToUint8Array(blob: Blob): Promise<Uint8Array> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const arrayBuffer = reader.result as ArrayBuffer;
-            resolve(new Uint8Array(arrayBuffer));
-        };
-        reader.onerror = reject;
-        reader.readAsArrayBuffer(blob);
-    });
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const arrayBuffer = reader.result as ArrayBuffer;
+      resolve(new Uint8Array(arrayBuffer));
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(blob);
+  });
 }
 
 /* DATE HANDLERS */
 
 export function dateTimeInstance() {
-    const today: Date = new Date();
+  const today: Date = new Date();
 
-    const dd = today.getDate().toString().padStart(2, '0');
-    const mm = (today.getMonth() + 1).toString().padStart(2, '0'); // Jan is 0!
-    const yyyy = today.getFullYear().toString().substr(-2);
+  const dd = today.getDate().toString().padStart(2, "0");
+  const mm = (today.getMonth() + 1).toString().padStart(2, "0"); // Jan is 0!
+  const yyyy = today.getFullYear().toString().substr(-2);
 
-    const formattedDate = `${dd}/${mm}/${yyyy}`;
+  const formattedDate = `${dd}/${mm}/${yyyy}`;
 
-    const hh = today.getHours().toString().padStart(2, '0');
-    const mins = today.getMinutes().toString().padStart(2, '0');
-    const ss = today.getSeconds().toString().padStart(2, '0');
+  const hh = today.getHours().toString().padStart(2, "0");
+  const mins = today.getMinutes().toString().padStart(2, "0");
+  const ss = today.getSeconds().toString().padStart(2, "0");
 
-    const formattedTime = `${hh}:${mins}:${ss}`;
+  const formattedTime = `${hh}:${mins}:${ss}`;
 
-    return `${formattedDate}  ${formattedTime}`;
+  return `${formattedDate}  ${formattedTime}`;
 }
+
+// Extract screen information from Drug_kit
+type DataObject = { [key: string]: any };
+
+export function extractAndFormatPreTestScreens(data: DataObject): DataObject[] {
+  // Extract screen-related information into a structured object
+  const screens = Object.keys(data)
+    .filter((key) => key.startsWith("Screen_"))
+    .reduce((acc: { [screenNumber: string]: DataObject }, key) => {
+      const screenNumber = key.split("_")[1];
+      if (!acc[screenNumber]) {
+        acc[screenNumber] = {};
+      }
+      acc[screenNumber][key] = data[key];
+      return acc;
+    }, {});
+
+  // Convert the structured object to an array of screen objects
+  const screenArray = Object.values(screens);
+
+  // Filter out screen objects with all null values
+  const filteredScreens = screenArray.filter((screen) =>
+    Object.values(screen).some((value) => value !== null)
+  );
+
+  return filteredScreens;
+}
+
+const convertToByte = (key: any) => {
+  return Crypto.AES.decrypt(key, process.env.NEXT_PUBLIC_SECRET_KEY || "");
+};
+
+const convertToStr = (key: any) => {
+  return key.toString(Crypto.enc.Utf8);
+};
+
+export function decryptIdAndCredentials(
+  participant_id: string | null,
+  pin: string | null
+) {
+  const decryptedParticipant_id = convertToByte(participant_id);
+  const decryptedPin = convertToByte(pin);
+  const strParticipantId = convertToStr(decryptedParticipant_id);
+  const strPin = convertToStr(decryptedPin);
+  return { strParticipantId, strPin };
+}
+interface Question {
+  skip_logic: boolean;
+  required: boolean;
+  question_type: string;
+  question_id: string;
+  question: string;
+  image_url: string | null;
+}
+export function removeSkipQuestions(data: Array<Question>) {
+  let result: Question[] = [];
+  data.map((quetion: Question) => {
+    if (quetion?.skip_logic) {
+      result.push(quetion);
+    }
+  });
+  return result;
+}
+
+export const hasPermission = (permission: string, userPermissions: string) => {
+  const permissionsArray = userPermissions?.split(";");
+  return permissionsArray?.includes(permission);
+};
+
+export const transformScreensData = (data: Object) => {
+  if (data) {
+    const k = Object.keys(data);
+    const getKey = k[0];
+    const match = getKey.match(/Screen_(\d+)/);
+    if (match) {
+      const number = match[1];
+      return parseInt(number);
+    } else {
+      console.log("No match found");
+    }
+  }
+};
+
+export const formatList = (input: string): string => {
+  return input.replace(/-/g, "<br> <span>&#8226;</span>");
+};

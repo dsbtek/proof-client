@@ -28,8 +28,9 @@
 }
 
 .grid-img {
-  width: 100px;
-  height: auto;
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
 }
 
 .list-container {
@@ -56,9 +57,9 @@
 }
 
 .list-img {
-  width: 100px;
-  height: auto;
-  object-fit: cover;
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
 }
 
 .list-items-text {

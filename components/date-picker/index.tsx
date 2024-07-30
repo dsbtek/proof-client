@@ -1,3 +1,4 @@
+import React from 'react';
 import './date-selector.css';
 
 interface DateSelectProps {

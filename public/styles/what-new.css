@@ -42,6 +42,7 @@
 .what-new-bg {
     display: flex;
     flex-direction: column;
+    background-color: #FAFAFA;
     gap: 2px;
     width: 100%;
     height: 84% !important;
@@ -50,6 +51,43 @@
 
 .what-new-link {
     color: #009CF9;
+}
+
+/* For webkit browsers like Chrome, Safari */
+.what-new-scroller {
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.what-new-scroller::-webkit-scrollbar {
+    width: 0;
+}
+
+.what-new-scroller::-webkit-scrollbar-track {
+    background: #ADADAD;
+}
+
+.what-new-scroller::-webkit-scrollbar-thumb {
+    background: #24527B;
+    border-radius: 10px;
+}
+
+.what-new-scroller::-webkit-scrollbar-thumb:hover {
+    background: #009CF9;
+}
+
+/* Hide scrollbar for other browsers */
+.what-new-scroller {
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
+
+.what-new-scroller::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
 }
 
 @keyframes lds-ripple {

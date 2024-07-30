@@ -41,6 +41,9 @@
   color: #4e555d;
   text-align: left;
   padding: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: justify;
 }
 
 .agreement-header-title {

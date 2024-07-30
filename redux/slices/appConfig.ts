@@ -11,6 +11,7 @@ export interface AppState {
   idCardFacialPercentageScore: string | undefined;
   scanReport: string;
   reDirectToProofPass: boolean;
+  reDirectToBac: boolean;
   userId?: string;
   idFetchError?: string;
   historyData: any;
@@ -30,6 +31,7 @@ const initialState: AppState = {
   idCardFacialPercentageScore: "",
   scanReport: "",
   reDirectToProofPass: false,
+  reDirectToBac: false,
   userId: "",
   idFetchError: "",
   historyData: {},
@@ -44,8 +46,8 @@ export const fetchS3Image = createAsyncThunk(
   "app/fetchS3Image",
   async (proofIdValue: string, { rejectWithValue }) => {
     try {
-      // const response = await retrieveS3image(`${proofIdValue}.png`);
-      const response = await retrieveS3image(proofIdValue);
+      const response = await retrieveS3image(`${proofIdValue}.png`);
+      // const response = await retrieveS3image(proofIdValue);
       return response as string;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -85,6 +87,9 @@ const appSlice = createSlice({
     },
     setReDirectToProofPass: (state, action: PayloadAction<boolean>) => {
       state.reDirectToProofPass = action.payload;
+    },
+    setReDirectToBac: (state, action: PayloadAction<boolean>) => {
+      state.reDirectToBac = action.payload;
     },
     setHistoryData: (state, action: PayloadAction<unknown>) => {
       state.historyData = action.payload;
@@ -141,6 +146,8 @@ export const ScanReportString = (state: { appConfig: AppState }) =>
   state.appConfig.scanReport;
 export const ReDirectToProofPass = (state: { appConfig: AppState }) =>
   state.appConfig.reDirectToProofPass;
+export const ReDirectToBac = (state: { appConfig: AppState }) =>
+  state.appConfig.reDirectToBac;
 export const historyData = (state: { appConfig: AppState }) =>
   state.appConfig.historyData;
 export const proofPassData_ = (state: { appConfig: AppState }) =>
@@ -170,6 +177,7 @@ export const {
   setProofPassImageNames,
   setExtractedFaceImage,
   removeScanReport,
+  setReDirectToBac,
 } = appSlice.actions;
 
 export default appSlice.reducer;

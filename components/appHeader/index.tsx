@@ -2,8 +2,11 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 import "./appHeader.css";
+import { testData } from "@/redux/slices/drugTest";
 
 interface AppHeaderProps {
     title: string;
@@ -12,10 +15,13 @@ interface AppHeaderProps {
 function AppHeader({ title }: AppHeaderProps) {
     const router = useRouter();
     const pathname = usePathname();
+    const { testingKit } = useSelector(testData);
 
     const handleBack = () => {
         if (pathname === "/test-collection/collection-summary") {
             router.push("/home");
+        } else if (pathname === `/test-collection/${testingKit.kit_id}`) {
+            toast.warn('You are taking a test. You can not go back');
         } else {
             router.back();
         }

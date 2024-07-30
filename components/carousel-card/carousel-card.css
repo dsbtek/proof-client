@@ -1,16 +1,12 @@
 .carousel-card {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
     width: 100%;
-    height: fit-content;
+    height: calc(100vh - 450px);
     gap: 10px;
-    background: 'white';
     border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0px 0px 10px 0px #69b2f6;
-    /* box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); */
+    padding: 12px;
     margin-top: 20px;
     transition: all 0.3s ease-in-out;
 }

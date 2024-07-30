@@ -1,9 +1,33 @@
 .radio-button {
     margin: 10px 0;
+    display: flex;
+    align-items: center;
 }
 
 .radio-button input {
     margin-right: 10px;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #999;
+    border-radius: 50%;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.radio-button input:checked::before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-color: #009CF9;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .radio-button label {

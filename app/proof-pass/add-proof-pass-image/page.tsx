@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from "react-webcam";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from 'react-toastify';
-import { DocumentTypeModal, Button, ThumbnailGallery, AppHeader } from '@/components';
+import { DocumentTypeModal, Button, ThumbnailGallery, AppHeader, FileUpload } from '@/components';
 import { useRouter } from 'next/navigation';
 import imageCompression from 'browser-image-compression';
 import Crypto from "crypto-js";
@@ -93,7 +93,8 @@ const ScanLabReport = () => {
         return bytes.toString(Crypto.enc.Utf8);
     };
 
-    const compressImage = useCallback(async (imageDataUrl: string, maxSizeMB = 1, maxWidthOrHeight = 800) => {
+    const compressImage = useCallback(async (imageDataUrl: string, maxSizeMB = 1, maxWidthOrHeight = 50) => {
+
         if (!imageDataUrl.startsWith('data:image')) {
             throw new Error('Invalid data URL');
         }
@@ -179,7 +180,6 @@ const ScanLabReport = () => {
             initCamera();
         }
     }, [showCamera, initCamera]);
-
     useEffect(() => {
         const initializeFormValues = async () => {
             const participant_id = localStorage.getItem("participant_id");
@@ -197,6 +197,11 @@ const ScanLabReport = () => {
                 let compressedIdUrl = '';
                 if (userData.photo.startsWith('data:image')) {
                     compressedIdUrl = await compressImage(idUrl as any);
+                }
+
+                let compressedFacialUrl = '';
+                if (facialUrl.startsWith('data:image')) {
+                    compressedIdUrl = await compressImage(facialUrl as any);
                 }
 
                 setFormValues({
@@ -225,7 +230,7 @@ const ScanLabReport = () => {
                     government_photo_url: compressedIdUrl,
                     passport_photo_url: compressedPassportPhoto,
                     face_scan1_percentage: facialPercentageScore,
-                    face_scan1_url: facialUrl,
+                    face_scan1_url: compressedFacialUrl,
                     first_name: proofPassData?.firstName || '',
                     last_name: proofPassData?.lastName || '',
                     middle_name: "",
@@ -269,7 +274,6 @@ const ScanLabReport = () => {
                 },
                 body: JSON.stringify(finalFormValues),
             });
-
             if (response.ok) {
                 toast.success("Data submitted successfully");
                 setTimeout(() => {
@@ -277,9 +281,9 @@ const ScanLabReport = () => {
                 }, 5000);
             } else {
                 toast.error("Error submitting data");
-                setTimeout(() => {
-                    router.push('/proof-pass/proof-pass-upload');
-                }, 5000);
+                // setTimeout(() => {
+                //     router.push('/proof-pass/proof-pass-upload');
+                // }, 5000);
             }
         } catch (error) {
             toast.warning(`Error: ${error}`);
@@ -350,13 +354,20 @@ const ScanLabReport = () => {
 
             {!showCamera && !isLoading &&
                 <div className='proof-pass-button-container'>
-                    <Button white classname="prompt-yes-btn w-scan-btn" style={{ width: '150px' }} onClick={() => {
-                        setShowModal(true);
-                        setShowCamera(false);
-                    }}>
-                        + Add
-                    </Button>
-                    <Button blue classname="prompt-yes-btn w-scan-btn" style={{ width: '150px' }} onClick={handleSubmit}>
+                    <div className="add-doc">
+                        <Button white classname="prompt-yes-btn w-scan-btn" style={{ width: '50%' }} onClick={() => {
+                            setShowModal(true);
+                            setShowCamera(false);
+                        }}>
+                            + Add
+                        </Button>
+                        <FileUpload style={{ width: '100%' }} onFileSelect={function (file: File): void {
+                            setShowModal(true);
+                            setShowCamera(false);
+                        }} />
+                    </div>
+
+                    <Button blue classname="prompt-yes-btn w-scan-btn" onClick={handleSubmit}>
                         Submit
                     </Button>
                 </div>

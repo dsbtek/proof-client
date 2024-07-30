@@ -15,7 +15,7 @@ const GetStarted = () => {
     <div className="container-test-collection">
       <AgreementHeader title="" />
       <div className="agreement-items-wrap">
-        <Image className="get-started-img" src="/images/bludnobg.png" alt="image" width={3000} height={3000} />
+        <Image className="get-started-img" src="/images/getting-started.svg" alt="image" width={3000} height={3000} />
         <p className="get-started-title">
           Getting Started
         </p>
@@ -28,7 +28,16 @@ const GetStarted = () => {
           <li>Note your Participant ID and today`s date, as they may be needed during the collection.</li>
         </ul>
       </div>
-      <AgreementFooter currentNumber={3} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={"/test-collection/before-you-begin"} btnLeftText={"Decline"} btnRightText={"Next"} />
+      <AgreementFooter
+        currentNumber={3}
+        outOf={5}
+        onPagination={true}
+        onLeftButton={true}
+        onRightButton={true}
+        btnLeftLink={"/test-collection/signature"}
+        btnRightLink={"/test-collection/before-you-begin"}
+        btnLeftText={"Back"}
+        btnRightText={"Next"} />
     </div>
   );
 };

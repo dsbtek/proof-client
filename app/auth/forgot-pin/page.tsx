@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
-import { TextField, Button, HeaderText } from "@/components";
+import { TextField, Button, HeaderText, AppHeader } from "@/components";
 import { forgotPinSchema } from "@/utils/validations";
 
 interface ForgotPinType {
@@ -48,17 +48,7 @@ function ForgotPin() {
     return (
         <div className="container">
             <div className="items-wrap">
-                <div className="back">
-                    <Link href="/auth/sign-in/">
-                        <Image
-                            src="/images/arrow-back.png"
-                            alt="image"
-                            width={20}
-                            height={20}
-                            loading='lazy'
-                        />
-                    </Link>
-                </div>
+                <AppHeader title='' />
                 <HeaderText
                     title={"Forgot PIN"}
                     text={
@@ -78,7 +68,7 @@ function ForgotPin() {
                                     placeholder="Participant ID"
                                     value={values.participant_id}
                                     startIcon={
-                                        <Image src="/images/person.png" alt="image" width={20} height={20} loading='lazy' />
+                                        <Image src="/icons/user.svg" alt="image" width={24} height={24} loading='lazy' />
                                     }
                                     name="participant_id"
                                     errors={errors}

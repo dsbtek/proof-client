@@ -4,6 +4,15 @@
   background-color: #009CF9;
   border-radius: 8px;
   box-shadow: 0 0 10px rgb(0, 156, 249);
+  z-index: 9100;
+}
+
+.vid-close {
+  position: absolute;
+  z-index: 9300;
+  top: 40px;
+  right: 40px;
+  cursor: pointer
 }
 
 .header-height {
@@ -55,6 +64,9 @@
 }
 
 .tutorial-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   margin-bottom: 50px;
 }
@@ -191,17 +203,28 @@
   justify-content: center;
   box-shadow: 10px 10px 50px 0px rgba(0, 0, 0, 0.05);
   width: 100%;
-  padding: 0.5em;
-  gap: 0.5em;
+  max-width: 182px;
+  padding: 16px;
+  gap: 1em;
   border-radius: 0.5em;
   position: relative;
+}
+
+.tut-grid-img {
+  width: 150px;
+  height: auto;
+}
+
+.grid-card p {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .sub-wrap-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 10px;
-  width: 100%;
+  grid-gap: 18px;
 }
 
 @media screen and (min-width: 1000px) {

@@ -12,7 +12,7 @@ function CarouselCard({ image, title, texts }: CaroselCardProps) {
     return (
         <div className='carousel-card'>
             <div>
-                <Image className='cc-image' src={image} alt="image" width={3000} height={3000} loading='lazy' />
+                <Image className='cc-image' src={image} alt="image" width={3000} height={3000} priority />
             </div>
             <div className='cc-content'>
                 <h3 className='cc-title'>{title}</h3>

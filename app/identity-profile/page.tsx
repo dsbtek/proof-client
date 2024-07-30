@@ -7,7 +7,7 @@ const IdentityProfile = () => {
     <div className="container-test-collection">
       <AgreementHeader title="PROOF Identity Profile (PIP)" />
       <div className="agreement-items-wrap">
-        <Image className="get-started-img" src="/images/idd.png" alt="image" width={3000} height={3000} />
+        <Image className="get-started-img" src="/images/proof-identity-profile.svg" alt="image" width={3000} height={3000} />
         <p className="idd-title">
           Before we begin, PROOF will establish a secure PROOF Identity Profile for you.
         </p>

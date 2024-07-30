@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { toast } from "react-toastify";
-import { typeOfServices, proofPassResult } from '../../../utils/appData';
-import { TextInput, Button, SelectComponent, AppHeader, DateSelector } from "@/components";
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import { toast } from 'react-toastify';
+import { TextInput, Button, SelectComponent, AppHeader, DatePicker } from '@/components';
 import { useDispatch } from 'react-redux';
-import { setProofPassData, setReDirectToProofPass } from "@/redux/slices/appConfig";
-import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
+import { setProofPassData, setReDirectToProofPass } from '@/redux/slices/appConfig';
+import { typeOfServices, proofPassResult } from '../../../utils/appData';
 
 interface Option {
   id: number;
@@ -26,19 +26,19 @@ const ProofPassUpload = () => {
   const dispatch = useDispatch();
   const [uploadFlag, setUploadFlag] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [formValues, setFormValues] = useState<ProofPassType>({
-    firstName: "",
-    lastName: "",
-    panel: "",
+    firstName: '',
+    lastName: '',
+    panel: '',
     typeOfService: null,
-    collectionDate: "",
+    collectionDate: '',
     result: null,
   });
   const [formErrors, setFormErrors] = useState<{ [key: string]: string | null }>({});
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (name: string, value: string | Option | null) => {
     setFormValues(prevValues => ({
       ...prevValues,
       [name]: value
@@ -50,21 +50,9 @@ const ProofPassUpload = () => {
     validateField(name, value);
   };
 
-  const handleSelectChange = (name: string, option: Option | null) => {
-    setFormValues(prevValues => ({
-      ...prevValues,
-      [name]: option
-    }));
-    setTouched(prevTouched => ({
-      ...prevTouched,
-      [name]: true
-    }));
-    validateField(name, option);
-  };
-
-  const validateField = (name: string, value: any) => {
+  const validateField = (name: string, value: string | Option | null) => {
     let error = null;
-    if (value === "" || value === null) {
+    if ((typeof value === 'string' && value === '') || value === null) {
       error = `${name} is required`;
     }
     setFormErrors(prevErrors => ({
@@ -73,8 +61,14 @@ const ProofPassUpload = () => {
     }));
   };
 
-  const handleSubmission = (e: FormEvent) => {
-    e.preventDefault();
+  const handleDateSelect = (date: string) => {
+    setFormValues(prevValues => ({
+      ...prevValues,
+      collectionDate: date
+    }));
+  };
+
+  const handleSubmission = () => {
     const formValid = Object.values(formErrors).every(error => error === null);
     const allTouched = Object.keys(formValues).reduce((acc, key) => {
       acc[key] = true;
@@ -88,15 +82,15 @@ const ProofPassUpload = () => {
         dispatch(setProofPassData(formValues));
         setUploadFlag(true);
       } catch (error) {
-        toast.error("Something went wrong");
+        toast.error('Something went wrong');
         console.error(error);
       }
     } else {
-      toast.error("Please fill out all required fields");
+      toast.error('Please fill out all required fields');
     }
   };
 
-  const ressetUploadFlag = () => {
+  const resetUploadFlag = () => {
     setLoading(true);
   };
 
@@ -107,74 +101,67 @@ const ProofPassUpload = () => {
   return (
     <div className="container">
       <AppHeader title="PROOFpass Upload" />
+      <br />
       {!uploadFlag ? (
         <div className="items-wrap">
-          <form onSubmit={handleSubmission}>
-            <TextInput
-              type="text"
-              placeholder="First Name"
-              name="firstName"
-              value={formValues.firstName}
-              onChange={handleChange}
-              errors={formErrors.firstName}
-              touched={touched.firstName}
-            />
-            <TextInput
-              type="text"
-              placeholder="Last Name"
-              name="lastName"
-              value={formValues.lastName}
-              onChange={handleChange}
-              errors={formErrors.lastName}
-              touched={touched.lastName}
-            />
-            <SelectComponent
-              className="select-w"
-              data={typeOfServices}
-              placeholder="Type of services"
-              name="typeOfService"
-              value={formValues.typeOfService}
-              onChange={(option) => handleSelectChange('typeOfService', option)}
-            />
-            {formValues.typeOfService && (
-              <div className="wrap-collection">
-                <TextInput
-                  type="text"
-                  placeholder="Panel"
-                  name="panel"
-                  value={formValues.panel}
-                  onChange={handleChange}
-                  errors={formErrors.panel}
-                  touched={touched.panel}
-                />
-                <DateSelector
-                  placeholder="Collection Date"
-                  label="Collection Date"
-                  name="collectionDate"
-                  value={formValues.collectionDate}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-                />
-                <SelectComponent
-                  className="select-w"
-                  data={proofPassResult}
-                  placeholder="Results"
-                  name="result"
-                  value={formValues.result}
-                  onChange={(option) => handleSelectChange('result', option)}
-                />
-              </div>
-            )}
-            <br />
-            <p>I certify that my responses are true and correct</p>
-            <br />
-            <Button blue type="submit">
-              Continue
-            </Button>
-          </form>
+          <TextInput
+            type="text"
+            placeholder="First Name"
+            name="firstName"
+            value={formValues.firstName}
+            onChange={(e) => handleChange('firstName', e.target.value)}
+            errors={formErrors.firstName}
+            touched={touched.firstName}
+          />
+          <TextInput
+            type="text"
+            placeholder="Last Name"
+            name="lastName"
+            value={formValues.lastName}
+            onChange={(e) => handleChange('lastName', e.target.value)}
+            errors={formErrors.lastName}
+            touched={touched.lastName}
+          />
+          <SelectComponent
+            className=""
+            data={typeOfServices}
+            placeholder="Type of services"
+            name="typeOfService"
+            value={formValues.typeOfService}
+            onChange={(option) => handleChange('typeOfService', option)}
+          />
+          {formValues.typeOfService && (
+            <div className="wrap-collection">
+              <TextInput
+                type="text"
+                placeholder="Panel"
+                name="panel"
+                value={formValues.panel}
+                onChange={(e) => handleChange('panel', e.target.value)}
+                errors={formErrors.panel}
+                touched={touched.panel}
+              />
+              <DatePicker title="Collection Date" onDateSelect={handleDateSelect} date={formValues.collectionDate} />
+              <SelectComponent
+                className=""
+                data={proofPassResult}
+                placeholder="Results"
+                name="result"
+                value={formValues.result}
+                onChange={(option) => handleChange('result', option)}
+              />
+            </div>
+          )}
+          <br />
+          <p>I certify that my responses are true and correct</p>
+          <br />
+          <Button blue onClick={handleSubmission}>
+            Continue
+          </Button>
         </div>
       ) : (
         <div className='proof-pass-camera-wrapper'>
-          <Button blue onClick={ressetUploadFlag} link='/proof-pass/add-proof-pass-image'>
+          <Button blue onClick={resetUploadFlag} link='/proof-pass/add-proof-pass-image'>
             {'+ Take a photo'}
           </Button>
         </div>

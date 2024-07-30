@@ -1,12 +1,8 @@
-.text-input {
-    margin: 10px 0;
+.textarea-wrap {
+    width: 100% !important;
 }
 
-.text-input textarea {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
+.textarea-wrap textarea {
+    box-sizing: border-box !important;
+    padding: 1rem;
 }

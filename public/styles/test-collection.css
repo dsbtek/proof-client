@@ -2,7 +2,7 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
     width: 100% !important;
-    background: #f8f8f8;
+    background: #FAFAFA;
     height: 100vh;
 }
 

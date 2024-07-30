@@ -7,7 +7,7 @@ import { Formik, Form } from 'formik';
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-import { TextField, Button, HeaderText } from "@/components";
+import { TextField, Button, HeaderText, AppHeader } from "@/components";
 import { otpSchema } from "@/utils/validations";
 
 interface OTPType {
@@ -47,17 +47,7 @@ function EnterOTP() {
     return (
         <div className="container">
             <div className="items-wrap">
-                <div className="back">
-                    <Link href="/auth/forgot-pin/">
-                        <Image
-                            src="/images/arrow-back.png"
-                            alt="image"
-                            width={20}
-                            height={20}
-                            loading='lazy'
-                        />
-                    </Link>
-                </div>
+                <AppHeader title='' />
                 <HeaderText
                     title={"Enter Code"}
                     text={"Enter the code that you have received in your email."}
@@ -77,10 +67,10 @@ function EnterOTP() {
                                         value={values.otp}
                                         startIcon={
                                             <Image
-                                                src="/images/lock.png"
+                                                src="/icons/lock.svg"
                                                 alt="image"
-                                                width={20}
-                                                height={20}
+                                                width={24}
+                                                height={24}
                                                 loading='lazy'
                                             />
                                         }

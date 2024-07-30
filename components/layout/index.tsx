@@ -1,21 +1,20 @@
 "use client";
 
-import { Provider, useDispatch } from "react-redux";
-import { AppDispatch, store } from "@/redux/store";
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 
 import Toastify from "@/components/toastify";
+import { Loader } from "@/components";
 
 const environment = process.env.NODE_ENV;
 
 export default function LayoutProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-
   const queryClient = new QueryClient();
-
 
   return (
     <>

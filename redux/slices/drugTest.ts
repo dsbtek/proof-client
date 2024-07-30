@@ -25,7 +25,7 @@ const initialState: TestState = {
     barcode: "",
     confirmationNo: "",
     signature: "",
-    testClip: "",
+    testClip: ""
 };
 
 const appSlice = createSlice({

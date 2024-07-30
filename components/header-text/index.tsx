@@ -8,7 +8,7 @@ interface HeaderTextProps {
 function HeaderText({ title, text }: HeaderTextProps) {
     return (
         <div className="header-text">
-            <h1 className="title">{title}</h1>
+            <p className="title">{title}</p>
             <p className="text">{text}</p>
         </div>
     )

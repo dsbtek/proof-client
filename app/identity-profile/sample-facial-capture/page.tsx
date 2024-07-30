@@ -10,7 +10,7 @@ const SampleFacialCapture = () => {
     <div className="container-test-collection">
       <AgreementHeader title="PIP - Step 3" />
       <div className="agreement-items-wrap">
-        <Image className="get-started-img" src="/images/sample-face-capture.png" alt="image" width={3000} height={3000} />
+        <Image className="get-started-img" src="/images/sample-facial-capture.svg" alt="image" width={3000} height={3000} />
         <p className="idd-txt m-5">
           Next, we will conduct a facial recognition scan so that we may compare you to the photo that is shown on your Government ID.
           <br />

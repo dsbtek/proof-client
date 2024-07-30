@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import { auth, appConfig, drugTest } from "./slices";
+import { auth, appConfig, drugTest, preTest } from "./slices";
 
 export const store = configureStore({
-  reducer: { auth, appConfig, drugTest },
+  reducer: { auth, appConfig, drugTest, preTest },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

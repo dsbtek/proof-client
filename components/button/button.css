@@ -53,10 +53,10 @@
     height: 35px;
     padding: 8px;
     border-radius: 8px;
-    background: #FFD5D380;
-    border: none;
-    color: #FF6566;
+    background: #ffffff;
+    color: #777777;
     cursor: pointer;
+    border: 1px solid var(--Dark-Grey, #777777)
 }
 
 .logout-btn {
@@ -67,15 +67,22 @@
     color: #FF6566;
     cursor: pointer;
     display: flex;
-    align-self: center;
+    align-items: center;
     gap: 8px;
     background: #FFD5D380;
+
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 24px;
+
+    position: absolute;
+    right: 0;
 }
 
 .faq-btn {
     border: none;
     background: none;
-    color: #009CF9;
+    /* color: #009CF9; */
     font-weight: 800;
     cursor: pointer;
 }

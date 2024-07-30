@@ -6,7 +6,8 @@ function PrivacyPolicy() {
             <div className="items-wrap">
                 <AppHeader title="Privacy Policy" />
                 <div className="privacy-policy-content">
-                    <h4 className="set-text">Privacy Policy</h4>
+                    <br />
+                    <h4 className="set-text">Cookie User Notice</h4>
                     <p className="privacy-text">On a limited basis, RecoveryTrek employs “cookies” to provide better service to our customers. We do not use cookies to collect any personally-identifying information from users or to track user activities beyond our web site. We do not maintain copies of cookies on our web site after you leave our web site.</p>
                     <p className="privacy-text">Cookies are small pieces of temporary data that are exchanged between a web site and a user’s computer which enable a “session”, or “dialog”, to be established between the two machines. With the session established, RecoveryTrek is able to tailor its responses (i.e., provide you with the information you want) and help you traverse our web pages in the most efficient and effective manner possible.</p>
 

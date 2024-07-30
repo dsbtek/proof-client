@@ -1,3 +1,6 @@
+"use client";
+
+
 import { Menu, HomeHeader, HomeMain, HomeFooter } from "@/components";
 
 const Home = () => {

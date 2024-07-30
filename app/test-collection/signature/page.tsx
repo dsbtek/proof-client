@@ -3,17 +3,25 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ReactSignatureCanvas from 'react-signature-canvas';
 import SignatureCanvas from 'react-signature-canvas';
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { preTestScreensData } from "@/redux/slices/pre-test";
 import { AgreementHeader, AgreementFooter, Button } from "@/components";
 import { setSig } from "@/redux/slices/drugTest";
+import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
+
+interface PreTestScreen {
+  Screen_1_Title: string;
+  Screen_1_Content: string;
+}
 
 const SignaturePage = () => {
   const [showClearPrompt, setShowClearPrompt] = useState(false);
   const [clearSignatureConfirmed, setClearSignatureConfirmed] = useState(false);
   const [sigCanvas, setSigCanvas] = useState<ReactSignatureCanvas | null>();
   const [sigCheck, setSigCheck] = useState(false);
+  const router = useRouter();
+  const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
 
   const dispatch = useDispatch();
 
@@ -22,6 +30,12 @@ const SignaturePage = () => {
     setClearSignatureConfirmed(false);
   };
 
+  const pathLink = (): string => {
+    if (preTestScreens && preTestScreens.length > 0) {
+      return "/pre-test-screens";
+    }
+    return "/test-collection/get-started";
+  };
   const confirmClearSignature = () => {
     setClearSignatureConfirmed(true);
     setShowClearPrompt(false);
@@ -40,11 +54,14 @@ const SignaturePage = () => {
       const sigData = sigCanvas.toDataURL();
       dispatch(setSig(sigData));
       setSigCheck(true);
-      toast.success("Signature Signed Successfully. Click next to continue");
+      const linkPath = pathLink()
+      router.push(linkPath);
     } else {
       console.error("Signature Canvas is not available");
     }
   }
+
+
 
   useEffect(() => {
     if (clearSignatureConfirmed) {
@@ -99,9 +116,9 @@ const SignaturePage = () => {
         onLeftButton={true}
         onRightButton={true}
         btnLeftLink={""}
-        btnRightLink={!sigCheck ? '' : '/test-collection/get-started'}
+        btnRightLink={!sigCheck ? '' : pathLink()}
         btnLeftText={"Clear"}
-        btnRightText={!sigCheck ? "Sign" : "Next"}
+        btnRightText={"Next"}
         onClickBtnLeftAction={handleClearSignature}
         onClickBtnRightAction={!sigCheck ? saveSignature : () => { }}
       />

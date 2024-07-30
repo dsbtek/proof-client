@@ -8,8 +8,6 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Crypto from "crypto-js";
-import { toast } from 'react-toastify';
-import { object } from 'yup';
 
 const ProofPassDetail = () => {
     const history = useSelector(historyData);
@@ -92,7 +90,7 @@ const ProofPassDetail = () => {
         <div className="container">
             <div className="proof-pass-header">
                 <AppHeader title="" />
-                <Image src='/images/pr.png' alt="proof logo" width={70} height={70} loading='lazy' />
+                <Image src='/icons/pr-logo.svg' alt="proof logo" width={70} height={70} loading='lazy' />
             </div>
             <div className={`proofpass-detail ${proofpass?.DrugTestResultStatus ? proofpass?.DrugTestResultStatus : "Inconclusive"} proofpass-text`}>
                 <div className="proof-pass-head">
@@ -100,25 +98,33 @@ const ProofPassDetail = () => {
                     <p>{proofpass?.TestPanel}</p>
                     <p>{`This service took place ${getNumberOfDays(proofpass?.servicedate)} days ago`}</p>
                 </div>
-                <p>Donor Participant ID: {proofpass?.ParticipantID}</p>
+                <div className="wrap-result-item" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <p>Donor Participant ID:</p> <p>{proofpass?.ParticipantID}</p>
+                </div>
                 {proofpass?.DrugTestResultStatus === 'Negative' ? (
                     <div className="proof-pass-item-border border-green"></div>
                 ) : (
                     <div className="proof-pass-item-border border-light"></div>
                 )}
-                <p>Date of Service: {proofpass?.servicedate}</p>
+                <div className="wrap-result-item" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <p>Date of Service: </p> <p>{proofpass?.servicedate}</p>
+                </div>
                 {proofpass?.DrugTestResultStatus === 'Negative' ? (
                     <div className="proof-pass-item-border border-green"></div>
                 ) : (
                     <div className="proof-pass-item-border border-light"></div>
                 )}
-                <p>Identity: {proofpass?.GovernmentPhotoID || "Not Applicable"}</p>
+                <div className="wrap-result-item" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <p>Identity:</p> <p>{proofpass?.GovernmentPhotoID || "Not Applicable"}</p>
+                </div>
                 {proofpass?.DrugTestResultStatus === 'Negative' ? (
                     <div className="proof-pass-item-border border-green"></div>
                 ) : (
                     <div className="proof-pass-item-border border-light"></div>
                 )}
-                <p>Collection: {proofpass?.CollectionDesignation || "Not Applicable"}</p>
+                <div className="wrap-result-item" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <p>Collection:</p> <p>{proofpass?.CollectionDesignation || "Not Applicable"}</p>
+                </div>
                 {proofpass?.Images && (
                     <div>
                         <Button blue onClick={openModal} disabled={!isLoadingImages}>{isLoadingImages ? "DOCUMENT IMAGES" : <div className='loading-images'><h4>Loading</h4> <MiniLoader /></div>}</Button>

@@ -1,10 +1,10 @@
 "use client";
-import { RotatingLines } from 'react-loader-spinner';
+import { Loader_ } from "..";
 
 const Loader = () => {
     return (
         <div className='modal'>
-            <RotatingLines width="50" strokeColor="#009CF9;" strokeWidth="3" />
+            <Loader_ />
         </div>
     )
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 import Select, { StylesConfig, SingleValue } from 'react-select';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import './select.css';
@@ -24,22 +24,46 @@ interface SelectProps {
 }
 
 const customStyles: StylesConfig<Option, false> = {
+    control: (base, state) => ({
+        ...base,
+        border: '1px',
+        boxShadow: '10px 10px 50px 0px #0000000D',
+        borderRadius: '8px',
+        backgroundColor: '#FFFFFF',
+        color: '#0C1617',
+        height: '60px',
+        '&:hover': {
+            cursor: 'pointer'
+        },
+        '&:focus': {
+            outline: 'none',
+            backgroundColor: '#fafafa',
+        },
+    }),
     dropdownIndicator: (base) => ({
         ...base,
-        color: '#333',
+        color: '#EAEAEA',
+    }),
+    placeholder: (base) => ({
+        ...base,
+        color: '#b0b0b0',
+    }),
+    singleValue: (base) => ({
+        ...base,
+        color: '#0C1617',
+    }),
+    menu: (base) => ({
+        ...base,
+        boxShadow: 'none',
+        border: '2px solid rgba(234,238,245,1)',
+        borderTop: 'none',
+        borderRadius: '0 0 5px 5px',
+        borderBottom: '2px solid rgba(234,238,245,1)',
+        marginTop: '-8px',
     }),
 };
 
-const CustomSeparator = () => (
-    <div
-        style={{
-            margin: '4px 0',
-            borderBottom: '1px solid #ccc',
-        }}
-    />
-);
-
-const SelectComponent = ({
+const SelectComponent: React.FC<SelectProps> = ({
     className,
     disabled,
     link,
@@ -49,30 +73,23 @@ const SelectComponent = ({
     name,
     value,
     onChange,
-}: SelectProps) => {
-    const [menuIsOpen, setMenuIsOpen] = useState(false);
-
+}) => {
     return (
         <Select
+            classNamePrefix="react-select"
             className={className}
             options={data}
             isDisabled={disabled}
             styles={customStyles}
-            menuIsOpen={menuIsOpen}
-            onMenuOpen={() => setMenuIsOpen(true)}
-            onMenuClose={() => setMenuIsOpen(false)}
-            onChange={onChange}
+            onChange={(selectedOption) => {
+                onChange(selectedOption);
+            }}
             placeholder={placeholder}
             value={value}
             components={{
                 IndicatorSeparator: () => null,
-                DropdownIndicator: () => (menuIsOpen ? <AiOutlineUp /> : <AiOutlineDown />),
-                MenuList: ({ children }) => (
-                    <div>
-                        {children}
-                        <CustomSeparator />
-                    </div>
-                ),
+                DropdownIndicator: ({ selectProps }) =>
+                    selectProps.menuIsOpen ? <AiOutlineUp /> : <AiOutlineDown />,
             }}
             menuPlacement="auto"
             menuPosition="absolute"

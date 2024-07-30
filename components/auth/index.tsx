@@ -1,18 +1,38 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { authToken } from "@/redux/slices/auth";
 
+import { SessionModal } from '@/components';
+import { setCookie } from "@/utils/utils";
+import { testData } from "@/redux/slices/drugTest";
+import { testingKit } from '../../redux/slices/drugTest';
+
 function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
     const { token, participant_id, pin, loggedOut } = useSelector(authToken);
+    const { testingKit } = useSelector(testData);
     const router = useRouter();
     const pathname = usePathname();
     const tokenCookie = Cookies.get("token");
     const landingCookie = Cookies.get("welView");
+
+    const [showSessionModal, setShowSessionmodal] = useState(false);
+
+    const stayLoggedIn = () => {
+        setShowSessionmodal(false);
+        setCookie('token', 'true', 1 / 24);
+    }
+
+    const handleSessionModal = useCallback(() => {
+        setShowSessionmodal(false);
+        toast.warning("Session expired! Please login again");
+        router.push("/auth/sign-in");
+    }, [router]);
+
 
     useEffect(() => {
         // Checks if the user is logged in and the token is valid
@@ -35,12 +55,19 @@ function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
 
         //Checks if the user's session has expired
         if (pathname !== "/" && pathname !== "/auth/forgot-pin" && pathname !== "/auth/enter-otp" && pathname !== "/auth/set-new-pin" && pathname !== "/auth/sign-in" && participant_id !== 0 && tokenCookie === undefined) {
-            toast.warning("Session expired! Please login again");
-            router.push("/auth/sign-in");
+            if (pathname === `/test-collection/${testingKit.kit_id}` || pathname === '/test-collection/collection-summary') {
+                setShowSessionmodal(true);
+            } else {
+                toast.warning("Session expired! Please login again");
+                router.push("/auth/sign-in");
+            }
         }
-    }, [pathname, token, router, tokenCookie, participant_id, pin, landingCookie, loggedOut]);
+    }, [pathname, token, router, tokenCookie, participant_id, pin, landingCookie, loggedOut, testingKit]);
 
-    return <>{children}</>;
+    return <>
+        <SessionModal show={showSessionModal} handleEnd={handleSessionModal} onClick={stayLoggedIn} />
+        {children}
+    </>;
 }
 
 export default Auth;

@@ -10,11 +10,13 @@ import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import Crypto from "crypto-js";
 
-import { TextField, CheckBox, Button } from "@/components";
+import { TextField, CheckBox, Button, Camera } from "@/components";
 import { login } from "@/redux/slices/auth";
 import { setAppData, fetchS3Image } from "@/redux/slices/appConfig";
 import { signinSchema } from "@/utils/validations";
 import { AppDispatch } from "@/redux/store";
+import { detections } from "@/mail/mailData";
+
 interface SignInType {
   participant_id: number | string;
   pin: number | string;
@@ -73,8 +75,8 @@ function LoginForm() {
       if (data.data.statusCode === 200) {
         dispatch(login({ token: true, participant_id: localId !== '' ? localId : participant_id, pin: localPin !== '' ? localPin : pin }));
         dispatch(setAppData({ ...data.data }));
-        // appDispatch(fetchS3Image(data.data.proof_id_value));
-        appDispatch(fetchS3Image('8554443303-FacialCapture.png'));
+        appDispatch(fetchS3Image(data.data.proof_id_value));
+        // appDispatch(fetchS3Image('8554443303-FacialCapture.png'));
         landingCookie !== undefined && landingCookie === 'true' ? router.push("/") : router.push("/home");
       } else {
         toast.warning(`Error ${data.data.statusCode}: ${data.data.message}`);
@@ -101,6 +103,21 @@ function LoginForm() {
     }
   }, [])
 
+  const sendMail = async () => {
+    const response = await fetch("/api/send-email", {
+      method: 'POST',
+      body: JSON.stringify({
+        'participant_id': '8554443303',
+        'date': '1100hrs',
+        'kit': '1200hrs',
+        'confirmation_no': '111000',
+        'detections': detections
+      })
+    })
+    const data = await response.json();
+    console.log('sm data:', data)
+  };
+
   return (
     <div className="container">
       <div className="items-wrap">
@@ -121,10 +138,10 @@ function LoginForm() {
                 value={localId !== '' ? localId : values.participant_id}
                 startIcon={
                   <Image
-                    src="/images/person.png"
+                    src="/icons/user.svg"
                     alt="image"
-                    width={20}
-                    height={20}
+                    width={24}
+                    height={24}
                     loading='lazy'
                   />
                 }
@@ -137,7 +154,7 @@ function LoginForm() {
                 placeholder="Pin"
                 value={localPin !== '' ? localPin : values.pin}
                 startIcon={
-                  <Image src="/images/lock.png" alt="image" width={20} height={20} loading='lazy' />
+                  <Image src="/icons/lock.svg" alt="image" width={24} height={24} loading='lazy' />
                 }
                 endIcon={true}
                 name="pin"
@@ -160,15 +177,17 @@ function LoginForm() {
                 blue
                 disabled={isSubmitting}
                 type="submit"
-              >{isSubmitting ? 'proof testing...' : 'Sign in'}</Button>
+              >{isSubmitting ? 'signing in...' : 'Sign in'}</Button>
             </Form>
           )}
         </Formik>
       </div>
-      <Link className="links" href="/new-to-proof">
+      {/* <Link href="https://proofapp.my.salesforce-sites.com/New2Proof" className="links">
         <Button classname="custom-button-1">{"New to Proof?"}</Button>
-      </Link>
+      </Link> */}
+      <Button classname="custom-button-1" onClick={sendMail}>{"New to Proof?"}</Button>
     </div>
+    // <Camera show={true} captureFrame={() => { }} />
   )
 };
 

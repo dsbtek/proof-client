@@ -27,12 +27,18 @@ function CollectionSummary() {
     };
 
     useEffect(() => {
-        if (uploading === true && pathname === '/test-collection/collection-summary') {
-            window.addEventListener('beforeunload', (event) => {
-                event.preventDefault();
-                toast('Please wait for the video to finish uploading', { autoClose: 5000 });
-            });
+        function beforeUnloadHandler(event: BeforeUnloadEvent) {
+            event.preventDefault();
+            toast('Please wait for the video to finish uploading', { autoClose: 5000 });
         }
+
+        if (uploading === true && pathname === '/test-collection/collection-summary') {
+            window.addEventListener('beforeunload', beforeUnloadHandler);
+        }
+
+        return () => {
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+        };
     }, [uploading, pathname]);
 
     return (

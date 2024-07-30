@@ -33,7 +33,7 @@ function Settings() {
                         dispatch(logout())
                         router.push('/auth/sign-in')
                     }}>
-                        <RxExit />
+                        <Image src='/icons/exit-door.svg' alt='exit-icon' width={20} height={20} />
                         <p>Logout</p>
                     </Button>
                 </div>
@@ -48,13 +48,13 @@ function Settings() {
                 </section>
                 <section className="settings-section">
                     <h4 className="set-sec-title">Account</h4>
-                    <Setting icon={<IoSettingsOutline size={30} color='#009CF9' />} title=" Application Settings" link='/settings/application-settings' />
-                    <Setting icon={<IoPersonCircleOutline size={30} color='#009CF9' />} title="Deactivate My Account" link='https://collectwithproof.com/contact-us' />
+                    <Setting icon={<Image src='/icons/gear.svg' alt='exit-icon' width={32} height={32} />} title=" Application Settings" link='/settings/application-settings' />
+                    <Setting icon={<Image src='/icons/bust.svg' alt='exit-icon' width={26} height={26} />} title="Deactivate My Account" link='https://collectwithproof.com/contact-us' />
                 </section>
                 <section className="settings-section">
                     <h4 className="set-sec-title">About</h4>
-                    <Setting icon={<IoNewspaperOutline size={30} color='#009CF9' />} title="Privacy Policy" link='/settings/privacy-policy' />
-                    <Setting icon={<IoIosPaper size={30} color='#009CF9' />} title="Terms and Conditions" link='/settings/terms-and-conditions' />
+                    <Setting icon={<Image src='/icons/privacy.svg' alt='exit-icon' width={32} height={32} />} title="Privacy Policy" link='/settings/privacy-policy' />
+                    <Setting icon={<Image src='/icons/terms.svg' alt='exit-icon' width={32} height={32} />} title="Terms and Conditions" link='https://www.recoverytrek.com/terms-of-use' />
                 </section>
             </div>
             <div className="menu-wrapper-style">

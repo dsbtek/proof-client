@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent } from "react";
-import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import Image from "next/image";
 
 import './textField.css';
 
@@ -71,7 +71,7 @@ const TextInput = ({
                 />
                 {endIcon && (
                     <div className="icon end-icon" onClick={handleTogglePasswordVisibility}>
-                        {showPassword ? <FaRegEyeSlash color="#009cf9" size={20} /> : <FaRegEye color="#009cf9" size={20} />}
+                        {showPassword ? <Image src="/icons/eye-close.svg" alt="image" width={24} height={24} loading='lazy' /> : <Image src="/icons/eye-open.svg" alt="image" width={24} height={24} loading='lazy' />}
                     </div>
                 )}
             </div>

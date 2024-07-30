@@ -1,11 +1,12 @@
 import React from 'react';
-import './radio.css'
+import './radio.css';
 
 interface RadioBtnProps {
   label?: string;
   checked: boolean;
   onChange: () => void;
 }
+
 const RadioButton = ({ onChange, checked, label }: RadioBtnProps) => {
   return (
     <div className="radio-button">

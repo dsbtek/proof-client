@@ -64,7 +64,7 @@ function Support() {
                                 <header className='faq-header' onClick={toggleInfo(index)}>
                                     <h6 className='faq-title' onClick={toggleInfo(index)}>{faq.Question}</h6>
                                     <Button classname='faq-btn' onClick={toggleInfo(index)}>
-                                        {showFAQ && activeTab == index ? <AiOutlineUp size={20} /> : <AiOutlineDown size={20} />}
+                                        {showFAQ && activeTab == index ? <AiOutlineUp size={20} color={activeTab == index ? '#009cf9' : '#95a3b4'} /> : <AiOutlineDown size={20} color='#95a3b4' />}
                                     </Button>
                                 </header>
                                 {showFAQ && activeTab == index && <div className='faq-body'>

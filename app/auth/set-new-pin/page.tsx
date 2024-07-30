@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Formik, Form } from 'formik';
 import { useRouter } from "next/navigation";
 
-import { TextField, Button, HeaderText } from "@/components";
+import { TextField, Button, HeaderText, AppHeader } from "@/components";
 import { setPinSchema } from "@/utils/validations";
 import { toast } from "react-toastify";
 
@@ -51,18 +51,7 @@ function SetNewPin() {
     return (
         <div className="container">
             <div className="items-wrap">
-                <div className="back">
-                    {/* <Link href="/auth/enter-otp/"> */}
-                    <Link href="/auth/forgot-pin">
-                        <Image
-                            src="/images/arrow-back.png"
-                            alt="image"
-                            width={20}
-                            height={20}
-                            loading='lazy'
-                        />
-                    </Link>
-                </div>
+                <AppHeader title='' />
                 <HeaderText
                     title={"Reset PIN"}
                     text={"Verification complete. Please enter your new PIN code."}
@@ -82,7 +71,7 @@ function SetNewPin() {
                                         placeholder="OTP Code"
                                         value={values.pin}
                                         startIcon={
-                                            <Image src="/images/lock.png" alt="image" width={20} height={20} loading='lazy' />
+                                            <Image src="/icons/lock.svg" alt="image" width={24} height={24} loading='lazy' />
                                         }
                                         endIcon={true}
                                         name="pin"
@@ -95,7 +84,7 @@ function SetNewPin() {
                                         placeholder="New Pin"
                                         value={values.confirm_pin}
                                         startIcon={
-                                            <Image src="/images/lock.png" alt="proof image" width={20} height={20} loading='lazy' />
+                                            <Image src="/icons/lock.svg" alt="proof image" width={24} height={24} loading='lazy' />
                                         }
                                         endIcon={true}
                                         name="confirm_pin"

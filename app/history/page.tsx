@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { authToken } from "@/redux/slices/auth";
 import { setHistoryData, historyData, appData } from "@/redux/slices/appConfig";
 import { toast } from "react-toastify";
+import { hasPermission } from "@/utils/utils";
 
 
 
@@ -15,7 +16,8 @@ const History = () => {
   const dispatch = useDispatch();
   const { participant_id, pin } = useSelector(authToken);
   const history = useSelector(historyData);
-
+  const userPermissions = useSelector(appData);
+  const permissions = userPermissions?.permissions
   const { data: histData, isLoading, refetch } = useQuery("history", {
     queryFn: async () => {
       const response = await fetch("/api/history", {
@@ -66,40 +68,51 @@ const History = () => {
             <span>Login</span>
             <AiOutlineRight />
           </Button>
-          <Button
-            onClick={() => console.log("BAC Test clicked")}
-            classname="history-button"
-            link="/proof-pass"
-          >
-            <span> Test</span>
-            <AiOutlineRight />
-          </Button>
-          <Button
-            onClick={() => console.log("BAC Test clicked")}
-            classname="history-button"
-            link="/history/bac-test-history"
-          >
-            <span>BAC Test</span>
-            <AiOutlineRight />
-          </Button>
+          {hasPermission('Test', permissions) &&
 
-          <Button
-            onClick={() => console.log("BAC Test clicked")}
-            classname="history-button"
-            link="/history"
-          >
-            <span>Prescriptions</span>
-            <AiOutlineRight />
-          </Button>
+            <Button
+              onClick={() => console.log("BAC Test clicked")}
+              classname="history-button"
+              link="/proof-pass"
+            >
+              <span> Test</span>
+              <AiOutlineRight />
+            </Button>
+          }
+          {hasPermission('Test', permissions) &&
 
-          <Button
-            onClick={() => console.log("BAC Test clicked")}
-            classname="history-button"
-            link="/history"
-          >
-            <span>Calls</span>
-            <AiOutlineRight />
-          </Button>
+            <Button
+              onClick={() => console.log("BAC Test clicked")}
+              classname="history-button"
+              link="/history/bac-test-history"
+            >
+              <span>BAC Test</span>
+              <AiOutlineRight />
+            </Button>
+          }
+
+          {hasPermission('Priscription', permissions) &&
+
+            <Button
+              onClick={() => console.log("BAC Test clicked")}
+              classname="history-button"
+              link="/history"
+            >
+              <span>Prescriptions</span>
+              <AiOutlineRight />
+            </Button>
+          }
+          {hasPermission('Calls', permissions) &&
+
+            <Button
+              onClick={() => console.log("BAC Test clicked")}
+              classname="history-button"
+              link="/history"
+            >
+              <span>Calls</span>
+              <AiOutlineRight />
+            </Button>
+          }
         </>
 
       }

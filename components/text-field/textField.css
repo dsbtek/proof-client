@@ -34,15 +34,6 @@
   right: 10px;
 }
 
-/* input {
-  background-color: #fafafa;
-  height: 50px;
-  width: 100%;
-  border: none;
-  border-bottom: 2px solid rgba(234, 238, 245, 1);
-  box-sizing: border-box;
-  outline: none;
-} */
 .app-input {
   background-color: #fafafa;
   height: 50px;
@@ -52,11 +43,6 @@
   box-sizing: border-box;
   outline: none;
 }
-
-/* input:focus {
-  background-color: #fafafa;
-  border-bottom: 2px solid rgb(0, 156, 249);
-} */
 
 .app-input:focus {
   background-color: #fafafa;

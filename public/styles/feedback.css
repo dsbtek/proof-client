@@ -1,19 +1,19 @@
-.feedback-gesture-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    width: 100%;
-}
-
-.feedback-imoji {
-    width: 100px;
-    height: 100px;
-}
-
 .feedback-text {
     font-size: 0.8rem;
     font-weight: 400;
     margin-bottom: 1rem;
     color: #0C1617;
+}
+
+.feedback-gesture-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.feedback-imoji {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }

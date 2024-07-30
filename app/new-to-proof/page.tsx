@@ -32,7 +32,7 @@ function NewToProof() {
 
             <div style={{ width: '100%', height: '100vh' }}>
                 <iframe
-                    src="https://collectwithproof.com/contact-us/"
+                    src="https://proofapp.my.salesforce-sites.com/New2Proof"
                     style={{ width: '100%', height: '100%', border: 'none', display: loading ? 'none' : 'block' }}
                     title="Contact Us Page"
                     onLoad={handleLoad}

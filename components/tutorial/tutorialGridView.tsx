@@ -13,7 +13,7 @@ const GridView = ({ imgUrl, title, onClick }: GridViewrProps) => {
       <div className='tut-overlay'>
         <FaRegCirclePlay color="#009CF9" size={40} />
       </div>
-      <Image className="grid-img" src={imgUrl} alt="proof image" width={3000} height={3000} loading='lazy' />
+      <Image className="tut-grid-img" src={imgUrl} alt="proof image" width={3000} height={3000} loading='lazy' />
       <p>{title}</p>
     </div>
   )

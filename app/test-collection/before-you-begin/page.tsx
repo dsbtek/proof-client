@@ -27,8 +27,8 @@ const BeforeYouBegin = () => {
     <>
       <div className="container-test-collection">
         <AgreementHeader title="" />
-        <div className="agreement-items-wrap">
-          <Image className="get-started-img" src="/images/bloodnobg.png" alt="image" width={3000} height={3000} />
+        <div className="agreement-items-wrap what-new-scroller">
+          <Image className="get-started-img" src="/images/before-you-begin.svg" alt="image" width={3000} height={3000} />
           <p className="get-started-title">Before You Begin</p>
           <p className="get-started-title">Please confirm the following.</p>
           <div className="checkbox-container">
@@ -38,7 +38,16 @@ const BeforeYouBegin = () => {
           </div>
         </div>
       </div>
-      <AgreementFooter currentNumber={4} outOf={5} onPagination={true} onLeftButton={false} onRightButton={allChecked} btnLeftLink={""} btnRightLink={"/test-collection/camera-view"} btnLeftText={"Decline"} btnRightText={"Next"} />
+      <AgreementFooter
+        currentNumber={4}
+        outOf={5}
+        onPagination={true}
+        onLeftButton={false}
+        onRightButton={allChecked}
+        btnLeftLink={""}
+        btnRightLink={"/test-collection/camera-view"}
+        btnLeftText={"Decline"}
+        btnRightText={"Next"} />
     </>
 
   );

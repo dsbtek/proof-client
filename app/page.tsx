@@ -3,13 +3,10 @@
 import { IoIosArrowForward } from "react-icons/io";
 import Link from 'next/link';
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { HeaderText, Carousel, CheckBox } from "@/components";
 import { setCookie } from "@/utils/utils";
-import Checkbox from "@/components/checkBox";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
 
 function Welcome() {
   const welcomeCookie = Cookies.get("welView");
@@ -30,7 +27,7 @@ function Welcome() {
       <HeaderText title="Welcome" text='PROOF is a mobile solution that simplifies data management and facilitates customized testing programs. You have received an account to PROOF to perform one or more of the following tasks.' />
       <Carousel />
       <div className="qe-btn-cont">
-        <Checkbox checked={checked} onChange={handleSwitch} label="Don’t show welcome screen again." />
+        <CheckBox checked={checked} onChange={handleSwitch} label="Don`t show welcome screen again." />
         <Link href={tokenCookie !== undefined ? "/tutorial" : "/auth/sign-in"}>
           <button className="qe-btn"><IoIosArrowForward /></button>
         </Link>
