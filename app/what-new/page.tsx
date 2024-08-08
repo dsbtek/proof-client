@@ -1,5 +1,5 @@
 'use client'
-import { Menu, AppHeader, Button } from "@/components";
+import { Menu, AppHeader, Button, DinamicMenuLayout } from "@/components";
 import { appData } from '@/redux/slices/appConfig';
 import { useState } from "react";
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
@@ -27,34 +27,36 @@ const WhatNew = () => {
   }
 
   return (
-    <div className="container">
-      <AppHeader title={"What`s New"} />
-      <br /> <br />
-      <div className='what-new-scroller what-new-bg'>
-        {data?.map((item: any, index: number) => {
-          const isOpen = openItems[index];
-          return (
-            <article className='faq' key={index} style={isOpen ? { borderRadius: '6px', padding: '12px', gap: '8px', border: '2px', backgroundColor: '#FFFFFF' } : { borderRadius: '6px', padding: '12px', gap: '8px', border: '2px', backgroundColor: '#FFFFFF' }}>
-              <header className='faq-header' onClick={toggleInfo(index)}>
-                <h6 className='faq-title'>{item?.Title}</h6>
-                <Button classname='faq-btn'>
-                  {isOpen ? <AiOutlineUp size={20} color="grey" /> : <AiOutlineDown size={20} color="grey" />}
-                </Button>
-              </header>
-              {isOpen &&
-                <>
-                  <div className='faq-body'><p className='faq-text'>{item?.Detail}</p></div>
-                  <div className='faq-body'><p className='faq-text what-new-link'>{extractLinks(item?.Detail).join(', ')}</p></div>
-                </>
-              }
-            </article>
-          )
-        })}
-      </div>
-      <div className="menu-wrapper-style">
+    <DinamicMenuLayout>
+      <div className="tutorial-container">
+        <AppHeader title={"What`s New"} />
+        <br /> <br />
+        <div className='what-new-scroller what-new-bg' style={{ padding: "16px" }}>
+          {data?.map((item: any, index: number) => {
+            const isOpen = openItems[index];
+            return (
+              <article className='faq' key={index} style={isOpen ? { borderRadius: '6px', padding: '12px', gap: '8px', border: '2px', backgroundColor: '#FFFFFF' } : { borderRadius: '6px', padding: '12px', gap: '8px', border: '2px', backgroundColor: '#FFFFFF' }}>
+                <header className='faq-header' onClick={toggleInfo(index)}>
+                  <h6 className='faq-title'>{item?.Title}</h6>
+                  <Button classname='faq-btn'>
+                    {isOpen ? <AiOutlineUp size={20} color="grey" /> : <AiOutlineDown size={20} color="grey" />}
+                  </Button>
+                </header>
+                {isOpen &&
+                  <>
+                    <div className='faq-body'><p className='faq-text'>{item?.Detail}</p></div>
+                    <div className='faq-body'><p className='faq-text what-new-link'>{extractLinks(item?.Detail).join(', ')}</p></div>
+                  </>
+                }
+              </article>
+            )
+          })}
+        </div>
+        {/* <div className="menu-wrapper-style">
         <Menu />
+      </div> */}
       </div>
-    </div>
+    </DinamicMenuLayout>
   );
 };
 

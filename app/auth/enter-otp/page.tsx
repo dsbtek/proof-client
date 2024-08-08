@@ -45,55 +45,58 @@ function EnterOTP() {
     }
 
     return (
-        <div className="container">
-            <div className="items-wrap">
-                <AppHeader title='' />
-                <HeaderText
-                    title={"Enter Code"}
-                    text={"Enter the code that you have received in your email."}
-                />
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={otpSchema}
-                    onSubmit={onSubmit}
-                >
-                    {({ values, errors, touched, isSubmitting }) => (
-                        <Form>
-                            <div className="auth-form">
-                                <div>
-                                    <TextField
-                                        type="text"
-                                        placeholder="verification code"
-                                        value={values.otp}
-                                        startIcon={
-                                            <Image
-                                                src="/icons/lock.svg"
-                                                alt="image"
-                                                width={24}
-                                                height={24}
-                                                loading='lazy'
-                                            />
-                                        }
-                                        name="otp"
-                                        errors={errors}
-                                        touched={touched}
-                                    />
-                                    <p className="otp-text">
-                                        If you are having difficulties resetting your PIN, Please contact{" "}
-                                        <span className="recoverytrek"><a href="mailto: proof@recoverytrek.com">proof@recoverytrek.com</a></span>
-                                    </p>
+        <div className="desktop-wrap">
+            <div className="container">
+                <div className="items-wrap">
+                    <AppHeader title='' />
+                    <HeaderText
+                        title={"Enter Code"}
+                        text={"Enter the code that you have received in your email."}
+                    />
+                    <Formik
+                        initialValues={initialValues}
+                        validationSchema={otpSchema}
+                        onSubmit={onSubmit}
+                    >
+                        {({ values, errors, touched, isSubmitting }) => (
+                            <Form>
+                                <div className="auth-form">
+                                    <div>
+                                        <TextField
+                                            type="text"
+                                            placeholder="verification code"
+                                            value={values.otp}
+                                            startIcon={
+                                                <Image
+                                                    src="/icons/lock.svg"
+                                                    alt="image"
+                                                    width={24}
+                                                    height={24}
+                                                    loading='lazy'
+                                                />
+                                            }
+                                            name="otp"
+                                            errors={errors}
+                                            touched={touched}
+                                        />
+                                        <p className="otp-text">
+                                            If you are having difficulties resetting your PIN, Please contact{" "}
+                                            <span className="recoverytrek"><a href="mailto: proof@recoverytrek.com">proof@recoverytrek.com</a></span>
+                                        </p>
+                                    </div>
+                                    <Button
+                                        blue
+                                        disabled={isSubmitting}
+                                        type="submit"
+                                    >Continue</Button>
                                 </div>
-                                <Button
-                                    blue
-                                    disabled={isSubmitting}
-                                    type="submit"
-                                >Continue</Button>
-                            </div>
-                        </Form>
-                    )}
-                </Formik>
+                            </Form>
+                        )}
+                    </Formik>
+                </div>
             </div>
-        </div>
+            <div className="auth-img" style={{ backgroundImage: 'url("../images/dsk-login-img.svg")' }}></div>
+        </div >
     );
 };
 

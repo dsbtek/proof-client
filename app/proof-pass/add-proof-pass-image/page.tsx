@@ -73,6 +73,7 @@ const ScanLabReport = () => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const [formInitialized, setFormInitialized] = useState(false);
+    const [fileUpload, setFileUpload] = useState(false);
 
 
     // Selectors
@@ -295,6 +296,15 @@ const ScanLabReport = () => {
         }
     }, [compressImages, extractImages, formValues, router]);
 
+    const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>, onFileSelect: (file: File) => void) => {
+        setShowModal(true);
+        setFileUpload(true)
+        setShowCamera(false);
+        if (event.target.files && event.target.files.length > 0) {
+            onFileSelect(event.target.files[0]);
+        }
+    };
+
     return (
         <div className="container" style={{ position: 'relative', height: '100vh' }}>
             <AppHeader title="PROOFpass Upload" />
@@ -306,13 +316,17 @@ const ScanLabReport = () => {
                         // setShowCamera(true);
                     }}
                     setImageName={setImageName}
-                    triggerCamera={() => {
+                    triggerCameraFileUpload={() => {
                         setShowModal(false);
-                        setShowCamera(true);
+                        if (fileUpload) {
+                            // handleFileInput()
+                        } else {
+                            setShowCamera(true);
+                        }
                     }}
                 />
             )}
-
+            \
             <div className="proof-pass-camera-wrapper">
                 {permissionsGranted && showCamera && (
                     <>
@@ -361,10 +375,15 @@ const ScanLabReport = () => {
                         }}>
                             + Add
                         </Button>
-                        <FileUpload style={{ width: '100%' }} onFileSelect={function (file: File): void {
-                            setShowModal(true);
-                            setShowCamera(false);
-                        }} />
+                        <FileUpload
+                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                            onChange={() => { }}
+                            onClose={function (): void {
+                                throw new Error('Function not implemented.');
+                            }}
+                            onUpload={function (files: FileList): void {
+                                throw new Error('Function not implemented.');
+                            } }                        />
                     </div>
 
                     <Button blue classname="prompt-yes-btn w-scan-btn" onClick={handleSubmit}>
@@ -372,9 +391,7 @@ const ScanLabReport = () => {
                     </Button>
                 </div>
             }
-
         </div>
-
     );
 };
 export default ScanLabReport;

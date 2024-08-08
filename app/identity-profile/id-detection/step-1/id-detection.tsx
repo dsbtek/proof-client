@@ -31,8 +31,6 @@ const usePermissions = () => {
     return permissionsGranted;
 };
 
-
-
 const extractFaceImage = (img: HTMLImageElement, face: any, paddingRatio = 0.5) => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
@@ -70,11 +68,26 @@ const CameraIDCardDetection = () => {
     const [faceImage, setFaceImage] = useState<string | null>(null);
     const [faces, setFaces] = useState<any[]>([]);
     const [faceDetected, setFaceDetected] = useState<boolean>(false);
+    const [brightness, setBrightness] = useState<number>(0);
     const cameraRef = useRef<Webcam | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const dispatch = useDispatch();
 
     const permissionsGranted = usePermissions();
     const faceMesh = useFaceMesh();
+
+    const calculateBrightness = useCallback((imageData: { data: any; }) => {
+        const data = imageData.data;
+        let totalBrightness = 0;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            totalBrightness += brightness;
+        }
+
+        const averageBrightness = totalBrightness / (data.length / 4);
+        setBrightness(averageBrightness);
+    }, []);
 
     const checkForFace = useCallback(async () => {
         if (cameraRef.current && faceMesh) {
@@ -86,10 +99,21 @@ const CameraIDCardDetection = () => {
                     const predictions = await faceMesh.predict(img);
                     setFaces(predictions);
                     setFaceDetected(predictions.length > 0);
+
+                    if (canvasRef.current) {
+                        const context = canvasRef.current.getContext('2d');
+                        if (context) {
+                            canvasRef.current.width = img.width;
+                            canvasRef.current.height = img.height;
+                            context.drawImage(img, 0, 0, img.width, img.height);
+                            const imageData = context.getImageData(0, 0, img.width, img.height);
+                            calculateBrightness(imageData);
+                        }
+                    }
                 };
             }
         }
-    }, [faceMesh]);
+    }, [faceMesh, calculateBrightness]);
 
     useEffect(() => {
         const interval = setInterval(checkForFace, 1000);
@@ -132,11 +156,6 @@ const CameraIDCardDetection = () => {
         setFaceImage(null);
     };
 
-    const recapture = () => {
-        setCapturedImage('');
-        setFaceImage('');
-    };
-
     return (
         <div className="container" style={{ position: 'relative' }}>
             <AgreementHeader title="PIP - Step 1 " />
@@ -153,7 +172,14 @@ const CameraIDCardDetection = () => {
                             screenshotFormat="image/png"
                             imageSmoothing={true}
                         />
-                        <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`} />
+
+                        <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}>
+                            {brightness < 120 && (
+                                <div className='brightness-detection'>
+                                    <p>Insufficient light detected.</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 ) : (
                     <>
@@ -197,12 +223,13 @@ const CameraIDCardDetection = () => {
                     <p className="vid-text">Please tap the `Next` button to move to step 2 <br /> where you will position the rear side of your ID.</p>
                 </div>
             )}
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
             <AgreementFooter
                 onPagination={false}
                 onLeftButton={faceImage ? true : false}
                 onRightButton={true}
                 btnLeftText={'Recapture'}
-                onClickBtnLeftAction={faceImage ? recapture : () => { }}
+                onClickBtnLeftAction={faceImage ? recaptureImage : () => { }}
                 btnRightText={capturedImage ? "Next" : "Capture"}
                 onClickBtnRightAction={capturedImage ? undefined : captureFrame}
                 rightdisabled={!faceDetected}

@@ -19,26 +19,19 @@ import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
 
 import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader } from "@/components";
-import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo } from '@/redux/slices/drugTest';
+import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename } from '@/redux/slices/drugTest';
 import { detectBarcodes, uploadVideoToS3, createPresignedUrl/*, videoEncoder */ } from './action';
 import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, dateTimeInstance, fileToBase64 } from '@/utils/utils';
 import { storeBlobInIndexedDB } from '@/utils/indexedDB';
 import { authToken } from '@/redux/slices/auth';
 import usePageVisibility from '@/hooks/visibilityHook';
-import { FacialCaptureString, appData } from '@/redux/slices/appConfig';
+import { FacialCaptureString, IdCardFacialPercentageScoreString, appData } from '@/redux/slices/appConfig';
 import useFaceDetector from '@/hooks/faceDetector';
 import { compareFacesAI, detectBarcodesAI, detectBarcodesAI2 } from '@/utils/queries';
 import useTestupload from '@/hooks/testUpload';
 
 
 function Test() {
-    const cameraRef = useRef<Webcam | null>(null);
-    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-    const blobCount = useRef(0);
-    const isFinal = useRef(false);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-    const uuid = useRef(uuidv4());
-
     const [activeStep, setActiveStep] = useState<number>(1);
     const [toggleContent, setToggleContent] = useState<boolean>(false);
     const [muted, setMuted] = useState<boolean>(false);
@@ -58,45 +51,61 @@ function Test() {
     const [performFaceScan, setPerformFaceScan] = useState<boolean>(false);
     const [performLabelScan, setPerformLabelScan] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const feedbackData = useSelector((state: any) => state.preTest.preTestFeedback);
+
+    const cameraRef = useRef<Webcam | null>(null);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const blobCount = useRef(0);
+    const isFinal = useRef(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const uuid = useRef(uuidv4());
+    const timeRef = useRef(0);
+    const stepNameRef = useRef(0);
+    const activeStepRef = useRef(activeStep);
+    const timerStepRef = useRef<null | number>(timerStep)
+    const temperatureReaderRef = useRef(0);
+    const faceScanRef = useRef(0);
+    const barcodeStepRef = useRef(0);
+    const labelScanRef = useRef(0);
 
     const dispatch = useDispatch();
     const router = useRouter();
     const pathname = usePathname();
-    const { testSteps, testStepsFiltered, timerObjs, testingKit, startTime, endTime, signature, confirmationNo } = useSelector(testData);
+    const { testSteps, testStepsFiltered, timerObjs, testingKit, startTime, endTime, signature, confirmationNo, filename } = useSelector(testData);
     const { participant_id } = useSelector(authToken);
     const { first_name, last_name } = useSelector(appData);
     const facialCapture = useSelector(FacialCaptureString);
+    const facialScanScore = useSelector(IdCardFacialPercentageScoreString);
+    const feedbackData = useSelector((state: any) => state.preTest.preTestFeedback);
 
     const isVisible = usePageVisibility();
     const { faceDetected } = useFaceDetector(cameraRef);
     const { uploader, testUpload } = useTestupload();
 
-    const { data: barcodeData, isLoading, refetch } = useQuery(["tutorial", barcodeImage], {
-        queryFn: async ({ queryKey }) => {
-            const [, barcodeImage] = queryKey;
-            const data = await detectBarcodesAI(barcodeImage!);
-            return data;
-        },
-        enabled: false,
-        onSuccess: ({ data }: any) => {
-            console.log('bc scan res:', data)
-            if (data.status === 'complete') {
-                const code = data.result[0].data;
-                setBarcode(code);
-                setBarcodeUploaded(true);
-                dispatch(saveBarcode(code));
-            }
+    // const { data: barcodeData, isLoading, refetch } = useQuery(["tutorial", barcodeImage], {
+    //     queryFn: async ({ queryKey }) => {
+    //         const [, barcodeImage] = queryKey;
+    //         const data = await detectBarcodesAI(barcodeImage!);
+    //         return data;
+    //     },
+    //     enabled: false,
+    //     onSuccess: ({ data }: any) => {
+    //         console.log('bc scan res:', data)
+    //         if (data.status === 'complete') {
+    //             const code = data.result[0].data;
+    //             setBarcode(code);
+    //             setBarcodeUploaded(true);
+    //             dispatch(saveBarcode(code));
+    //         }
 
-            if (data.status === 'failed') {
-                toast.warn(`${data.message}`)
-            }
-        },
-        onError: (error: Error) => {
-            toast.error("Sorry Cannot Fetch Data");
-            console.error(error)
-        }
-    });
+    //         if (data.status === 'failed') {
+    //             toast.warn(`${data.message}`)
+    //         }
+    //     },
+    //     onError: (error: Error) => {
+    //         toast.error("Sorry Cannot Fetch Data");
+    //         console.error(error)
+    //     }
+    // });
 
     const {
         status,
@@ -131,18 +140,35 @@ function Test() {
 
     const handleNextStep = useCallback(() => {
         if (activeStep === test.length) {
-            endTest();
+            if (testingKit.Scan_Shipping_Label && !performLabelScan) {
+                setPerformLabelScan(true);
+            } else {
+                endTest();
+            }
         } else {
             //Logic helps timer step stay on track with the active step
             if (activeStep + 1 !== test[activeStep].step && test[activeStep].step !== null && activeStep === test[activeStep - 1].step) {
                 setActiveStep(test[activeStep].step);
             } else if (time === 0 && timerStep !== activeStep) {
-                setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                const newActiveStep = activeStep + 1;
+                mediaRecorderRef.current?.stop();
+                // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                setActiveStep(newActiveStep);
+                setTimeout(() => {
+                    timeRef.current = time;
+                    stepNameRef.current = test[newActiveStep - 1].step_name;
+                    activeStepRef.current = newActiveStep;
+                    timerStepRef.current = typeof timerStep === 'number' ? 1 : 0;
+                    temperatureReaderRef.current = test[newActiveStep - 1].is_temperature_reader ? 1 : 0;
+                    faceScanRef.current = performFaceScan ? 1 : 0;
+                    barcodeStepRef.current = barcodeStep ? 1 : 0;
+                    labelScanRef.current = performLabelScan ? 1 : 0;
+                }, 1000)
             } else {
                 setShowTimer(true);
             }
         }
-    }, [activeStep, endTest, test, time, timerStep]);
+    }, [activeStep, barcodeStep, endTest, performFaceScan, performLabelScan, test, testingKit.Scan_Shipping_Label, time, timerStep]);
 
     const handleTimerEnd = useCallback(async () => {
         setShowTimer(false);
@@ -236,9 +262,9 @@ function Test() {
             const faceScan = cameraRef?.current!.getScreenshot();
             (async () => {
                 try {
-                    const similarity = await compareFacesAI(facialCapture, faceScan!);
-                    console.log('simi in test-->', similarity.match_percentage)
-                    setPerformFaceScan(false);
+                    const similarity = await compareFacesAI(facialCapture.replace(/^data:image\/\w+;base64,/, ''), faceScan!.replace(/^data:image\/\w+;base64,/, ''));
+                    console.log('simi in test-->', similarity.result.percentage)
+                    // setPerformFaceScan(false);
                     dispatch
                 } catch (error) {
                     console.error('Test Face Compare Error:', error);
@@ -251,10 +277,6 @@ function Test() {
         }
 
         if (faceDetected && isVisible && status !== 'acquiring') {
-            // if (barcodeStep) {
-            //     audioRef.current.loop = false;
-            //     audioRef.current.pause();
-            // }
             audioRef.current.loop = false;
             audioRef.current.pause();
         } else {
@@ -269,11 +291,25 @@ function Test() {
                 audioRef.current.pause();
             }
         };
-    }, [barcodeStep, dispatch, faceDetected, facialCapture, isVisible, performFaceScan, status]);
+    }, [barcodeStep, dispatch, faceDetected, facialCapture, isVisible, performFaceScan, status, testingKit.Scan_Shipping_Label]);
 
     //General Test Collection functions and logic
     useEffect(() => {
         testStepsFiltered.length > 0 ? setTest(testStepsFiltered) : setTest(testSteps);
+
+        // Ensures the first stream chunk has data
+        if (test[0] && test[0].step === activeStep) {
+            timeRef.current = time;
+            stepNameRef.current = test[0].step_name;
+            activeStepRef.current = test[0].step;
+            timerStepRef.current = typeof timerStep === 'number' ? 1 : 0;
+            temperatureReaderRef.current = test[activeStep - 1].is_temperature_reader ? 1 : 0;
+            faceScanRef.current = performFaceScan ? 1 : 0;
+            barcodeStepRef.current = barcodeStep ? 1 : 0;
+            labelScanRef.current = performLabelScan ? 1 : 0;
+
+            dispatch(setFilename(`${participant_id}-${testingKit.kit_name}-${testingKit.kit_id}-${uuid.current}`));
+        }
 
         // Start recording the video
         record();
@@ -284,7 +320,7 @@ function Test() {
         }
 
         // Checks if the timer will be active
-        if (timerObjs.length > 0 && time === 0) {
+        if (timerObjs.length > 0 && time === 0 && status !== 'acquiring') {
             timerObjs.map((timerObj) => {
                 if (timerObj.after_step === activeStep) {
                     setTimerStep(timerObj.after_step);
@@ -302,15 +338,12 @@ function Test() {
         }
 
         //Checks for actions to be performed during the testing process
-        if (test.length > 0) {
+        if (test.length > 0 && status !== 'acquiring') {
             const barcodeCapture = test[activeStep - 1].is_barcode;
             barcodeCapture && setBarcodeStep(true);
 
-            const faceScan = test[activeStep - 1].is_face_scan;
-            faceScan && setPerformFaceScan(true);
-
-            const labelScan = test[activeStep - 1].shippinglabel;
-            labelScan && setPerformLabelScan(true);
+            const faceScan = test[activeStep - 1].is_scan_face;
+            (faceScan && !performFaceScan) && setPerformFaceScan(true);
         }
 
         const handlePendingTest = async () => {
@@ -397,12 +430,11 @@ function Test() {
             audio?.removeEventListener('ended', handleAudioEnd);
             window.removeEventListener('beforeunload', beforeUnloadHandler);
         };
-    }, [activeStep, cameraRef, capturedVideo, dispatch, endTest, endTime, feedbackData, handleDialog, isFinal, participant_id, pathname, performFaceScan, record, router, showTimer, startTime, status, test, testStart, testSteps, testStepsFiltered, testUpload, testingKit, testingKit.kit_id, time, timerObjs, timerStep, uploader])
+    }, [activeStep, barcodeStep, cameraRef, capturedVideo, dispatch, endTest, endTime, feedbackData, handleDialog, isFinal, participant_id, pathname, performFaceScan, performLabelScan, record, router, showTimer, startTime, status, test, testStart, testSteps, testStepsFiltered, testUpload, testingKit, testingKit.kit_id, time, timerObjs, timerStep, uploader])
 
 
     //Streams the video to the AI detection service
     useEffect(() => {
-        // let bcount = 0
         const handleStreaming = async () => {
             if (cameraRef?.current?.stream !== undefined && cameraRef?.current?.stream !== null) {
                 // If there's an existing MediaRecorder, stop it and remove the event listener
@@ -434,23 +466,24 @@ function Test() {
                     }
 
                     const unencodedString = await blobToBase64(data);
-
+                    console.log('as:', activeStep)
                     const body = JSON.stringify({
                         'chunks': unencodedString,
                         'test_type': `${testingKit.kit_id}`,
                         'video_path': '',
-                        'record': `${participant_id}-${testingKit.kit_name}-${testingKit.kit_id}-${uuid.current}`,
+                        'record': filename,
+                        // 'record': `${participant_id}-${testingKit.kit_name}-${testingKit.kit_id}-${uuid.current}`,
                         'index': blobCount.current,
                         'is_final': isFinal.current ? 1 : 0,
                         'step': {
-                            step_time: time,
-                            step_name: test[activeStep - 1].step_name,
-                            step: activeStep,
-                            is_timed: typeof timerStep === 'number' ? 1 : 0,
-                            is_temperature_reader: test[activeStep - 1].is_temperature_reader ? 1 : 0,
-                            is_scan_face: performFaceScan ? 1 : 0,
-                            is_barcode: barcodeStep ? 1 : 0,
-                            shippinglabel: performLabelScan ? 1 : 0
+                            step_time: timeRef.current,
+                            step_name: stepNameRef.current,
+                            step: activeStepRef.current,
+                            is_timed: timerStepRef.current,
+                            is_temperature_reader: temperatureReaderRef.current,
+                            is_scan_face: faceScanRef.current,
+                            is_barcode: barcodeStepRef.current,
+                            shippinglabel: labelScanRef.current
                         }
                     })
 
@@ -491,6 +524,7 @@ function Test() {
                         if (analysis_data.status === 'complete') {
                             if (analysis_data.result) {
                                 const detections = Object.entries(analysis_data.result);
+                                const link = filename;
                                 const sendMail = async () => {
                                     const response = await fetch("/api/send-email", {
                                         method: 'POST',
@@ -499,6 +533,8 @@ function Test() {
                                             'date': endTime,
                                             'kit': testingKit.kit_name,
                                             'confirmation_no': confirmationNo,
+                                            'videoLink': `https://proofdata.s3.amazonaws.com/${link}`,
+                                            'face_scan_score': facialScanScore,
                                             'detections': detections
                                         })
                                     })
@@ -524,7 +560,7 @@ function Test() {
                 console.error('Stream Error:', error);
             });
         }
-    }, [activeStep, barcodeStep, cameraRef, confirmationNo, dispatch, endTime, isFinal, participant_id, performFaceScan, performLabelScan, status, test, testingKit.kit_id, testingKit.kit_name, time, timerStep])
+    }, [activeStep, barcodeStep, cameraRef, confirmationNo, dispatch, endTime, facialScanScore, filename, isFinal, participant_id, performFaceScan, performLabelScan, status, test, testingKit.kit_id, testingKit.kit_name, time, timerStep])
 
     return (
         <>

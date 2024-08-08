@@ -111,6 +111,8 @@ function LoginForm() {
         'date': '1100hrs',
         'kit': '1200hrs',
         'confirmation_no': '111000',
+        'videoLink': `https://proofdata.s3.amazonaws.com/bla`,
+        'face_scan_score': '100%',
         'detections': detections
       })
     })
@@ -119,75 +121,76 @@ function LoginForm() {
   };
 
   return (
-    <div className="container">
-      <div className="items-wrap">
-        <div className="sign-header">
-          <h1>Welcome,</h1>
-          <p>Sign in to continue</p>
+    <div className="desktop-wrap">
+      <div className="container">
+
+        <div className="items-wrap">
+          <div className="sign-header">
+            <h1>Welcome,</h1>
+            <p>Sign in to continue</p>
+          </div>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={localId === '' ? signinSchema : null}
+            onSubmit={onSubmit}
+          >
+            {({ values, errors, touched, isSubmitting }) => (
+              <Form>
+                <TextField
+                  type="text"
+                  placeholder="Participant ID"
+                  value={localId !== '' ? localId : values.participant_id}
+                  startIcon={
+                    <Image
+                      src="/icons/user.svg"
+                      alt="image"
+                      width={24}
+                      height={24}
+                      loading='lazy'
+                    />
+                  }
+                  name="participant_id"
+                  errors={errors}
+                  touched={touched}
+                />
+                <TextField
+                  type="password"
+                  placeholder="Pin"
+                  value={localPin !== '' ? localPin : values.pin}
+                  startIcon={
+                    <Image src="/icons/lock.svg" alt="image" width={24} height={24} loading='lazy' />
+                  }
+                  endIcon={true}
+                  name="pin"
+                  errors={errors}
+                  touched={touched}
+                />
+                <div className="check-wrap">
+                  <div>
+                    <CheckBox
+                      label={"Remember my login"}
+                      checked={checked}
+                      onChange={handleCheck}
+                    />
+                  </div>
+                  <div className="forgot-pin">
+                    <Link href="/auth/forgot-pin">Forgot PIN?</Link>
+                  </div>
+                </div>
+                <Button
+                  blue
+                  disabled={isSubmitting}
+                  type="submit"
+                >{isSubmitting ? 'signing in...' : 'Sign in'}</Button>
+              </Form>
+            )}
+          </Formik>
         </div>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={localId === '' ? signinSchema : null}
-          onSubmit={onSubmit}
-        >
-          {({ values, errors, touched, isSubmitting }) => (
-            <Form>
-              <TextField
-                type="text"
-                placeholder="Participant ID"
-                value={localId !== '' ? localId : values.participant_id}
-                startIcon={
-                  <Image
-                    src="/icons/user.svg"
-                    alt="image"
-                    width={24}
-                    height={24}
-                    loading='lazy'
-                  />
-                }
-                name="participant_id"
-                errors={errors}
-                touched={touched}
-              />
-              <TextField
-                type="password"
-                placeholder="Pin"
-                value={localPin !== '' ? localPin : values.pin}
-                startIcon={
-                  <Image src="/icons/lock.svg" alt="image" width={24} height={24} loading='lazy' />
-                }
-                endIcon={true}
-                name="pin"
-                errors={errors}
-                touched={touched}
-              />
-              <div className="check-wrap">
-                <div>
-                  <CheckBox
-                    label={"Remember my login"}
-                    checked={checked}
-                    onChange={handleCheck}
-                  />
-                </div>
-                <div className="forgot-pin">
-                  <Link href="/auth/forgot-pin">Forgot PIN?</Link>
-                </div>
-              </div>
-              <Button
-                blue
-                disabled={isSubmitting}
-                type="submit"
-              >{isSubmitting ? 'signing in...' : 'Sign in'}</Button>
-            </Form>
-          )}
-        </Formik>
+        <br />
+        <Button classname="custom-button-1" onClick={sendMail}>{"New to Proof?"}</Button>
       </div>
-      {/* <Link href="https://proofapp.my.salesforce-sites.com/New2Proof" className="links">
-        <Button classname="custom-button-1">{"New to Proof?"}</Button>
-      </Link> */}
-      <Button classname="custom-button-1" onClick={sendMail}>{"New to Proof?"}</Button>
+      <div className="auth-img" style={{ backgroundImage: 'url("../images/dsk-login-img.svg")' }}></div>
     </div>
-    // <Camera show={true} captureFrame={() => { }} />
   )
 };
 

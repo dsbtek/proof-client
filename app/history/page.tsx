@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { Menu, AppHeader, Button, Loader_ } from "@/components";
+import { Menu, AppHeader, Button, Loader_, DinamicMenuLayout } from "@/components";
 import { AiOutlineRight } from "react-icons/ai";
 import { useQuery } from "react-query";
 import { useSelector, useDispatch } from "react-redux";
@@ -53,73 +53,75 @@ const History = () => {
   }, [history, refetch]);
 
   return (
-    <div className="container">
-      <AppHeader title="History" />
-      <br />
-      {isLoading ?
-        <Loader_ />
-        :
-        <>
-          <Button
-            onClick={() => console.log("Login clicked")}
-            classname="history-button"
-            link="/history/login-history"
-          >
-            <span>Login</span>
-            <AiOutlineRight />
-          </Button>
-          {hasPermission('Test', permissions) &&
-
+    <DinamicMenuLayout>
+      <div className="tutorial-container">
+        <AppHeader title="History" />
+        <br />
+        {isLoading ?
+          <Loader_ />
+          :
+          <>
             <Button
-              onClick={() => console.log("BAC Test clicked")}
+              onClick={() => console.log("Login clicked")}
               classname="history-button"
-              link="/proof-pass"
+              link="/history/login-history"
             >
-              <span> Test</span>
+              <span>Login</span>
               <AiOutlineRight />
             </Button>
-          }
-          {hasPermission('Test', permissions) &&
+            {hasPermission('Test', permissions) &&
 
-            <Button
-              onClick={() => console.log("BAC Test clicked")}
-              classname="history-button"
-              link="/history/bac-test-history"
-            >
-              <span>BAC Test</span>
-              <AiOutlineRight />
-            </Button>
-          }
+              <Button
+                onClick={() => console.log("BAC Test clicked")}
+                classname="history-button"
+                link="/proof-pass"
+              >
+                <span> Test</span>
+                <AiOutlineRight />
+              </Button>
+            }
+            {hasPermission('Test', permissions) &&
 
-          {hasPermission('Priscription', permissions) &&
+              <Button
+                onClick={() => console.log("BAC Test clicked")}
+                classname="history-button"
+                link="/history/bac-test-history"
+              >
+                <span>BAC Test</span>
+                <AiOutlineRight />
+              </Button>
+            }
 
-            <Button
-              onClick={() => console.log("BAC Test clicked")}
-              classname="history-button"
-              link="/history"
-            >
-              <span>Prescriptions</span>
-              <AiOutlineRight />
-            </Button>
-          }
-          {hasPermission('Calls', permissions) &&
+            {hasPermission('Priscription', permissions) &&
 
-            <Button
-              onClick={() => console.log("BAC Test clicked")}
-              classname="history-button"
-              link="/history"
-            >
-              <span>Calls</span>
-              <AiOutlineRight />
-            </Button>
-          }
-        </>
+              <Button
+                onClick={() => console.log("BAC Test clicked")}
+                classname="history-button"
+                link="/history"
+              >
+                <span>Prescriptions</span>
+                <AiOutlineRight />
+              </Button>
+            }
+            {hasPermission('Calls', permissions) &&
 
-      }
-      <div className="menu-wrapper-style">
+              <Button
+                onClick={() => console.log("BAC Test clicked")}
+                classname="history-button"
+                link="/history"
+              >
+                <span>Calls</span>
+                <AiOutlineRight />
+              </Button>
+            }
+          </>
+
+        }
+        {/* <div className="menu-wrapper-style">
         <Menu />
+      </div> */}
       </div>
-    </div>
+    </DinamicMenuLayout>
   );
 };
 

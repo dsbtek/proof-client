@@ -1,3 +1,13 @@
+.tutorial-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+
+}
+
 .tutorial-video {
   width: 80%;
   height: 80%;
@@ -227,8 +237,28 @@
   grid-gap: 18px;
 }
 
-@media screen and (min-width: 1000px) {
+.review-btn {
+  text-wrap: nowrap;
+  font-size: clamp(0.5rem, 2vw, 1rem);
+  padding: 16px;
+  gap: 10px;
+  border-radius: 8px;
+  background: #009CF9;
+  outline: none;
+  border-color: transparent;
+  color: #FFFFFF;
+}
+
+@media screen and (min-width: 700px) {
   .footer-wrap {
     margin-top: 16px;
   }
+
+  .tutorial-container {
+    padding: 16px;
+    border: 1px;
+    border-radius: 16px;
+    background: #FFFFFF;
+  }
+
 }

@@ -7,15 +7,26 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { BsFillPersonCheckFill } from "react-icons/bs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { appData } from "@/redux/slices/appConfig";
+import { useSelector } from "react-redux";
 
 import "./menu.css";
 
 
 const Menu = () => {
+  const { first_name, last_name } = useSelector(appData);
   const pathname = usePathname();
 
   return (
     <nav className="menu">
+      <div className="menu-user-name">
+        <div className="user-home">
+          <p className="greet-text">{"Hello,"}</p>
+          <p className="user-name">
+            {first_name + ' ' + last_name}
+          </p>
+        </div>
+      </div>
       <Link href="/home" className="sub-menu">
         {/* <GoHome size={30} color={pathname === '/home' ? '#009CF9' : '#ADADAD'} /> */}
         {pathname === '/home' ?

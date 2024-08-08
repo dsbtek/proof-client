@@ -3,6 +3,7 @@ interface DetectionDetails {
     total?: number;
     note?: string;
     score?: number;
+    label?: string;
     time_spent?: string;
     last_time_val?: string;
     first_time_val?: string;

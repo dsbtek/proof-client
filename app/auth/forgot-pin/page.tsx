@@ -46,51 +46,55 @@ function ForgotPin() {
     }
 
     return (
-        <div className="container">
-            <div className="items-wrap">
-                <AppHeader title='' />
-                <HeaderText
-                    title={"Forgot PIN"}
-                    text={
-                        "Complete the form below and you will receive a reset code which you will enter on the next screen"
-                    }
-                />
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={forgotPinSchema}
-                    onSubmit={onSubmit}
-                >
-                    {({ values, errors, touched, isSubmitting }) => (
-                        <Form>
-                            <div className="auth-form">
-                                <TextField
-                                    type="text"
-                                    placeholder="Participant ID"
-                                    value={values.participant_id}
-                                    startIcon={
-                                        <Image src="/icons/user.svg" alt="image" width={24} height={24} loading='lazy' />
-                                    }
-                                    name="participant_id"
-                                    errors={errors}
-                                    touched={touched}
-                                />
-                                <div className="buttons">
-                                    <Button
-                                        white
-                                        // onClick={() => { router.push("/auth/enter-otp/") }}
-                                        onClick={() => { router.push("/auth/set-new-pin") }}
-                                    >I already have a code</Button>
-                                    <Button
-                                        blue
-                                        disabled={isSubmitting}
-                                        type="submit"
-                                    >Continue</Button>
+        <div className="desktop-wrap">
+
+            <div className="container">
+                <div className="items-wrap">
+                    <AppHeader title='' />
+                    <HeaderText
+                        title={"Forgot PIN"}
+                        text={
+                            "Complete the form below and you will receive a reset code which you will enter on the next screen"
+                        }
+                    />
+                    <Formik
+                        initialValues={initialValues}
+                        validationSchema={forgotPinSchema}
+                        onSubmit={onSubmit}
+                    >
+                        {({ values, errors, touched, isSubmitting }) => (
+                            <Form>
+                                <div className="auth-form">
+                                    <TextField
+                                        type="text"
+                                        placeholder="Participant ID"
+                                        value={values.participant_id}
+                                        startIcon={
+                                            <Image src="/icons/user.svg" alt="image" width={24} height={24} loading='lazy' />
+                                        }
+                                        name="participant_id"
+                                        errors={errors}
+                                        touched={touched}
+                                    />
+                                    <div className="buttons">
+                                        <Button
+                                            white
+                                            // onClick={() => { router.push("/auth/enter-otp/") }}
+                                            onClick={() => { router.push("/auth/set-new-pin") }}
+                                        >I already have a code</Button>
+                                        <Button
+                                            blue
+                                            disabled={isSubmitting}
+                                            type="submit"
+                                        >Continue</Button>
+                                    </div>
                                 </div>
-                            </div>
-                        </Form>
-                    )}
-                </Formik>
+                            </Form>
+                        )}
+                    </Formik>
+                </div>
             </div>
+            <div className="auth-img" style={{ backgroundImage: 'url("../images/dsk-login-img.svg")' }}></div>
         </div>
     )
 };

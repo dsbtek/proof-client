@@ -51,7 +51,9 @@
 }
 
 .checkbox-wrapper label {
-  font-size: 14px;
+  /* font-size: 14px; */
+  font-size: clamp(0.5rem, 2vw, 1rem);
+  text-wrap: nowrap;
   margin-left: 8px;
   line-height: 24px;
 }

@@ -176,3 +176,8 @@
     align-items: center;
     gap: 4px;
 }
+
+.upload-icon {
+    height: 30px;
+    width: 30px;
+}

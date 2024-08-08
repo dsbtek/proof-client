@@ -111,3 +111,22 @@
 .otp-text {
     font-weight: 400px;
 }
+
+@media (min-width: 700px) {
+    .custom-button-1 {
+        margin-bottom: 0px;
+        margin-top: 0px;
+        border-radius: 12px;
+        width: 70%;
+        border: 1.3px solid var(--Neutral-300, #AAB5C2);
+        color: Black;
+    }
+
+    .auth-form {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        height: 100%;
+        gap: 16px;
+    }
+}

@@ -1,3 +1,13 @@
+.desktop-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.auth-img {
+  display: none;
+}
+
 .sign-container {
   display: flex;
   flex-direction: column;
@@ -107,6 +117,7 @@
   color: #4E555D;
 }
 
+
 @media screen and (min-width: 700px) {
   .signBg-with-img {
     width: 100%;
@@ -114,5 +125,11 @@
 
   .signBg-with {
     height: 180px;
+  }
+
+  .auth-img {
+    display: flex;
+    width: 50%;
+    background-size: cover;
   }
 }

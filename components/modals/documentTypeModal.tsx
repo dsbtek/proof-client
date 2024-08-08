@@ -5,7 +5,7 @@ import './documentTypeModal.css';
 interface ModalProps {
     onClose: () => void;
     setImageName: (name: string) => void;
-    triggerCamera: () => void;
+    triggerCameraFileUpload: () => void;
 }
 
 const typeOfImages = [
@@ -14,10 +14,10 @@ const typeOfImages = [
     { id: 3, title: 'Rapid Test Device' }
 ];
 
-const DocumentTypeModal = ({ onClose, setImageName, triggerCamera }: ModalProps) => {
+const DocumentTypeModal = ({ onClose, setImageName, triggerCameraFileUpload }: ModalProps) => {
     const handleItemClick = (title: string) => {
         setImageName(title);
-        triggerCamera();
+        triggerCameraFileUpload();
         onClose();
     };
 

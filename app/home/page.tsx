@@ -1,20 +1,20 @@
 "use client";
 
 
-import { Menu, HomeHeader, HomeMain, HomeFooter } from "@/components";
+import { Menu, HomeHeader, HomeMain, HomeFooter, DinamicMenuLayout } from "@/components";
 
 const Home = () => {
   return (
-    <div className="container">
-      <div className="items-wrap" style={{ marginBottom: '4em' }}>
+    <DinamicMenuLayout>
+      <div className="tutorial-container">
         <HomeHeader title={"HOME"} greetings={"Hello,"} />
         <HomeMain />
         <HomeFooter />
       </div>
-      <div className="menu-wrapper-style">
+      {/* <div className="menu-wrapper-style">
         <Menu />
-      </div>
-    </div>
+      </div> */}
+    </DinamicMenuLayout>
   );
 };
 

@@ -8,6 +8,7 @@ export interface TestState {
     startTime: string;
     endTime: string;
     uploading: boolean | undefined;
+    filename: string;
     barcode: string;
     confirmationNo: string;
     signature: string;
@@ -22,6 +23,7 @@ const initialState: TestState = {
     startTime: "",
     endTime: "",
     uploading: undefined,
+    filename: '',
     barcode: "",
     confirmationNo: "",
     signature: "",
@@ -66,6 +68,9 @@ const appSlice = createSlice({
         saveConfirmationNo: (state, action: PayloadAction<string>) => {
             state.confirmationNo = action.payload;
         },
+        setFilename: (state, action: PayloadAction<string>) => {
+            state.filename = action.payload
+        },
         clearTestData: (state) => {
             state.testingKit = {}
             state.timerObjs = []
@@ -83,6 +88,6 @@ const appSlice = createSlice({
 export const testData = (state: { drugTest: TestState }) => state.drugTest
 export const testingKit = (state: { drugTest: TestState }) => state.drugTest.testingKit;
 
-export const { setTestSteps, setKit, setSig, clearTestData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo } = appSlice.actions;
+export const { setTestSteps, setKit, setSig, clearTestData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, setFilename, saveConfirmationNo } = appSlice.actions;
 
 export default appSlice.reducer;

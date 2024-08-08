@@ -115,15 +115,27 @@
 }
 
 .id-card-frame-guide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: calc(100% - 10%);
     height: calc(100% - 60%);
     border-radius: 12px;
     position: absolute;
 }
 
+.brightness-detection {
+    background-color: chocolate;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+}
+
 .face-detected {
     border: 1px solid #009cf9;
 }
+
+
 
 .no-face-detected {
     border: 1px solid red;

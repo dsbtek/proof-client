@@ -5,9 +5,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
-import { IoMdCloseCircleOutline } from "react-icons/io";
+import { IoIosArrowForward, IoMdCloseCircleOutline } from "react-icons/io";
+import Link from 'next/link';
 
-import { HeaderText, Menu, Switch, TutorialGridView, TutorialListView, Modal, ListViewLoader, GridViewLoader } from "@/components";
+import { HeaderText, Menu, Switch, TutorialGridView, TutorialListView, Modal, ListViewLoader, GridViewLoader, CheckBox, DinamicMenuLayout } from "@/components";
 import { authToken } from "@/redux/slices/auth";
 import { setTutorialData, tutorialData, appData } from "@/redux/slices/appConfig";
 import { setCookie } from "@/utils/utils";
@@ -18,6 +19,7 @@ const Tutorial = () => {
     const [showModal, setShowModal] = useState(false);
     const [videoUrl, setVideoUrl] = useState("https://rt-mobiletrekvideos.s3.amazonaws.com/chris+welcome+video+10-14-22.mp4");
     const [videoPoster, setVideoPoster] = useState("https://proof-drug-tutorial.s3.amazonaws.com/AppTutorial/Video Tutorial/Player.png");
+    const tokenCookie = Cookies.get("token");
 
     const dispatch = useDispatch();
     const { participant_id, pin } = useSelector(authToken);
@@ -85,14 +87,15 @@ const Tutorial = () => {
     }, [refetch, tutorial]);
 
     return (
-        <>
+        <DinamicMenuLayout>
+
             <Modal show={showModal} onClose={() => { }}>
                 <IoMdCloseCircleOutline size={40} color='#009cf9' className="vid-close" onClick={handleModal} />
                 <video id='tut-vid' className="tutorial-video" src={videoUrl} controls poster={videoPoster} >
                     Your browser does not support the video tag
                 </video>
             </Modal>
-            <div className="container">
+            <div className="tutorial-container">
                 <HeaderText
                     title={"Quick & Easy"}
                     text={
@@ -154,11 +157,11 @@ const Tutorial = () => {
                         </div>
                     )}
                 </div>
-                <div className="menu-wrapper-style">
+                {/* <div className="menu-wrapper-style" style={{ padding: "16px" }}>
                     <Menu />
-                </div>
+                </div> */}
             </div>
-        </>
+        </DinamicMenuLayout>
     );
 };
 

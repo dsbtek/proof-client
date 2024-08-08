@@ -188,15 +188,3 @@
   height: 65.5px;
   width: 52px;
 }
-
-.menu-wrapper-style {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
-
-@media screen and (min-width: 540px) {
-  .menu-wrapper-style {
-    width: 600px;
-  }
-}

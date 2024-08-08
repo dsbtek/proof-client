@@ -1,10 +1,10 @@
 import { detections } from './mailData';
 
-export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024', kit = 'PR Urine Kit', confirmation_no = '000111', detection = detections): string {
+export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024', kit = 'PR Urine Kit', confirmation_no = '000111', videoLink = '#', face_scan_score = '', detection = detections): string {
     let resultRows = '';
     let totalScore = '';
     let scoreRatio = '';
-    let videoLink = '#';
+    // let videoLink = '#';
 
     detection.map((data) => {
         if (data[0] === "score_ratios") {
@@ -15,7 +15,7 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
             resultRows += `<tr style="margin:0;padding:0;border:0;background-color:#f9f9f9;">
                                 <td
                                     style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
-                                    ${data[0]}</td>
+                                    ${data[1].label ?? data[0]}</td>
                                 <td
                                     style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
                                     ${data[1].note}</td>
@@ -90,6 +90,13 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
                                 <p
                                     style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
                                     Kit: ${kit}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Facial Comparison: ${face_scan_score}</p>
                             </td>
                         </tr>
                         <tr style="margin:0;padding:0;border:0;">

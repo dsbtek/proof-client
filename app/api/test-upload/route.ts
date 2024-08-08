@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ data: res.data }, { status: res.status });
         }
     } catch (error: any) {
-        console.error(error.response?.data?.msg);
+        console.error('Test Upload Error:', error.response?.data?.msg);
+        return NextResponse.error();
     }
 }

@@ -14,3 +14,10 @@
     font-size: 20px;
     font-weight: 400;
 }
+
+@media (min-width: 700px) {
+    .app-header-container {
+        display: none;
+
+    }
+}

@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 
 import { appData } from '@/redux/slices/appConfig';
 import { authToken } from '@/redux/slices/auth';
-import { saveConfirmationNo, testData, setUploadStatus } from '@/redux/slices/drugTest';
+import { saveConfirmationNo, testData, setUploadStatus, setFilename } from '@/redux/slices/drugTest';
 import { base64ToBlob, blobToBase64, blobToBuffer, dateTimeInstance } from '@/utils/utils';
 import { createPresignedUrl } from '@/app/test-collection/[slug]/action';
 import { toast } from 'react-toastify';
@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 function useTestupload() {
     const pathname = usePathname();
     const dispatch = useDispatch();
-    const { testSteps, testStepsFiltered, timerObjs, testingKit, startTime, endTime, signature, barcode } = useSelector(testData);
+    const { filename, testSteps, testStepsFiltered, timerObjs, testingKit, startTime, endTime, signature, barcode } = useSelector(testData);
     const { participant_id } = useSelector(authToken);
     const { first_name, last_name } = useSelector(appData);
 
@@ -81,7 +81,8 @@ function useTestupload() {
         try {
             const webmBlob = new Blob([blob], { type: 'video/mp4' });
             const unencodedString = await blobToBase64(webmBlob);
-            const filename = `${Date.now()}-${testingKit.kit_id}.mp4`
+            // const filename = `${Date.now()}-${testingKit.kit_id}.mp4`
+            // dispatch(setFilename(filename));
             let success = false;
 
             // const encodedResponse = await fetch(`${process.env.NEXT_PUBLIC_BEAM_SERVICE_URL}/convert-to-mp4`, {
@@ -104,6 +105,7 @@ function useTestupload() {
             const buffer = await blobToBuffer(webmBlob!);
 
             dispatch(setUploadStatus(true));
+
 
             await testUpload()
 
@@ -152,7 +154,7 @@ function useTestupload() {
             pendingTest?.();
             console.error("Upload error:", error);
         }
-    }, [testUpload, dispatch, testingKit.kit_id]);
+    }, [dispatch, testUpload, filename]);
 
     return { uploader, testUpload }
 };

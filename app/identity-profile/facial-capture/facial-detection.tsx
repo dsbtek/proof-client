@@ -91,7 +91,7 @@ const FacialCapture = () => {
                 setTimeout(() => {
                     router.push('/identity-profile/id-detection/step-1');
                 }, 3000);
-            } else if (similarity.message === 'No faces found in the second image, Recapture') {
+            } else if (similarity.message === 'No faces found in the second image') {
                 setCapturedImage("")
                 toast.error(`${similarity.message}`);
             };

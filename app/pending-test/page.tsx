@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Crypto from "crypto-js";
 
-import { Menu, AppHeader, Button, Loader } from '@/components';
+import { Menu, AppHeader, Button, Loader, DinamicMenuLayout } from '@/components';
 import { uploadVideoToS3 } from '../test-collection/[slug]/action';
 import { saveTestClip, setEndTime, setStartTime, setUploadStatus, testData } from '@/redux/slices/drugTest';
 import { retrieveBlobFromIndexedDB, checkDatabaseAndObjectStore, deleteBlobFromIndexedDB } from '@/utils/indexedDB';
@@ -108,32 +108,34 @@ const PendingTest = () => {
   }, [pendingTest, dispatch]);
 
   return (
-    <div className="container">
-      {uploading && <Loader />}
-      <AppHeader title="Pending Test" />
-      <div className="pending-test-container">
-        {pendingTest !== undefined || null ? (
-          <div className="pending-test">
-            <Image src={pendingTest.kit.kit_image} alt="proof image" width={5000} height={5000} className="pend-test-img" loading='lazy' />
-            <h1 style={{ color: '#24527B' }}>{pendingTest.kit.kit_name}</h1>
-            <article className="sum-texts">
-              <div className="sum-text">
-                <h4>Collection Start:</h4>
-                <p>{pendingTest.startTime}</p>
-              </div>
-              <div className="sum-text">
-                <h4>Collection End:</h4>
-                <p>{pendingTest.endTime}</p>
-              </div>
-            </article>
-            <Button style={{ padding: '12px', height: '50px' }} classname="blue" onClick={uploadPending}>Upload</Button>
-          </div>
-        ) : (
-          <h4 className="pending-text">No Pending drug test videos.</h4>
-        )}
+    <DinamicMenuLayout>
+      <div className="tutorial-container">
+        {uploading && <Loader />}
+        <AppHeader title="Pending Test" />
+        <div className="pending-test-container">
+          {pendingTest !== undefined || null ? (
+            <div className="pending-test">
+              <Image src={pendingTest.kit.kit_image} alt="proof image" width={5000} height={5000} className="pend-test-img" loading='lazy' />
+              <h1 style={{ color: '#24527B' }}>{pendingTest.kit.kit_name}</h1>
+              <article className="sum-texts">
+                <div className="sum-text">
+                  <h4>Collection Start:</h4>
+                  <p>{pendingTest.startTime}</p>
+                </div>
+                <div className="sum-text">
+                  <h4>Collection End:</h4>
+                  <p>{pendingTest.endTime}</p>
+                </div>
+              </article>
+              <Button style={{ padding: '12px', height: '50px' }} classname="blue" onClick={uploadPending}>Upload</Button>
+            </div>
+          ) : (
+            <h4 className="pending-text">No Pending drug test videos.</h4>
+          )}
+        </div>
+        {/* <Menu /> */}
       </div>
-      <Menu />
-    </div>
+    </DinamicMenuLayout >
   );
 };
 

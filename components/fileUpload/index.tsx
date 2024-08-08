@@ -1,32 +1,52 @@
 "use client"
 
 import React, { CSSProperties, useRef } from 'react';
+import Image from 'next/image';
 import Button from '../button';
 
 interface FileUploadProps {
-    onFileSelect: (file: File) => void;
     style?: CSSProperties;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onClose: () => void;
+    onUpload: (files: FileList) => void;
 }
 
-const FileUpload = ({ onFileSelect, style }: FileUploadProps) => {
+const FileUpload: React.FC<FileUploadProps> = ({ style, onChange, onClose, onUpload }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
-            onFileSelect(event.target.files[0]);
+            onUpload(event.target.files);
+        }
+        onChange(event);
+    };
+
+    const handleClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
         }
     };
 
     return (
-        <div style={{ width: '50%' }}>
+        <div style={{ width: '50%', display: 'flex' }}>
             <input
                 type="file"
                 ref={fileInputRef}
-                onChange={handleFileInput}
+                onChange={handleFileChange}
                 style={{ display: 'none' }}
             />
-            <Button blue style={style} onClick={() => fileInputRef.current?.click()}>
+            <Button white style={style} onClick={handleClick}>
+                <Image
+                    className="upload-icon"
+                    src="/icons/upload-icon.svg"
+                    alt="Upload Icon"
+                    width={20}
+                    height={20}
+                />
                 Upload File
+            </Button>
+            <Button white style={{ marginLeft: '10px' }} onClick={onClose}>
+                Cancel
             </Button>
         </div>
     );
