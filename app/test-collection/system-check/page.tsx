@@ -90,9 +90,13 @@ const SystemCheck = () => {
 
 
   return (
-    <div className="container-test-collection">
+    <div className="system-chk-container">
       <AppHeader title={"System Check"} />
       <div className="system-check-items">
+        <div className="sys-chk-title">
+          <h3>System Check</h3>
+          <p>Please wait...</p>
+        </div>
         {systemChecks.map((check, index) => (
           <div className="system-check-list" key={index}>
             {check.imgUrl === "" ? <MiniLoader size='40px' /> : <Image src={check.imgUrl} alt="image" width={5000} height={5000} loading='lazy' className="sys-chk-icon" />}
@@ -106,7 +110,7 @@ const SystemCheck = () => {
             </div>
           </div>
         ))}
-        <div style={{ width: '95%', marginLeft: 'auto', marginRight: 'auto', marginTop: '32px' }}>
+        <div className="btn-system-chk" style={{ width: '95%', marginLeft: 'auto', marginRight: 'auto', marginTop: '32px' }}>
           <Button blue type="submit" link={'/test-collection/agreement'}>Next</Button>
         </div>
       </div>

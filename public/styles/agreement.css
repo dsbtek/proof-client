@@ -3,7 +3,6 @@
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  padding: 0 20px;
   text-align: center;
   background: #f8f8f8;
   position: relative;
@@ -44,6 +43,7 @@
   white-space: pre-wrap;
   word-wrap: break-word;
   text-align: justify;
+  margin-bottom: 10%;
 }
 
 .agreement-header-title {
@@ -84,8 +84,13 @@
   object-fit: cover;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (min-width: 700px) {
   .agreement-footer-container {
     position: fixed;
+    background-color: #FFFFFF !important;
+  }
+
+  .agreement-items-wrap {
+    margin-bottom: 5%;
   }
 }

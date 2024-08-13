@@ -64,6 +64,21 @@ const extractFaceImage = (img: HTMLImageElement, face: any, paddingRatio = 0.5) 
 };
 
 const CameraIDCardDetection = () => {
+    const [sigCanvasH, setSigCanvasH] = useState(0);
+
+    useEffect(() => {
+        const routeBasedOnScreenSize = () => {
+            const screenWidth = window.innerWidth;
+            if (screenWidth <= 700) {
+                setSigCanvasH(250);
+            } else {
+                setSigCanvasH(700);
+            }
+        };
+        routeBasedOnScreenSize();
+        window.addEventListener('resize', routeBasedOnScreenSize);
+        return () => window.removeEventListener('resize', routeBasedOnScreenSize);
+    }, []);
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [faceImage, setFaceImage] = useState<string | null>(null);
     const [faces, setFaces] = useState<any[]>([]);
@@ -157,85 +172,182 @@ const CameraIDCardDetection = () => {
     };
 
     return (
-        <div className="container" style={{ position: 'relative' }}>
-            <AgreementHeader title="PIP - Step 1 " />
-            <br />
-            {!capturedImage && <p className="vid-text">Please position the front side of your ID <br />in the camera frame below.</p>}
-            <br />
-            {permissionsGranted ? (
-                !capturedImage ? (
-                    <div className='camera-container'>
-                        <Webcam
-                            className='camera'
-                            ref={cameraRef}
-                            audio={false}
-                            screenshotFormat="image/png"
-                            imageSmoothing={true}
-                        />
-
-                        <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}>
-                            {brightness < 120 && (
-                                <div className='brightness-detection'>
-                                    <p>Insufficient light detected.</p>
-                                </div>
-                            )}
+        <>
+            {sigCanvasH !== 700 ?
+                <div className="id-detection-container" style={{ position: 'relative' }}>
+                    <AgreementHeader title="PIP - Step 1 " />
+                    <br />
+                    <div className='test-items-wrap-desktop_'>
+                        <div className="sub-item">
+                            {!capturedImage && <p className="vid-text">Please position the front side of your ID <br />in the camera frame below.</p>}
                         </div>
+
+                        <br />
+                        {permissionsGranted ? (
+                            !capturedImage ? (
+                                <div className='camera-container'>
+                                    <Webcam
+                                        className='camera'
+                                        ref={cameraRef}
+                                        audio={false}
+                                        screenshotFormat="image/png"
+                                        imageSmoothing={true}
+                                    />
+
+                                    <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}>
+                                        {brightness < 120 && (
+                                            <div className='brightness-detection'>
+                                                <p>Insufficient light detected.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    {capturedImage && (
+                                        <div className='id-image'>
+                                            <Image
+                                                className='img-border'
+                                                src={capturedImage}
+                                                alt="Captured Image"
+                                                layout="responsive"
+                                                width={500}
+                                                height={500}
+                                            />
+                                        </div>
+                                    )}
+                                    {faceImage && (
+                                        <div className='face-image-wrap'>
+                                            <p className="vid-text" style={{ color: '#009cf9', marginBottom: '8px', whiteSpace: 'nowrap' }}>Extracted ID Face</p>
+                                            <Image
+                                                className='face-image'
+                                                src={faceImage}
+                                                alt="Extracted Face Image"
+                                                layout="responsive"
+                                                width={200}
+                                                height={200}
+                                            />
+                                        </div>
+                                    )}
+                                    {!faceImage && <Button blue onClick={recaptureImage} style={{ marginTop: '2em' }}>Recapture</Button>}
+                                </>
+                            )
+                        ) : (
+                            <>
+                                <p className="vid-text">Camera access is not granted. Please allow camera access to continue.</p>
+                                <Loader_ />
+                            </>
+                        )}
                     </div>
-                ) : (
-                    <>
-                        {capturedImage && (
-                            <div className='id-image'>
-                                <Image
-                                    className='img-border'
-                                    src={capturedImage}
-                                    alt="Captured Image"
-                                    layout="responsive"
-                                    width={500}
-                                    height={500}
-                                />
-                            </div>
-                        )}
-                        {faceImage && (
-                            <div className='face-image-wrap'>
-                                <p className="vid-text" style={{ color: '#009cf9', marginBottom: '8px', whiteSpace: 'nowrap' }}>Extracted ID Face</p>
-                                <Image
-                                    className='face-image'
-                                    src={faceImage}
-                                    alt="Extracted Face Image"
-                                    layout="responsive"
-                                    width={200}
-                                    height={200}
-                                />
-                            </div>
-                        )}
-                        {!faceImage && <Button blue onClick={recaptureImage} style={{ marginTop: '2em' }}>Recapture</Button>}
-                    </>
-                )
-            ) : (
-                <>
-                    <p className="vid-text">Camera access is not granted. Please allow camera access to continue.</p>
-                    <Loader_ />
-                </>
-            )}
-            <br />
-            {capturedImage && (
-                <div>
-                    <p className="vid-text">Please tap the `Next` button to move to step 2 <br /> where you will position the rear side of your ID.</p>
+
+                    <br />
+                    {capturedImage && (
+                        <div>
+                            <p className="vid-text">Please tap the `Next` button to move to step 2 <br /> where you will position the rear side of your ID.</p>
+                        </div>
+                    )}
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <AgreementFooter
+                        onPagination={false}
+                        onLeftButton={faceImage ? true : false}
+                        onRightButton={true}
+                        btnLeftText={'Recapture'}
+                        onClickBtnLeftAction={faceImage ? recaptureImage : () => { }}
+                        btnRightText={capturedImage ? "Next" : "Capture"}
+                        onClickBtnRightAction={capturedImage ? undefined : captureFrame}
+                        rightdisabled={!faceDetected}
+                        btnRightLink={capturedImage ? '/identity-profile/id-detection/step-2' : undefined}
+                    />
                 </div>
-            )}
-            <canvas ref={canvasRef} style={{ display: 'none' }} />
-            <AgreementFooter
-                onPagination={false}
-                onLeftButton={faceImage ? true : false}
-                onRightButton={true}
-                btnLeftText={'Recapture'}
-                onClickBtnLeftAction={faceImage ? recaptureImage : () => { }}
-                btnRightText={capturedImage ? "Next" : "Capture"}
-                onClickBtnRightAction={capturedImage ? undefined : captureFrame}
-                rightdisabled={!faceDetected}
-                btnRightLink={capturedImage ? '/identity-profile/id-detection/step-2' : undefined}
-            />
-        </div>
+                :
+                <div className="id-detection-container" style={{ position: 'relative' }}>
+                    {/* <AgreementHeader title="PIP - Step 1 " /> */}
+                    <br />
+                    <div className='test-items-wrap-desktop_'>
+                        <div className="sub-item">
+                            {!capturedImage && <p className="vid-text">Please position the front side of your ID <br />in the camera frame below.</p>}
+                        </div>
+
+                        <br />
+                        {permissionsGranted ? (
+                            !capturedImage ? (
+                                <div className='camera-container'>
+                                    <Webcam
+                                        className='camera'
+                                        ref={cameraRef}
+                                        audio={false}
+                                        screenshotFormat="image/png"
+                                        imageSmoothing={true}
+                                    />
+
+                                    <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}>
+                                        {brightness < 120 && (
+                                            <div className='brightness-detection'>
+                                                <p>Insufficient light detected.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    {capturedImage && (
+                                        <div className='id-image'>
+                                            <Image
+                                                className='img-border'
+                                                src={capturedImage}
+                                                alt="Captured Image"
+                                                layout="responsive"
+                                                width={500}
+                                                height={500}
+                                            />
+                                        </div>
+                                    )}
+                                    {faceImage && (
+                                        <div className='face-image-wrap'>
+                                            <p className="vid-text" style={{ color: '#009cf9', marginBottom: '8px', whiteSpace: 'nowrap' }}>Extracted ID Face</p>
+                                            <Image
+                                                className='face-image'
+                                                src={faceImage}
+                                                alt="Extracted Face Image"
+                                                layout="responsive"
+                                                width={200}
+                                                height={200}
+                                            />
+                                        </div>
+                                    )}
+                                    {!faceImage && <Button blue onClick={recaptureImage} style={{ marginTop: '2em' }}>Recapture</Button>}
+                                </>
+                            )
+                        ) : (
+                            <>
+                                <p className="vid-text">Camera access is not granted. Please allow camera access to continue.</p>
+                                <Loader_ />
+                            </>
+                        )}
+                    </div>
+
+                    <br />
+                    {capturedImage && (
+                        <div>
+                            <p className="vid-text">Please tap the `Next` button to move to step 2 <br /> where you will position the rear side of your ID.</p>
+                        </div>
+                    )}
+                    <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    <AgreementFooter
+                        onPagination={false}
+                        onLeftButton={faceImage ? true : false}
+                        onRightButton={true}
+                        btnLeftText={'Recapture'}
+                        onClickBtnLeftAction={faceImage ? recaptureImage : () => { }}
+                        btnRightText={capturedImage ? "Next" : "Capture"}
+                        onClickBtnRightAction={capturedImage ? undefined : captureFrame}
+                        rightdisabled={!faceDetected}
+                        btnRightLink={capturedImage ? '/identity-profile/id-detection/step-2' : undefined}
+                    />
+                </div>
+            }
+        </>
+
     );
 };
 

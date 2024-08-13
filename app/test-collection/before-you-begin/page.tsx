@@ -1,9 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { AgreementHeader, AgreementFooter, CheckBox } from "@/components";
 
 const BeforeYouBegin = () => {
+
+  const [sigCanvasH, setSigCanvasH] = useState(0);
+
+  useEffect(() => {
+    const routeBasedOnScreenSize = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth <= 700) {
+        setSigCanvasH(250);
+      } else {
+        setSigCanvasH(700);
+      }
+    };
+    routeBasedOnScreenSize();
+    window.addEventListener('resize', routeBasedOnScreenSize);
+    return () => window.removeEventListener('resize', routeBasedOnScreenSize);
+  }, []);
   const [checkboxes, setCheckboxes] = useState([
     { id: 1, label: 'Unopened Proof Collection Kit', isChecked: false },
     { id: 2, label: 'Ballpoint Pen', isChecked: false },
@@ -27,16 +43,32 @@ const BeforeYouBegin = () => {
     <>
       <div className="container-test-collection">
         <AgreementHeader title="" />
-        <div className="agreement-items-wrap what-new-scroller">
-          <Image className="get-started-img" src="/images/before-you-begin.svg" alt="image" width={3000} height={3000} />
-          <p className="get-started-title">Before You Begin</p>
-          <p className="get-started-title">Please confirm the following.</p>
-          <div className="checkbox-container">
-            {checkboxes.map((checkbox, index) => (
-              <CheckBox key={checkbox.id} onChange={() => handleCheckboxChange(checkbox.id)} checked={checkbox.isChecked} label={checkbox.label} />
-            ))}
+        {sigCanvasH !== 700 ?
+          <div className="agreement-items-wrap what-new-scroller">
+            <Image className="get-started-img" src="/images/before-you-begin.svg" alt="image" width={3000} height={3000} />
+            <p className="get-started-title">Before You Begin</p>
+            <p className="get-started-title">Please confirm the following.</p>
+            <div className="checkbox-container">
+              {checkboxes.map((checkbox, index) => (
+                <CheckBox key={checkbox.id} onChange={() => handleCheckboxChange(checkbox.id)} checked={checkbox.isChecked} label={checkbox.label} />
+              ))}
+            </div>
+          </div> :
+
+          <div className="test-items-wrap-desktop_ ">
+            <div className="sub-item">
+              <p className="get-started-title">Before You Begin</p>
+              <p className="get-started-title">Please confirm the following.</p>
+              <div className="checkbox-container">
+                {checkboxes.map((checkbox, index) => (
+                  <CheckBox key={checkbox.id} onChange={() => handleCheckboxChange(checkbox.id)} checked={checkbox.isChecked} label={checkbox.label} />
+                ))}
+              </div>
+            </div>
+            <Image className="get-started-img" src="/images/b4bgin.svg" alt="image" width={3000} height={3000} />
           </div>
-        </div>
+        }
+
       </div>
       <AgreementFooter
         currentNumber={4}

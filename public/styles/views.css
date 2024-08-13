@@ -77,3 +77,33 @@
   color: rgba(77, 91, 107, 1);
   margin-bottom: 8px;
 }
+
+@media (min-width: 700px) {
+  .list-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+    height: calc(100vh - 150px);
+    overflow-y: auto;
+  }
+
+  .list-card {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    background: #f8f8f8;
+    padding: 16px;
+    height: calc(100vh - 150px);
+  }
+
+  .wrap-grid-items {
+    padding: 16px;
+  }
+}

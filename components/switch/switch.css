@@ -4,6 +4,10 @@
   width: 100px;
 }
 
+.wrap-desktop-switch {
+  display: none;
+}
+
 .wrap-check p {
   font-size: 12px;
   font-weight: 400;
@@ -55,4 +59,40 @@
 
 .switchOff .slider {
   transform: translateX(0);
+}
+
+.btn-desktop-switch {
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+  margin: 0px 5px;
+}
+
+.btn-desktop-img {
+  height: 36px;
+  width: 36px;
+}
+
+@media (min-width: 700px) {
+  .wrap-check {
+    display: none;
+  }
+
+  .wrap-desktop-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-radius: 10px 10px 0px 0px;
+  }
+
+  .destop-switch-btn-wrap {
+    display: flex;
+    justify-content: space-evenly;
+    width: 15%;
+    padding: 16px;
+    background-color: #793b3b;
+  }
 }

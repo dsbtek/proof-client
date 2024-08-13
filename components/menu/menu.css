@@ -56,14 +56,28 @@
 
 @media screen and (min-width: 700px) {
 
-
-
-
-  .menu-user-name {
+  .menu {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+    height: 100vh;
+    padding: 0px;
+    overflow-y: auto;
+  }
+
+
+  .menu-user-name-wrap {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
     width: 100%;
-    padding: 36px;
+    /* height: 70px; */
+    /* padding: 36px; */
+    background-color: antiquewhite;
+    /* margin-top: 20px; */
   }
 
   .menu-wrapper-style {
@@ -76,22 +90,14 @@
     background-color: #FFFFFF;
   }
 
-  .menu {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 20%;
-    height: 100vh;
-    padding: 0px;
-  }
+
 
   .sub-menu {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    height: 72px;
+    height: 40px;
     gap: 12px;
     border: 1px;
     padding: 36px;
@@ -117,6 +123,6 @@
     line-height: 43.57px;
     text-align: left;
     color: #24527b;
-    margin-bottom: 32px;
+    /* margin-bottom: 32px; */
   }
 }

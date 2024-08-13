@@ -5,7 +5,7 @@ import ReactSignatureCanvas from 'react-signature-canvas';
 import SignatureCanvas from 'react-signature-canvas';
 import { useDispatch, useSelector } from "react-redux";
 import { preTestScreensData } from "@/redux/slices/pre-test";
-import { AgreementHeader, AgreementFooter, Button } from "@/components";
+import { AgreementHeader, AgreementFooter, Button, Header } from "@/components";
 import { setSig } from "@/redux/slices/drugTest";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
@@ -20,6 +20,7 @@ const SignaturePage = () => {
   const [clearSignatureConfirmed, setClearSignatureConfirmed] = useState(false);
   const [sigCanvas, setSigCanvas] = useState<ReactSignatureCanvas | null>();
   const [sigCheck, setSigCheck] = useState(false);
+  const [sigCanvasH, setSigCanvasH] = useState(0);
   const router = useRouter();
   const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
 
@@ -69,8 +70,24 @@ const SignaturePage = () => {
     }
   }, [clearSignature, clearSignatureConfirmed, sigCanvas]);
 
+
+  useEffect(() => {
+    const routeBasedOnScreenSize = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth <= 700) {
+        setSigCanvasH(250);
+      } else {
+        setSigCanvasH(680);
+      }
+    };
+    routeBasedOnScreenSize();
+    window.addEventListener('resize', routeBasedOnScreenSize);
+    return () => window.removeEventListener('resize', routeBasedOnScreenSize);
+  }, []);
+
+
   return (
-    <div className="container-test-collection">
+    <div className="agreement-container">
       {showClearPrompt && (
         <div className="overLay">
           <div className="prompt">
@@ -90,9 +107,9 @@ const SignaturePage = () => {
         </div>
       )}
 
-      <AgreementHeader title=" " />
+      <Header title="Signature" />
       <div className="sign-items-wrap">
-        <div className="signBg-with-img" style={{ backgroundImage: 'url("../images/signBg.png")', backgroundSize: "cover", backgroundRepeat: "no-repeat", }}>
+        <div className="signBg-with-img" style={{ backgroundImage: sigCanvasH !== 680 ? 'url("../images/signBg.png")' : "", backgroundSize: "cover", backgroundRepeat: "no-repeat", }}>
           <p className="sign-text">
             Please Sign in the white box in acceptance of the Agreement and Consent and press Next to continue.
           </p>
@@ -102,7 +119,7 @@ const SignaturePage = () => {
             <SignatureCanvas
               ref={data => setSigCanvas(data)}
               penColor='#24527B'
-              canvasProps={{ width: 600, height: 250, className: 'sigCanvas' }}
+              canvasProps={{ width: 600, height: sigCanvasH, className: 'sigCanvas' }}
             />
           </div>
         </div>

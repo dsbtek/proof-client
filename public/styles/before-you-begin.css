@@ -31,3 +31,27 @@
     text-align: left;
     color: #4E555D;
 }
+
+
+@media (min-width: 700px) {
+    .test-items-wrap-desktop_ {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        width: 100%;
+        height: 100%;
+    }
+
+    .sub-item {
+        display: flex;
+        flex-direction: column;
+        /* align-items: center; */
+        justify-content: center;
+        width: 50%;
+        height: 100%;
+        /* background-color: antiquewhite; */
+    }
+
+}

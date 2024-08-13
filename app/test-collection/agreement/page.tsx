@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 
-import { AgreementHeader, AgreementFooter, AppHeader } from "@/components";
+import { AgreementHeader, AgreementFooter, AppHeader, Header } from "@/components";
 import { authToken } from "@/redux/slices/auth";
 import { testingKit, testData, setTestSteps } from "@/redux/slices/drugTest";
 import { preTestScreensData, preTestFeedbackData, setPreTestFeedback } from "@/redux/slices/pre-test";
@@ -26,13 +26,14 @@ const AgreementConsent = () => {
   const { testSteps, testStepsFiltered } = useSelector(testData);
   const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
   const preTestFeedback = useSelector(preTestFeedbackData) as PreTestScreen[];
+
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [muted, setMuted] = useState<boolean>(false);
+  const [muted, setMuted] = useState(false);
   const [statusCode, setStatusCode] = useState(0);
 
-  //Fetchs User Agreement for the self drug test and initialises AI core
-  const { isLoading, isStale, refetch } = useQuery(`test-data: ${kit_id}`, {
-    queryFn: async () => {
+  const { isLoading, isStale, refetch } = useQuery(
+    `test-data: ${kit_id}`,
+    async () => {
       initializeAI();
       const response = await fetch("/api/drug-kit-details", {
         method: "POST",
@@ -40,52 +41,56 @@ const AgreementConsent = () => {
           participant_id: participant_id as string,
           pin: pin as string,
           kit_id: kit_id,
-        }
+        },
       });
       const data = await response.json();
       return data;
     },
-    enabled: false,
-    onSuccess: ({ data }) => {
-      if (data.statusCode === 200) {
-        setStatusCode(data.statusCode)
-        dispatch(setTestSteps(data.test_steps));
-      } else {
-        toast.warn('Failed to load test data. Please try again')
-        console.error(`Error ${data.statusCode}: ${data.message}`);
-      }
-    },
-    onError: (error) => {
-      toast.error("Sorry, test data failed to load");
-      console.error(error);
-    },
-  });
-
-  //Fetches pretest and feedback data for the self drug test
-  const getFeedback = useCallback(async (kitFeedbackQuestion: string) => {
-    try {
-      const participant_id = localStorage.getItem("participant_id");
-      const pin = localStorage.getItem("pin");
-      const { strParticipantId, strPin } = decryptIdAndCredentials(participant_id, pin);
-      const response = await fetch("/api/pre-test-questionnaire", {
-        method: 'POST',
-        headers: {
-          participant_id: strParticipantId,
-          pin: strPin,
-          form_name: kitFeedbackQuestion,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        dispatch(setPreTestFeedback(data.data.sections));
-      } else {
-        console.log("Error submitting data");
-      }
-    } catch (error) {
-      toast.warning(`Error: ${error}`);
+    {
+      enabled: false,
+      onSuccess: ({ data }) => {
+        if (data.statusCode === 200) {
+          setStatusCode(data.statusCode);
+          dispatch(setTestSteps(data.test_steps));
+        } else {
+          toast.warn("Failed to load test data. Please try again");
+          console.error(`Error ${data.statusCode}: ${data.message}`);
+        }
+      },
+      onError: (error) => {
+        toast.error("Sorry, test data failed to load");
+        console.error(error);
+      },
     }
-  }, [dispatch]);
+  );
+
+  const getFeedback = useCallback(
+    async (kitFeedbackQuestion: string) => {
+      try {
+        const participant_id = localStorage.getItem("participant_id");
+        const pin = localStorage.getItem("pin");
+        const { strParticipantId, strPin } = decryptIdAndCredentials(participant_id, pin);
+        const response = await fetch("/api/pre-test-questionnaire", {
+          method: "POST",
+          headers: {
+            participant_id: strParticipantId,
+            pin: strPin,
+            form_name: kitFeedbackQuestion,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          dispatch(setPreTestFeedback(data.data.sections));
+        } else {
+          console.log("Error submitting data");
+        }
+      } catch (error) {
+        toast.warning(`Error: ${error}`);
+      }
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (testSteps.length === 0 && testStepsFiltered.length === 0 && isStale) {
@@ -96,7 +101,7 @@ const AgreementConsent = () => {
     }
   }, [Feedback_Questionnaire_Name, getFeedback, isLoading, isStale, refetch, testSteps, testStepsFiltered.length]);
 
-  const muteAudio = () => {
+  const toggleMute = () => {
     setMuted(!muted);
     if (audioRef.current) {
       audioRef.current.muted = !muted;
@@ -104,17 +109,22 @@ const AgreementConsent = () => {
   };
 
   const renderAgreementContent = () => (
-    <>
-      {/* <AgreementHeader title="Agreement & Consent" /> */}
-      <div style={{ display: 'flex', width: '100%', padding: '16px' }}>
-        <AppHeader title={"Agreement & Consent"} />
-        <div className='test-audio'>
-          {muted ? <GoMute onClick={muteAudio} color='#adadad' style={{ cursor: 'pointer' }} /> : <RxSpeakerLoud onClick={muteAudio} color='#009cf9' style={{ cursor: 'pointer' }} />}
-        </div>
-
-      </div>
+    <div className="agreement-container">
+      <Header
+        title="Agreement & Consent"
+        icon={
+          muted ? (
+            <GoMute onClick={toggleMute} color="#adadad" style={{ cursor: "pointer" }} />
+          ) : (
+            <RxSpeakerLoud onClick={toggleMute} color="#009cf9" style={{ cursor: "pointer" }} />
+          )
+        }
+      />
       <div className="agreement-items-wrap scroller">
-        <p className=""><b>PROOF™ User Agreement</b> </p>
+        <p>
+          <b>PROOF™ User Agreement</b>
+        </p>
+        <br />
         <br />
         <p>
           By clicking to continue, you are electronically signing this PROOF™ User Agreement (“PUA”). You are receiving data integration into the PROOF™ Mobile Application for test collection and results and posting those test results in the PROOF™ Mobile Application software platform. This agreement is between the User (person using the PROOF™ Mobile Application) and PROOF™ and includes data integration with PROOF™ Mobile Application.
@@ -218,9 +228,9 @@ const AgreementConsent = () => {
           <br />
           You understand that you are free to decline to provide biometric identifiers and biometric information to PROOF™, however, we are not able to provide certain identification verification services unless you consent and make information available to PROOF™ in accordance with this Policy. You may revoke this consent at any time by emailing us at proof@recoverytrek.com (you will not be able to proceed with PROOF™).
         </p>
-        <audio ref={audioRef} src={`"https://rt-mobiletrekvideos.s3.amazonaws.com/consent+and+accept.mp3"`} controls={false} autoPlay />
-
+        <audio ref={audioRef} src="https://rt-mobiletrekvideos.s3.amazonaws.com/consent+and+accept.mp3" controls={false} autoPlay />
       </div>
+      <br /> <br />
       <AgreementFooter
         currentNumber={1}
         outOf={4}
@@ -233,7 +243,7 @@ const AgreementConsent = () => {
         btnRightText={isLoading ? "loading..." : "Accept"}
         rightdisabled={isLoading || statusCode !== 200}
       />
-    </>
+    </div>
   );
 
   const renderCustomContent = (title: string, content: string) => (
@@ -251,16 +261,15 @@ const AgreementConsent = () => {
         btnLeftLink="/home"
         btnRightLink={isLoading ? "" : "/test-collection/signature"}
         btnLeftText="Decline"
-        btnRightText={isLoading ? "loading..." : "Accept"}
+        btnRightText={isLoading ? "Loading..." : "Accept"}
         rightdisabled={isLoading || statusCode !== 200}
       />
     </>
   );
 
   return (
-    <div className="container-test-collection">
-
-      {preTestScreens[0]?.Screen_1_Title !== 'Agreement and Consent'
+    <div className="">
+      {preTestScreens[0]?.Screen_1_Title !== "Agreement and Consent"
         ? renderAgreementContent()
         : renderCustomContent(preTestScreens[0].Screen_1_Title, preTestScreens[0].Screen_1_Content)}
       <audio ref={audioRef} autoPlay muted={muted} controls={false}>

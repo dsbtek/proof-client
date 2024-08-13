@@ -19,14 +19,6 @@ const Menu = () => {
 
   return (
     <nav className="menu">
-      <div className="menu-user-name">
-        <div className="user-home">
-          <p className="greet-text">{"Hello,"}</p>
-          <p className="user-name">
-            {first_name + ' ' + last_name}
-          </p>
-        </div>
-      </div>
       <Link href="/home" className="sub-menu">
         {/* <GoHome size={30} color={pathname === '/home' ? '#009CF9' : '#ADADAD'} /> */}
         {pathname === '/home' ?

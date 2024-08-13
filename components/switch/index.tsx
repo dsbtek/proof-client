@@ -12,16 +12,19 @@ interface SwitchProps {
 
 const Switch = ({ onToggle, checked, showLabel }: SwitchProps) => {
   return (
-    <div className="wrap-check">
-      <p className={checked ? "grid-view" : "list-view"}>
-        {!showLabel ? "" : checked && showLabel ? "Grid View" : "List View"}
-      </p>
-      <button
-        className={`switch ${checked ? "switchOn" : "switchOff"}`}
-        onClick={onToggle}
-      >
-        <span className="slider"></span>
-      </button>
+    <div className="view-switch-wrap">
+
+      <div className="wrap-check">
+        <p className={checked ? "grid-view" : "list-view"}>
+          {!showLabel ? "" : checked && showLabel ? "Grid View" : "List View"}
+        </p>
+        <button
+          className={`switch ${checked ? "switchOn" : "switchOff"}`}
+          onClick={onToggle}
+        >
+          <span className="slider"></span>
+        </button>
+      </div>
     </div>
   );
 };

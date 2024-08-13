@@ -144,4 +144,17 @@
     .test-header {
         padding: 8px 16px;
     }
+
+    .test-audio {
+        width: 60px;
+        display: flex;
+        align-content: center;
+        background: white;
+        justify-content: center;
+    }
+
+    .test-camera-container {
+        width: 50%;
+        background: #838687;
+    }
 }

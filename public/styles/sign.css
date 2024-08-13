@@ -119,17 +119,36 @@
 
 
 @media screen and (min-width: 700px) {
-  .signBg-with-img {
-    width: 100%;
-  }
 
-  .signBg-with {
-    height: 180px;
-  }
 
   .auth-img {
     display: flex;
     width: 50%;
     background-size: cover;
+  }
+
+  .sign-items-wrap {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    color: #4e555d;
+  }
+
+  .signBg-with-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .wrap-signature {
+    height: 100vh;
+    background-color: #ffffff;
+  }
+
+  .signBg-with {
+    display: none;
+    height: 180px;
   }
 }

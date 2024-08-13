@@ -1,3 +1,25 @@
+.system-chk-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: 100% !important;
+  background: #FAFAFA;
+  height: 100vh;
+}
+
+.system-chk-container> :nth-child(1) {
+  position: sticky;
+  top: 0px;
+  z-index: 1000;
+  padding: 16px;
+}
+
+
+.system-chk-container> :nth-child(3) {
+  background: #f8f8f8;
+  position: fixed;
+  bottom: 0;
+}
+
 .system-check-items {
   display: flex;
   flex-direction: column;
@@ -52,4 +74,37 @@
 .sys-chk-icon {
   width: 50px;
   height: 50px;
+}
+
+.sys-chk-title {
+  display: none;
+}
+
+@media (min-width: 700px) {
+  .container-test-collection {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .system-check-items {
+    align-self: center;
+    margin: 0px auto;
+    width: 30%;
+  }
+
+  .btn-system-chk {
+    width: 192px !important;
+    height: 40px !important;
+    position: absolute;
+    gap: 16px;
+    bottom: 7%;
+    right: 5%;
+  }
+
+  .sys-chk-title {
+    display: block;
+    text-align: center;
+  }
 }

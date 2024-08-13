@@ -144,7 +144,6 @@ button:disabled {
 }
 
 .wrap-modal-items {
-  /* border-bottom: ; */
   height: 49px;
   cursor: pointer;
 }
@@ -155,7 +154,6 @@ button:disabled {
 }
 
 .mobile-menu {
-  /* height: 5%; */
   width: 100%;
 }
 
@@ -172,14 +170,6 @@ button:disabled {
 .desktop-menu {
   display: none;
 }
-
-/* @media (max-width: 768px) {
-  .screen-content {
-    max-height: 70vh;
-    overflow-y: auto;
-    padding: 10px;
-  }
-} */
 
 @media (min-width: 700px) {
   .screen-content {
@@ -221,5 +211,9 @@ button:disabled {
     width: 80%;
     height: 100%;
     padding: 32px;
+  }
+
+  .no-herder {
+    display: none !important;
   }
 }

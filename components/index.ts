@@ -1,6 +1,7 @@
 export { default as Button } from "./button/index";
 export { default as TextField } from "./text-field/index";
 export { default as Switch } from "./switch/index";
+export { default as DesktopSwitch } from "./switch/desktop-switch";
 export { default as CheckBox } from "./checkBox/index";
 export { default as LayoutProvider } from "./layout/index";
 export { default as Auth } from "./auth/index";
@@ -21,6 +22,7 @@ export { default as TutorialFooter } from "./tutorial/tutorialFooter";
 export { default as AgreementHeader } from "./agreement/AgreementHeader";
 export { default as AgreementFooter } from "./agreement/AgreementFooter";
 export { default as AppHeader } from "./appHeader/index";
+export { default as Header } from "./appHeader/header";
 export { default as ReadOnlyInput } from "./readonlyInput/index";
 export { default as Setting } from "./setting/index";
 export { default as Modal } from "./modals/index";

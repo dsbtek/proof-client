@@ -11,9 +11,10 @@ import { testData } from "@/redux/slices/drugTest";
 interface AppHeaderProps {
     title: string;
     className?: string;
+    icon?: JSX.Element;
 }
 
-function AppHeader({ title, className }: AppHeaderProps) {
+const Header = ({ title, className, icon }: AppHeaderProps) => {
     const router = useRouter();
     const pathname = usePathname();
     const { testingKit } = useSelector(testData);
@@ -22,20 +23,21 @@ function AppHeader({ title, className }: AppHeaderProps) {
         if (pathname === "/test-collection/collection-summary") {
             router.push("/home");
         } else if (pathname === `/test-collection/${testingKit.kit_id}`) {
-            toast.warn('You are taking a test. You can not go back');
+            toast.warn("You are taking a test. You cannot go back");
         } else {
             router.back();
         }
-    }
+    };
 
     return (
         <div className={`app-header-container ${className}`}>
             <div className="icon-container">
                 <AiOutlineArrowLeft onClick={handleBack} />
             </div>
-            <div className="title-container">{title}</div>
+            <div className="icon-container">{title}</div>
+            {icon}
         </div>
-    )
+    );
 };
 
-export default AppHeader;
+export default Header;
