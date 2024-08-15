@@ -25,7 +25,7 @@ const GetStarted = () => {
   }, []);
   return (
     <div className="container-test-collection">
-      <AgreementHeader title="" />
+      <AgreementHeader title="Device Setup" />
       {sigCanvasH !== 700 ?
         <div className="agreement-items-wrap">
           <Image className="get-started-img" src="/images/getting-started.svg" alt="image" width={3000} height={3000} />

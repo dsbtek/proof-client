@@ -165,18 +165,37 @@
         height: 100%;
         position: relative;
         width: 100%;
-        background-color: aqua;
     }
 
     .test-details {
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
         width: 50%;
+        height: 100%;
+        /* background-color: antiquewhite; */
+    }
+
+    .test-graphic {
+        height: 50%;
+    }
+
+    .test-graphic_ {
+        display: flex;
+        flex-direction: column;
+        /* background-color: aqua; */
+        width: 100%;
         height: 100%;
     }
 
     .test-text {
-        height: 50%;
+        padding: 32px;
+        height: 200px;
     }
 
+    .test-camera-container {
+        height: 100%;
+        background-size: cover;
+        background: #838687;
+    }
 }

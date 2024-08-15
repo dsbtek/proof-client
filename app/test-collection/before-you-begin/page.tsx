@@ -42,7 +42,7 @@ const BeforeYouBegin = () => {
   return (
     <>
       <div className="container-test-collection">
-        <AgreementHeader title="" />
+        <AgreementHeader title="Confirmation" />
         {sigCanvasH !== 700 ?
           <div className="agreement-items-wrap what-new-scroller">
             <Image className="get-started-img" src="/images/before-you-begin.svg" alt="image" width={3000} height={3000} />

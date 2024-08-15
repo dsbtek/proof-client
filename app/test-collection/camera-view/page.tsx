@@ -39,7 +39,7 @@ const CameraView = () => {
 
   return (
     <div className="container-test-collection">
-      <AgreementHeader title=" " />
+      <AgreementHeader title=" Camera View" />
       {sigCanvasH !== 700 ?
         <div className="agreement-items-wrap">
           <Image className="get-started-img" src="/images/camera-view-1.svg" alt="image" width={3000} height={3000} />
