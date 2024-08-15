@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useBattery } from 'react-use';
 import Image from "next/image";
 
-import { AppHeader, Button, Menu, MiniLoader } from "@/components";
+import { AgreementHeader, AppHeader, Button, Menu, MiniLoader } from "@/components";
 import { checkAvailableStorage, decryptIdAndCredentials, checkSignalStrength, /*FastTest,*/ generateSystemChecks, removeSkipQuestions } from "@/utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { testingKit } from "@/redux/slices/drugTest";
@@ -90,13 +90,15 @@ const SystemCheck = () => {
 
 
   return (
-    <div className="system-chk-container">
-      <AppHeader title={"System Check"} />
+    <div className="system-chk-container ">
+      <AgreementHeader title="System Check " />
+
+      {/* <AppHeader title={"System Check"} /> */}
       <div className="system-check-items">
-        <div className="sys-chk-title">
+        {/* <div className="sys-chk-title">
           <h3>System Check</h3>
           <p>Please wait...</p>
-        </div>
+        </div> */}
         {systemChecks.map((check, index) => (
           <div className="system-check-list" key={index}>
             {check.imgUrl === "" ? <MiniLoader size='40px' /> : <Image src={check.imgUrl} alt="image" width={5000} height={5000} loading='lazy' className="sys-chk-icon" />}

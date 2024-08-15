@@ -176,16 +176,28 @@
         position: relative;
     }
 
-    .id-detection-container {
+
+
+    .id-detection-container_ {
         display: flex;
-        flex-direction: row !important;
+        flex-direction: column !important;
         width: 100% !important;
         background: #f8f8f8;
         height: 100vh;
     }
 
+    .camera-items-wrap-desktop_ {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        /* padding: 32px; */
+        width: 100%;
+        height: 100%;
+    }
+
     .vid-text {
-        margin-top: 4em;
+        /* margin-top: 4em; */
     }
 
     .id-card-frame-guide {
@@ -196,5 +208,34 @@
     .id-image-2 {
         width: 90%;
         height: 300px;
+        margin-top: 0px;
+    }
+
+    .camera-container {
+        display: flex;
+        width: 50%;
+        height: 100%;
+        /* position: relative; */
+        background-color: #009cf9;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .camera {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        position: absolute;
+        left: 0px;
+    }
+
+    .id-img_ {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* background-color: #009cf9; */
+        background-color: #0C1617;
+        width: 50%;
+        height: 100%;
     }
 }

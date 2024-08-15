@@ -28,6 +28,7 @@
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
     position: relative;
+    z-index: 9999;
 }
 
 .loader::after {

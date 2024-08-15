@@ -18,7 +18,7 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
 
-import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader } from "@/components";
+import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner } from "@/components";
 import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename } from '@/redux/slices/drugTest';
 import { detectBarcodes, uploadVideoToS3, createPresignedUrl/*, videoEncoder */ } from './action';
 import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, dateTimeInstance, fileToBase64 } from '@/utils/utils';
@@ -80,32 +80,6 @@ function Test() {
     const isVisible = usePageVisibility();
     const { faceDetected } = useFaceDetector(cameraRef);
     const { uploader, testUpload } = useTestupload();
-
-    // const { data: barcodeData, isLoading, refetch } = useQuery(["tutorial", barcodeImage], {
-    //     queryFn: async ({ queryKey }) => {
-    //         const [, barcodeImage] = queryKey;
-    //         const data = await detectBarcodesAI(barcodeImage!);
-    //         return data;
-    //     },
-    //     enabled: false,
-    //     onSuccess: ({ data }: any) => {
-    //         console.log('bc scan res:', data)
-    //         if (data.status === 'complete') {
-    //             const code = data.result[0].data;
-    //             setBarcode(code);
-    //             setBarcodeUploaded(true);
-    //             dispatch(saveBarcode(code));
-    //         }
-
-    //         if (data.status === 'failed') {
-    //             toast.warn(`${data.message}`)
-    //         }
-    //     },
-    //     onError: (error: Error) => {
-    //         toast.error("Sorry Cannot Fetch Data");
-    //         console.error(error)
-    //     }
-    // });
 
     const {
         status,
@@ -197,51 +171,10 @@ function Test() {
         try {
             setBarcodeIsLoading(true);
             const imageSrc = cameraRef?.current!.getScreenshot();
-            const formats = ['ean_13', 'qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e', 'ean_8', 'pdf417', 'aztec', 'data_matrix', 'itf', 'code_93'];
-            const readers = ['ean_reader', 'ean_5_reader', 'ean_2_reader', 'ean_8_reader', 'code_39_reader', 'code_39_vin_reader', 'codabar_reader', 'upc_reader', 'upc_e_reader', 'i2of5_reader', '2of5_reader', 'code_93_reader'];
+            setBarcodeImage(imageSrc!)
 
-            const barcodeTypes = [Html5QrcodeSupportedFormats.AZTEC, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.CODE_39, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.ITF, Html5QrcodeSupportedFormats.PDF_417, Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.UPC_E];
+            setBarcodeUploaded(true);
 
-            const imageFile = await base64ToFile(imageSrc!, 'barcode.png', 'image/png');
-
-            setBarcodeImage(imageSrc!);
-
-            // const barcodeResult = await detectBarcodesAI(imageSrc!);
-            const barcodeResult = await detectBarcodesAI2(imageSrc!);
-
-            // refetch();
-
-            console.log('bc scan res:', barcodeResult)
-
-            if (barcodeResult.status === 'complete') {
-                // const code = barcodeResult.result[0].data;
-                const code = barcodeResult.data.parsed;
-                setBarcode(code);
-                setBarcodeUploaded(true);
-                dispatch(saveBarcode(code));
-            }
-
-            if (barcodeResult.status === 'error') {
-                toast.warn(`${barcodeResult.message}`)
-            }
-
-            // Quagga.decodeSingle({
-            //     decoder: {
-            //         readers: readers
-            //     },
-            //     locate: true, // try to locate the barcode in the image
-            //     src: imageSrc!
-            // }, function (result: any) {
-            //     console.log("result-->", result);
-            //     if (result !== undefined && result !== null && result.codeResult !== undefined && result.codeResult !== null) {
-            //         const code = result.codeResult.code;
-            //         setBarcode(code);
-            //         setBarcodeUploaded(true);
-            //         dispatch(saveBarcode(code));
-            //     } else {
-            //         toast.warn('No barcode detected. Please try again.');
-            //     }
-            // })
             setBarcodeIsLoading(false);
             setShowBCModal(true);
         } catch (error) {
@@ -249,7 +182,65 @@ function Test() {
             toast.error('Error detecting barcode. Please try again.');
             console.error('Barcode Capture Error:', error);
         }
-    }, [dispatch]);
+    }, []);
+    // const barcodeCapture = useCallback(async () => {
+    //     try {
+    //         setBarcodeIsLoading(true);
+    //         const imageSrc = cameraRef?.current!.getScreenshot();
+    //         const formats = ['ean_13', 'qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e', 'ean_8', 'pdf417', 'aztec', 'data_matrix', 'itf', 'code_93'];
+    //         const readers = ['ean_reader', 'ean_5_reader', 'ean_2_reader', 'ean_8_reader', 'code_39_reader', 'code_39_vin_reader', 'codabar_reader', 'upc_reader', 'upc_e_reader', 'i2of5_reader', '2of5_reader', 'code_93_reader'];
+
+    //         const barcodeTypes = [Html5QrcodeSupportedFormats.AZTEC, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.CODE_39, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.ITF, Html5QrcodeSupportedFormats.PDF_417, Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.UPC_E];
+
+    //         const imageFile = await base64ToFile(imageSrc!, 'barcode.png', 'image/png');
+
+    //         setBarcodeImage(imageSrc!);
+
+    //         // const barcodeResult = await detectBarcodesAI(imageSrc!);
+    //         const barcodeResult = await detectBarcodesAI2(imageSrc!);
+
+    //         // refetch();
+
+    //         console.log('bc scan res:', barcodeResult)
+
+    //         if (barcodeResult.status === 'complete') {
+    //             // const code = barcodeResult.result[0].data;
+    //             const code = barcodeResult.data.parsed;
+    //             // setBarcode(code);
+    //             // setBarcodeUploaded(true);
+    //             dispatch(saveBarcode(code));
+    //         }
+    //         setBarcodeUploaded(true);
+
+    //         if (barcodeResult.status === 'error') {
+    //             toast.warn(`${barcodeResult.message}`)
+    //         }
+
+    //         // Quagga.decodeSingle({
+    //         //     decoder: {
+    //         //         readers: readers
+    //         //     },
+    //         //     locate: true, // try to locate the barcode in the image
+    //         //     src: imageSrc!
+    //         // }, function (result: any) {
+    //         //     console.log("result-->", result);
+    //         //     if (result !== undefined && result !== null && result.codeResult !== undefined && result.codeResult !== null) {
+    //         //         const code = result.codeResult.code;
+    //         //         setBarcode(code);
+    //         //         setBarcodeUploaded(true);
+    //         //         dispatch(saveBarcode(code));
+    //         //     } else {
+    //         //         toast.warn('No barcode detected. Please try again.');
+    //         //     }
+    //         // })
+    //         setBarcodeIsLoading(false);
+    //         setShowBCModal(true);
+    //     } catch (error) {
+    //         setBarcodeIsLoading(false);
+    //         toast.error('Error detecting barcode. Please try again.');
+    //         console.error('Barcode Capture Error:', error);
+    //     }
+    // }, [dispatch]);
 
     const reCaptureBarcode = () => {
         setBarcode('');
@@ -308,7 +299,7 @@ function Test() {
             barcodeStepRef.current = barcodeStep ? 1 : 0;
             labelScanRef.current = performLabelScan ? 1 : 0;
 
-            dispatch(setFilename(`${participant_id}-${testingKit.kit_name}-${testingKit.kit_id}-${uuid.current}`));
+            dispatch(setFilename(`${participant_id}-${testingKit.kit_name.split(' ').join('-')}-${testingKit.kit_id}-${uuid.current}.mp4`));
         }
 
         // Start recording the video
@@ -496,7 +487,7 @@ function Test() {
                         headers: {
                             "Accept": "*/*",
                             "Accept-Encoding": "gzip, deflate",
-                            "Authorization": `Basic ${process.env.NEXT_PUBLIC_BEAM_AUTH}`,
+                            "Authorization": `Bearer ${process.env.NEXT_PUBLIC_BEAM_AUTH}`,
                             "Content-Type": "application/json",
                             "Connection": "keep-alive"
                         },
@@ -524,7 +515,6 @@ function Test() {
                         if (analysis_data.status === 'complete') {
                             if (analysis_data.result) {
                                 const detections = Object.entries(analysis_data.result);
-                                const link = filename;
                                 const sendMail = async () => {
                                     const response = await fetch("/api/send-email", {
                                         method: 'POST',
@@ -533,7 +523,7 @@ function Test() {
                                             'date': endTime,
                                             'kit': testingKit.kit_name,
                                             'confirmation_no': confirmationNo,
-                                            'videoLink': `https://proofdata.s3.amazonaws.com/${link}`,
+                                            'videoLink': `https://proofdata.s3.amazonaws.com/${filename}`,
                                             'face_scan_score': facialScanScore,
                                             'detections': detections
                                         })
@@ -576,7 +566,8 @@ function Test() {
                     </div>
                 </div>
                 <div className='test-content'>
-                    <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
+                    {/* <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} /> */}
+                    <Scanner show={showBCModal} scanType='test' barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
                     <Webcam
                         className='test-camera-container'
                         ref={cameraRef}
@@ -600,8 +591,8 @@ function Test() {
                                                     <Button classname={!toggleContent ? 'db-blue' : 'db-white'} style={{ borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px' }} onClick={() => setToggleContent(false)} >Graphics</Button>
                                                     <Button classname={toggleContent ? 'db-blue' : 'db-white'} style={{ borderTopRightRadius: '8px', borderBottomRightRadius: '8px' }} onClick={() => setToggleContent(true)} >Text</Button>
                                                 </div>
-                                                {!isPlaying && !barcodeStep && <Button classname="td-right" onClick={handleNextStep} >{showTimer ? 'Wait...' : 'Next'}</Button>}
-                                                {!isPlaying && barcodeStep && <div style={{ width: '100%', maxWidth: '85px' }}></div>}
+                                                {!isPlaying && !barcodeStep && !performLabelScan && <Button classname="td-right" onClick={handleNextStep} >{showTimer ? 'Wait...' : 'Next'}</Button>}
+                                                {!isPlaying && barcodeStep || performLabelScan && <div style={{ width: '100%', maxWidth: '85px' }}></div>}
                                             </div>
                                         </div>
                                         <div style={{ position: 'relative' }} key={index + 2}>

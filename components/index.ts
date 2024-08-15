@@ -53,4 +53,5 @@ export { default as Camera } from "./camera/index";
 export { default as BacProgressBar } from "./BacProgressBar/index";
 export { default as FileUpload } from "./fileUpload/index";
 export { default as CameraView } from "./camera-view/index";
+export { default as Scanner } from "./scanditize";
 export { default as DinamicMenuLayout } from "./layout/desktop-menu-layout";

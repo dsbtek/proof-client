@@ -106,8 +106,9 @@ const SignaturePage = () => {
           </div>
         </div>
       )}
+      <AgreementHeader title="Signature " />
 
-      <Header title="Signature" />
+      {/* <Header title="Signature" /> */}
       <div className="sign-items-wrap">
         <div className="signBg-with-img" style={{ backgroundImage: sigCanvasH !== 680 ? 'url("../images/signBg.png")' : "", backgroundSize: "cover", backgroundRepeat: "no-repeat", }}>
           <p className="sign-text">

@@ -85,6 +85,14 @@
 }
 
 @media screen and (min-width: 700px) {
+  .agreement-container {
+    display: flex;
+    flex-direction: column !important;
+    width: 100% !important;
+    background: #f8f8f8;
+    height: 100vh;
+  }
+
   .agreement-footer-container {
     position: fixed;
     background-color: #FFFFFF !important;
@@ -92,5 +100,12 @@
 
   .agreement-items-wrap {
     margin-bottom: 5%;
+  }
+
+  .agreement-header-container {
+    height: 10%;
+    width: 100%;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E3E6EB;
   }
 }

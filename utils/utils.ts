@@ -369,3 +369,70 @@ export const transformScreensData = (data: Object) => {
 export const formatList = (input: string): string => {
   return input.replace(/-/g, "<br> <span>&#8226;</span>");
 };
+
+export function parseAamvaData(data: string | null): Record<string, any> | string {
+  /**
+   * Parses AAMVA (American Association of Motor Vehicle Administrators) Driver License/Identification Card data.
+   *
+   * @param {string | null} data - The raw data string from the driver's license or ID card.
+   * @returns {Record<string, any> | string} A dictionary containing the parsed fields, or "Invalid Data" if the input is null or undefined.
+   */
+
+  // An object to store the parsed data
+  const parsedData: Record<string, any> = {};
+
+  // Helper functions
+  const getGender = (x: string): string => {
+    if (x === "1") return "MALE";
+    if (x === "2") return "FEMALE";
+    return "UNSPECIFIED";
+  };
+
+  const convertToTimestamp = (dateStr: string): number => {
+    /**
+     * Converts a date string in MMDDYYYY format to a Unix timestamp.
+     *
+     * @param {string} dateStr - The date string in MMDDYYYY format.
+     * @returns {number} The Unix timestamp.
+     */
+    const [month, day, year] = [dateStr.slice(0, 2), dateStr.slice(2, 4), dateStr.slice(4)];
+    const dateObj = new Date(`${year}-${month}-${day}`);
+    return Math.floor(dateObj.getTime() / 1000);
+  };
+
+  // Defines a list of fields to extract
+  const fields: Array<[string, string, ((x: string) => any)?]> = [
+    ["DAQ", "Driver's License Number"],
+    ["DCS", "Last Name"],
+    ["DAC", "First Name"],
+    ["DAD", "Middle Name"],
+    ["DBD", "Document Issue Date", convertToTimestamp],
+    ["DBB", "Date of Birth", convertToTimestamp],
+    ["DBA", "Document Expiration Date", convertToTimestamp],
+    ["DBC", "Gender", getGender],
+    ["DAU", "Height"],
+    ["DAY", "Eye Color"],
+    ["DAG", "Street Address"],
+    ["DAI", "City"],
+    ["DAJ", "State"],
+    ["DAK", "Postal Code"],
+    ["DCG", "Country"],
+    ["DCK", "Inventory Control Number"],
+    ["DDK", "Document Discriminator"],
+    ["DDB", "Card Revision Date", convertToTimestamp],
+  ];
+
+  if (!data) {
+    return "Invalid Data";
+  }
+
+  // Extract each field using regex
+  fields.forEach(([code, description, func]) => {
+    const match = data.match(new RegExp(`${code}([^\\n\\r]*)`));
+    if (match) {
+      parsedData[description] = func ? func(match[1].trim()) : match[1].trim();
+    }
+  });
+
+  return parsedData;
+};

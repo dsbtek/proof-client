@@ -88,10 +88,22 @@
     height: 100%;
   }
 
+  .system-chk-container {
+    display: flex;
+    flex-direction: column !important;
+    align-items: center;
+    width: 100% !important;
+    background: #f8f8f8;
+    height: 100vh;
+  }
+
   .system-check-items {
-    align-self: center;
+    display: flex;
+    /* align-self: center; */
+    justify-content: center;
     margin: 0px auto;
-    width: 30%;
+    height: 100%;
+    width: 35%;
   }
 
   .btn-system-chk {
@@ -107,4 +119,5 @@
     display: block;
     text-align: center;
   }
+
 }

@@ -79,6 +79,7 @@ const CameraIDCardDetection = () => {
         window.addEventListener('resize', routeBasedOnScreenSize);
         return () => window.removeEventListener('resize', routeBasedOnScreenSize);
     }, []);
+
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [faceImage, setFaceImage] = useState<string | null>(null);
     const [faces, setFaces] = useState<any[]>([]);
@@ -260,15 +261,18 @@ const CameraIDCardDetection = () => {
                     />
                 </div>
                 :
-                <div className="id-detection-container" style={{ position: 'relative' }}>
-                    {/* <AgreementHeader title="PIP - Step 1 " /> */}
-                    <br />
-                    <div className='test-items-wrap-desktop_'>
+                <div className="id-detection-container_" style={{ position: 'relative' }}>
+                    <AgreementHeader title="PROOF Identity Profile (PIP) " />
+                    {/* <br /> */}
+                    <div className='camera-items-wrap-desktop_'>
                         <div className="sub-item">
-                            {!capturedImage && <p className="vid-text">Please position the front side of your ID <br />in the camera frame below.</p>}
+                            <h3 className="">PIP - Step 1</h3>
+                            <br />
+                            {!capturedImage && <p className="">Please position the front side of your ID <br />in the camera frame below.</p>}
+                            {faceImage && <p className=""> Please tap the `Next` button to move to step 2 where you will <br /> position the rear side of your ID. in the camera frame below.</p>}
+
                         </div>
 
-                        <br />
                         {permissionsGranted ? (
                             !capturedImage ? (
                                 <div className='camera-container'>
@@ -290,31 +294,38 @@ const CameraIDCardDetection = () => {
                                 </div>
                             ) : (
                                 <>
-                                    {capturedImage && (
-                                        <div className='id-image'>
-                                            <Image
-                                                className='img-border'
-                                                src={capturedImage}
-                                                alt="Captured Image"
-                                                layout="responsive"
-                                                width={500}
-                                                height={500}
-                                            />
-                                        </div>
-                                    )}
-                                    {faceImage && (
-                                        <div className='face-image-wrap'>
-                                            <p className="vid-text" style={{ color: '#009cf9', marginBottom: '8px', whiteSpace: 'nowrap' }}>Extracted ID Face</p>
-                                            <Image
-                                                className='face-image'
-                                                src={faceImage}
-                                                alt="Extracted Face Image"
-                                                layout="responsive"
-                                                width={200}
-                                                height={200}
-                                            />
-                                        </div>
-                                    )}
+                                    <div className="id-img_" style={{ display: "flex", flexDirection: "column" }}>
+
+                                        {capturedImage && (
+                                            <div className='id-image'>
+                                                <Image
+                                                    className='img-border'
+                                                    src={capturedImage}
+                                                    alt="Captured Image"
+                                                    layout="responsive"
+                                                    width={500}
+                                                    height={500}
+                                                />
+                                            </div>
+                                        )}
+                                        {faceImage && (
+                                            // <div className="id-img_">
+                                            <div className='face-image-wrap'>
+                                                <p className="vid-text" style={{ color: '#009cf9', marginBottom: '8px', whiteSpace: 'nowrap' }}>Extracted ID Face</p>
+                                                <Image
+                                                    className='face-image'
+                                                    src={faceImage}
+                                                    alt="Extracted Face Image"
+                                                    layout="responsive"
+                                                    width={200}
+                                                    height={200}
+                                                />
+                                            </div>
+                                            // </div>
+
+                                        )}
+                                    </div>
+
                                     {!faceImage && <Button blue onClick={recaptureImage} style={{ marginTop: '2em' }}>Recapture</Button>}
                                 </>
                             )

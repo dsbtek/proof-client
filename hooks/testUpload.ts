@@ -80,32 +80,10 @@ function useTestupload() {
     const uploader = useCallback(async (blob: Blob, pendingTest?: () => void) => {
         try {
             const webmBlob = new Blob([blob], { type: 'video/mp4' });
-            const unencodedString = await blobToBase64(webmBlob);
-            // const filename = `${Date.now()}-${testingKit.kit_id}.mp4`
-            // dispatch(setFilename(filename));
             let success = false;
-
-            // const encodedResponse = await fetch(`${process.env.NEXT_PUBLIC_BEAM_SERVICE_URL}/convert-to-mp4`, {
-            //     method: "POST",
-            //     headers: {
-            //         "Accept": "*/*",
-            //         "Accept-Encoding": "gzip, deflate",
-            //         "Authorization": `Basic ${process.env.NEXT_PUBLIC_BEAM_AUTH}`,
-            //         "Content-Type": "application/json",
-            //         "Connection": "keep-alive"
-            //     },
-            //     body: JSON.stringify({
-            //         "base64_chunk": unencodedString,
-            //     })
-            // })
-
-            // const encodedString = await encodedResponse.json();
-            // const encodedBlob = await base64ToBlob(encodedString.result.base64_output, 'video/mp4')
-            // const buffer = await blobToBuffer(encodedBlob!);
             const buffer = await blobToBuffer(webmBlob!);
 
             dispatch(setUploadStatus(true));
-
 
             await testUpload()
 
@@ -125,7 +103,7 @@ function useTestupload() {
                                 headers: {
                                     "Accept": "*/*",
                                     "Accept-Encoding": "gzip, deflate",
-                                    "Authorization": `Basic ${process.env.NEXT_PUBLIC_BEAM_AUTH}`,
+                                    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_BEAM_AUTH}`,
                                     "Content-Type": "application/json",
                                     "Connection": "keep-alive"
                                 },

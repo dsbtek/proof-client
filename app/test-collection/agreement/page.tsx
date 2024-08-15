@@ -110,7 +110,9 @@ const AgreementConsent = () => {
 
   const renderAgreementContent = () => (
     <div className="agreement-container">
-      <Header
+      <AgreementHeader title="Agreement & Consent " />
+
+      {/* <Header
         title="Agreement & Consent"
         icon={
           muted ? (
@@ -119,7 +121,7 @@ const AgreementConsent = () => {
             <RxSpeakerLoud onClick={toggleMute} color="#009cf9" style={{ cursor: "pointer" }} />
           )
         }
-      />
+      /> */}
       <div className="agreement-items-wrap scroller">
         <p>
           <b>PROOF™ User Agreement</b>
