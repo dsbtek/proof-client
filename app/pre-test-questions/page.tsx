@@ -39,7 +39,21 @@ const PreTest = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedDate_, setSelectedDate] = useState('');
   const router = useRouter();
+  const [sigCanvasH, setSigCanvasH] = useState(0);
 
+  useEffect(() => {
+    const routeBasedOnScreenSize = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth <= 700) {
+        setSigCanvasH(250);
+      } else {
+        setSigCanvasH(700);
+      }
+    };
+    routeBasedOnScreenSize();
+    window.addEventListener('resize', routeBasedOnScreenSize);
+    return () => window.removeEventListener('resize', routeBasedOnScreenSize);
+  }, []);
   useEffect(() => {
     if (preTestQuestionnaire.length) {
       const initialSelectedOptions = preTestQuestionnaire.map((section, sectionIndex) =>
@@ -157,37 +171,77 @@ const PreTest = () => {
   return (
     <div className="container-test-collection">
       <AgreementHeader title={currentSection?.sectionName} />
-      <div className="agreement-items-wrap">
-        {currentQuestion.image_url && (
-          <Image
-            className="get-started-img"
-            src={currentQuestion.image_url}
-            alt="image"
-            width={3000}
-            height={3000}
-          />
-        )}
-        <p className="get-started-title">{currentQuestion?.question}</p>
-        <br />
-        {currentQuestion?.options && (
-          <div className="radio-button-container">
-            {currentQuestion.options.map((opt, optIndex) => (
-              <RadioButton
-                key={`${currentSectionIndex}-${currentQuestionIndex}-${optIndex}`}
-                onChange={() => handleOptionChange(currentSectionIndex, currentQuestionIndex, optIndex)}
-                checked={selectedOption === optIndex}
-                label={opt}
-              />
-            ))}
-          </div>
-        )}
+      {sigCanvasH !== 700 ?
+        <div className="agreement-items-wrap">
+          {currentQuestion.image_url && (
+            <Image
+              className="get-started-img"
+              src={currentQuestion.image_url}
+              alt="image"
+              width={3000}
+              height={3000}
+            />
+          )}
+          <p className="get-started-title">{currentQuestion?.question}</p>
+          <br />
+          {currentQuestion?.options && (
+            <div className="radio-button-container">
+              {currentQuestion.options.map((opt, optIndex) => (
+                <RadioButton
+                  key={`${currentSectionIndex}-${currentQuestionIndex}-${optIndex}`}
+                  onChange={() => handleOptionChange(currentSectionIndex, currentQuestionIndex, optIndex)}
+                  checked={selectedOption === optIndex}
+                  label={opt}
+                />
+              ))}
+            </div>
+          )}
 
-        {currentQuestion?.question_type?.includes('Date') && (
-          <div className="radio-button-container">
-            <DatePicker title={"Select a date"} onDateSelect={handleDateSelect} />
+          {currentQuestion?.question_type?.includes('Date') && (
+            <div className="radio-button-container">
+              <DatePicker title={"Select a date"} onDateSelect={handleDateSelect} />
+            </div>
+          )}
+        </div>
+        :
+        <div className="test-items-wrap-desktop_ ">
+
+          <div className="sub-item">
+            <p className="get-started-title">{currentQuestion?.question}</p>
+            <br />
+            {currentQuestion?.options && (
+              <div className="radio-button-container">
+                {currentQuestion.options.map((opt, optIndex) => (
+                  <RadioButton
+                    key={`${currentSectionIndex}-${currentQuestionIndex}-${optIndex}`}
+                    onChange={() => handleOptionChange(currentSectionIndex, currentQuestionIndex, optIndex)}
+                    checked={selectedOption === optIndex}
+                    label={opt}
+                  />
+                ))}
+              </div>
+            )}
+
+
+            {currentQuestion?.question_type?.includes('Date') && (
+              <div className="radio-button-container">
+                <DatePicker title={"Select a date"} onDateSelect={handleDateSelect} />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {currentQuestion.image_url && (
+            <Image
+              className="get-started-img"
+              src={currentQuestion.image_url}
+              alt="image"
+              width={3000}
+              height={3000}
+            />
+          )}
+        </div>
+      }
+
 
       <AgreementFooter
         currentNumber={currentQuestionIndex + 1}

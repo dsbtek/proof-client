@@ -18,8 +18,8 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
 
-import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner } from "@/components";
-import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename } from '@/redux/slices/drugTest';
+import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner, AgreementFooter } from "@/components";
+import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename, setTestSteps } from '@/redux/slices/drugTest';
 import { detectBarcodes, uploadVideoToS3, createPresignedUrl/*, videoEncoder */ } from './action';
 import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, dateTimeInstance, fileToBase64 } from '@/utils/utils';
 import { storeBlobInIndexedDB } from '@/utils/indexedDB';
@@ -51,6 +51,8 @@ function Test() {
     const [performFaceScan, setPerformFaceScan] = useState<boolean>(false);
     const [performLabelScan, setPerformLabelScan] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [step, setStep] = useState<number>(1);
+    const [step_, setStep_] = useState<number>(1);
 
     const cameraRef = useRef<Webcam | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -80,7 +82,21 @@ function Test() {
     const isVisible = usePageVisibility();
     const { faceDetected } = useFaceDetector(cameraRef);
     const { uploader, testUpload } = useTestupload();
+    const [sigCanvasH, setSigCanvasH] = useState(0);
 
+    useEffect(() => {
+        const routeBasedOnScreenSize = () => {
+            const screenWidth = window.innerWidth;
+            if (screenWidth <= 700) {
+                setSigCanvasH(250);
+            } else {
+                setSigCanvasH(700);
+            }
+        };
+        routeBasedOnScreenSize();
+        window.addEventListener('resize', routeBasedOnScreenSize);
+        return () => window.removeEventListener('resize', routeBasedOnScreenSize);
+    }, []);
     const {
         status,
         liveVideo,
@@ -565,54 +581,111 @@ function Test() {
                         <AiFillCloseCircle color='red' onClick={handleDialog} style={{ cursor: 'pointer' }} />
                     </div>
                 </div>
-                <div className='test-content'>
-                    {/* <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} /> */}
-                    <Scanner show={showBCModal} scanType='test' barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
-                    <Webcam
-                        className='test-camera-container'
-                        ref={cameraRef}
-                        audio={false}
-                        screenshotFormat="image/png"
-                        videoConstraints={{
-                            facingMode: "user"
-                        }}
-                        imageSmoothing={true}
-                    />
-                    <div className='test-details'>
-                        {test.map((step: any, index: number) => {
-                            if (activeStep === step.step && step.step !== null) {
-                                return (
-                                    <React.Fragment key={index}>
-                                        <div className='test-header' key={index + 1}>
-                                            <p className='test-steps'>{`Step ${step.step} of ${test.length}`}</p>
-                                            <div className='td-btns' style={isPlaying ? { justifyContent: 'center' } : {}}>
-                                                {!isPlaying && <Button classname='td-left' onClick={repeatAudio}>Repeat</Button>}
-                                                <div className='double-btns'>
-                                                    <Button classname={!toggleContent ? 'db-blue' : 'db-white'} style={{ borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px' }} onClick={() => setToggleContent(false)} >Graphics</Button>
-                                                    <Button classname={toggleContent ? 'db-blue' : 'db-white'} style={{ borderTopRightRadius: '8px', borderBottomRightRadius: '8px' }} onClick={() => setToggleContent(true)} >Text</Button>
+                {sigCanvasH !== 700 ?
+                    <div className='test-content'>
+                        {/* <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} /> */}
+                        <Scanner show={showBCModal} scanType='test' barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
+                        <Webcam
+                            className='test-camera-container'
+                            ref={cameraRef}
+                            audio={false}
+                            screenshotFormat="image/png"
+                            videoConstraints={{
+                                facingMode: "user"
+                            }}
+                            imageSmoothing={true}
+                        />
+                        <div className='test-details'>
+                            {test.map((step: any, index: number) => {
+                                if (activeStep === step.step && step.step !== null) {
+                                    return (
+                                        <React.Fragment key={index}>
+                                            <div className='test-header' key={index + 1}>
+                                                <p className='test-steps'>{`Step ${step.step} of ${test.length}`}</p>
+                                                <div className='td-btns' style={isPlaying ? { justifyContent: 'center' } : {}}>
+                                                    {!isPlaying && <Button classname='td-left' onClick={repeatAudio}>Repeat</Button>}
+                                                    <div className='double-btns'>
+                                                        <Button classname={!toggleContent ? 'db-blue' : 'db-white'} style={{ borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px' }} onClick={() => setToggleContent(false)} >Graphics</Button>
+                                                        <Button classname={toggleContent ? 'db-blue' : 'db-white'} style={{ borderTopRightRadius: '8px', borderBottomRightRadius: '8px' }} onClick={() => setToggleContent(true)} >Text</Button>
+                                                    </div>
+                                                    {!isPlaying && !barcodeStep && !performLabelScan && <Button classname="td-right" onClick={handleNextStep} >{showTimer ? 'Wait...' : 'Next'}</Button>}
+                                                    {!isPlaying && barcodeStep || performLabelScan && <div style={{ width: '100%', maxWidth: '85px' }}></div>}
                                                 </div>
-                                                {!isPlaying && !barcodeStep && !performLabelScan && <Button classname="td-right" onClick={handleNextStep} >{showTimer ? 'Wait...' : 'Next'}</Button>}
-                                                {!isPlaying && barcodeStep || performLabelScan && <div style={{ width: '100%', maxWidth: '85px' }}></div>}
                                             </div>
-                                        </div>
-                                        <div style={{ position: 'relative' }} key={index + 2}>
-                                            {!toggleContent ? <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
-                                                :
+                                            <div style={{ position: 'relative' }} key={index + 2}>
+                                                {!toggleContent ? <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
+                                                    :
+                                                    <div className='test-text'>
+                                                        <article className='test-step'>
+                                                            <h5>{step.step}</h5>
+                                                        </article>
+                                                        <p className='t-text'>{step.directions}</p>
+                                                    </div>}
+                                                {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
+                                            </div>
+                                            <audio key={index + 3} id='test-audio' src={step.audio_path} controls autoPlay muted={muted} style={{ display: 'none' }} />
+                                        </React.Fragment>
+                                    )
+                                }
+                            })}
+                        </div>
+                    </div>
+                    :
+                    <div className='test-content'>
+                        {/* <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} /> */}
+                        <Scanner show={showBCModal} scanType='test' barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
+
+                        <div className='test-details'>
+                            {test.map((step: any, index: number) => {
+                                if (activeStep === step.step && step.step !== null) {
+                                    // setStep(step.step)
+                                    // setStep_(test.length)
+                                    return (
+                                        <React.Fragment key={index}>
+                                            <div key={index + 2}>
+
                                                 <div className='test-text'>
                                                     <article className='test-step'>
                                                         <h5>{step.step}</h5>
                                                     </article>
                                                     <p className='t-text'>{step.directions}</p>
-                                                </div>}
-                                            {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
-                                        </div>
-                                        <audio key={index + 3} id='test-audio' src={step.audio_path} controls autoPlay muted={muted} style={{ display: 'none' }} />
-                                    </React.Fragment>
-                                )
-                            }
-                        })}
+                                                </div>
+                                                <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
+                                                {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
+                                            </div>
+                                            <audio key={index + 3} id='test-audio' src={step.audio_path} controls autoPlay muted={muted} style={{ display: 'none' }} />
+                                        </React.Fragment>
+                                    )
+                                }
+                            })}
+                        </div>
+                        <div className='camera-container'>
+                            <Webcam
+                                className='test-camera-container'
+                                ref={cameraRef}
+                                audio={false}
+                                screenshotFormat="image/png"
+                                videoConstraints={{
+                                    facingMode: "user"
+                                }}
+                                imageSmoothing={true}
+                            />
+                        </div>
                     </div>
-                </div>
+                }
+                <AgreementFooter
+                    currentNumber={step}
+                    outOf={step_}
+                    onPagination={false}
+                    onLeftButton={true}
+                    onRightButton={true}
+                    btnLeftLink={""}
+                    btnRightLink={""}
+                    btnLeftText={"Repeat"}
+                    btnRightText={"Next"}
+                    rightdisabled={false}
+                    onClickBtnLeftAction={() => { }}
+                />
                 {barcodeStep && <div className='barcode-btns'>
                     {barcodeIsLoading ? <Loader_ /> : <Button classname='cap-btn' onClick={barcodeCapture}><TbCapture /> Capture</Button>}
                 </div>}

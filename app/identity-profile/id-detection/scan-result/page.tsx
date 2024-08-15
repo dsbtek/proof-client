@@ -12,7 +12,7 @@ const IDCardScanResult = () => {
     const idBack = useSelector(idBackString);
 
     return (
-        <div className="container">
+        <div className="id-detection-container_">
             <AgreementHeader title="PIP - ID Scan Result" />
             <br />
             <br />

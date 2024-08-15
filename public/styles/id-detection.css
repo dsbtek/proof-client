@@ -238,4 +238,22 @@
         width: 50%;
         height: 100%;
     }
+
+    .vid-items-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: static;
+        margin-top: 32px;
+        width: 100%;
+        height: 400px;
+    }
+
+    .scan-complete-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 }

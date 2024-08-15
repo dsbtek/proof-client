@@ -134,7 +134,7 @@
     gap: 16px;
 }
 
-@media screen and (min-width: 1000px) {
+/* @media screen and (min-width: 1000px) {
     .test-graphic {
         height: calc(100vh - 585px);
     }
@@ -157,4 +157,26 @@
         width: 50%;
         background: #838687;
     }
+} */
+
+@media (min-width: 700px) {
+    .test-content {
+        display: flex;
+        height: 100%;
+        position: relative;
+        width: 100%;
+        background-color: aqua;
+    }
+
+    .test-details {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        height: 100%;
+    }
+
+    .test-text {
+        height: 50%;
+    }
+
 }

@@ -43,10 +43,25 @@ const FacialCapture = () => {
     const [faceCapture, setFaceCapture] = useState<any>(null);
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [modelsLoaded, setModelsLoaded] = useState(false);
+    const [brightness, setBrightness] = useState<number>(0);
 
     const { faceDetected } = useFaceDetector(cameraRef)
     const [similarity, setSimilarity] = useState(false);
+    const [sigCanvasH, setSigCanvasH] = useState(0);
 
+    useEffect(() => {
+        const routeBasedOnScreenSize = () => {
+            const screenWidth = window.innerWidth;
+            if (screenWidth <= 700) {
+                setSigCanvasH(250);
+            } else {
+                setSigCanvasH(700);
+            }
+        };
+        routeBasedOnScreenSize();
+        window.addEventListener('resize', routeBasedOnScreenSize);
+        return () => window.removeEventListener('resize', routeBasedOnScreenSize);
+    }, []);
     useEffect(() => {
         const checkPermissions = async () => {
             try {
@@ -59,6 +74,19 @@ const FacialCapture = () => {
 
         checkPermissions();
 
+    }, []);
+
+    const calculateBrightness = useCallback((imageData: { data: any; }) => {
+        const data = imageData.data;
+        let totalBrightness = 0;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            totalBrightness += brightness;
+        }
+
+        const averageBrightness = totalBrightness / (data.length / 4);
+        setBrightness(averageBrightness);
     }, []);
 
     const correctBase64Image = (base64String: string) => {
@@ -155,86 +183,182 @@ const FacialCapture = () => {
     };
 
     return (
-        <div className="container">
-            <AgreementHeader title='PIP - Step 3' />
-            <br />
-            {!capturedImage && (
-                <p className="vid-text">
-                    Please position your head and body in the silhouette you see on screen. Please be as still as possible and look directly at the screen.
-                </p>
-            )}
-            <br />
-            {!capturedImage ? (
-                <div className='camera-container'>
-                    <Webcam
-                        className='camera'
-                        ref={cameraRef}
-                        audio={false}
-                        screenshotFormat="image/png"
-                        videoConstraints={{ facingMode: "user" }}
-                        imageSmoothing={true}
-                    />
-                    <div style={frameStyle as any}>
-                        {faceDetected ?
-                            <Image className="detection-image" src="/images/face-detected.png" alt="captured Image" width={2000} height={2000} />
-                            :
-                            <Image className="detection-image" src="/images/face-no-detected.png" alt="captured Image" width={2000} height={2000} />
-                        }
-                    </div>
-                </div>
-            ) : (
-                <>
-                    <div className="image-container">
-                        <Image className="captured-image" src={capturedImage} alt="captured Image" width={5000} height={5000} loading="lazy" />
-                    </div>
-                    {similarity ? (
-                        // {percentageScoreString ? (
-                        <div className="image-container">
-                            <div className="scan-complete">
-                                <GrStatusGood color='#32de84' size={30} />
-                                <p>Scan Complete!</p>
+        <>
+            {sigCanvasH !== 700 ?
+                <div className="container">
+                    <AgreementHeader title='PIP - Step 3' />
+                    <br />
+                    {!capturedImage && (
+                        <p className="vid-text">
+                            Please position your head and body in the silhouette you see on screen. Please be as still as possible and look directly at the screen.
+                        </p>
+                    )}
+                    <br />
+                    {!capturedImage ? (
+                        <div className='camera-container'>
+                            <Webcam
+                                className='camera'
+                                ref={cameraRef}
+                                audio={false}
+                                screenshotFormat="image/png"
+                                videoConstraints={{ facingMode: "user" }}
+                                imageSmoothing={true}
+                            />
+                            <div style={frameStyle as any}>
+                                {faceDetected ?
+                                    <Image className="detection-image" src="/images/face-detected.png" alt="captured Image" width={2000} height={2000} />
+                                    :
+                                    <Image className="detection-image" src="/images/face-no-detected.png" alt="captured Image" width={2000} height={2000} />
+                                }
                             </div>
-                            <p style={{ textAlign: 'center' }}>
-                                Your PROOF Identity Profile has been successfully established.
-                                <br /><br />
-                                Click `Next` to Continue
-                            </p>
                         </div>
                     ) : (
-                        <Loader_ />
+                        <>
+                            <div className="image-container">
+                                <Image className="captured-image" src={capturedImage} alt="captured Image" width={5000} height={5000} loading="lazy" />
+                            </div>
+                            {similarity ? (
+                                // {percentageScoreString ? (
+                                <div className="image-container">
+                                    <div className="scan-complete">
+                                        <GrStatusGood color='#32de84' size={30} />
+                                        <p>Scan Complete!</p>
+                                    </div>
+                                    <p style={{ textAlign: 'center' }}>
+                                        Your PROOF Identity Profile has been successfully established.
+                                        <br /><br />
+                                        Click `Next` to Continue
+                                    </p>
+                                </div>
+                            ) : (
+                                <Loader_ />
+                            )}
+                        </>
                     )}
-                </>
-            )}
-            {capturedImage ? (
-                <AgreementFooter
-                    currentNumber={2}
-                    outOf={4}
-                    onPagination={false}
-                    onLeftButton={true}
-                    onRightButton={true}
-                    btnLeftLink={""}
-                    btnRightLink={pathLink()}
-                    btnLeftText={capturedImage ? "Recapture" : ""}
-                    btnRightText={"Next"}
-                    rightdisabled={!similarity}
-                    onClickBtnLeftAction={capturedImage ? recapture : () => { }}
-                />
-            ) : (
-                <AgreementFooter
-                    currentNumber={2}
-                    outOf={4}
-                    onPagination={false}
-                    onLeftButton={false}
-                    onRightButton={true}
-                    btnLeftLink={''}
-                    btnRightLink={''}
-                    btnLeftText={'Clear'}
-                    btnRightText={'Capture'}
-                    onClickBtnRightAction={captureFrame}
-                    rightdisabled={!faceDetected}
-                />
-            )}
-        </div>
+                    {capturedImage ? (
+                        <AgreementFooter
+                            currentNumber={2}
+                            outOf={4}
+                            onPagination={false}
+                            onLeftButton={true}
+                            onRightButton={true}
+                            btnLeftLink={""}
+                            btnRightLink={pathLink()}
+                            btnLeftText={capturedImage ? "Recapture" : ""}
+                            btnRightText={"Next"}
+                            rightdisabled={!similarity}
+                            onClickBtnLeftAction={capturedImage ? recapture : () => { }}
+                        />
+                    ) : (
+                        <AgreementFooter
+                            currentNumber={2}
+                            outOf={4}
+                            onPagination={false}
+                            onLeftButton={false}
+                            onRightButton={true}
+                            btnLeftLink={''}
+                            btnRightLink={''}
+                            btnLeftText={'Clear'}
+                            btnRightText={'Capture'}
+                            onClickBtnRightAction={captureFrame}
+                            rightdisabled={!faceDetected}
+                        />
+                    )}
+                </div>
+                :
+                <div className="id-detection-container_">
+                    <AgreementHeader title='PROOF Identity Profile (PIP)' />
+                    <div className='test-items-wrap-desktop_'>
+
+                        {!capturedImage && (
+                            <div className="sub-item">
+                                <h3 className="">PIP - Step 3</h3>
+                                <br />
+                                <p className="">
+                                    Please position your head and body in the silhouette you see on screen. Please be as still as possible and look directly at the screen.
+                                </p>
+                            </div>
+
+                        )}
+
+                        {!capturedImage ? (
+                            <div className='camera-container'>
+                                <Webcam
+                                    className='camera'
+                                    ref={cameraRef}
+                                    audio={false}
+                                    screenshotFormat="image/png"
+                                    videoConstraints={{ facingMode: "user" }}
+                                    imageSmoothing={true}
+                                />
+                                <div style={frameStyle as any}>
+                                    {faceDetected ?
+                                        <Image className="detection-image" src="/images/face-detected.png" alt="captured Image" width={2000} height={2000} />
+                                        :
+                                        <Image className="detection-image" src="/images/face-no-detected.png" alt="captured Image" width={2000} height={2000} />
+                                    }
+                                </div>
+                            </div>
+                        ) : (
+                            <div className='scan-complete-wrap'>
+                                {similarity &&
+                                    <div className="scan-complete">
+                                        <GrStatusGood color='#32de84' size={30} />
+                                        <p>Scan Complete!</p>
+                                    </div>
+                                }
+                                <div className="image-container">
+                                    <Image className="captured-image" src={capturedImage} alt="captured Image" width={5000} height={5000} loading="lazy" />
+                                </div>
+                                {similarity ? (
+                                    // {percentageScoreString ? (
+                                    <div className="image-container">
+
+                                        <p style={{ textAlign: 'center' }}>
+                                            Your PROOF Identity Profile has been successfully established.
+                                            <br /><br />
+                                            Click `Next` to Continue
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <Loader_ />
+                                )}
+
+                            </div>
+                        )}
+                    </div>
+                    {capturedImage ? (
+                        <AgreementFooter
+                            currentNumber={2}
+                            outOf={4}
+                            onPagination={false}
+                            onLeftButton={true}
+                            onRightButton={true}
+                            btnLeftLink={""}
+                            btnRightLink={pathLink()}
+                            btnLeftText={capturedImage ? "Recapture" : ""}
+                            btnRightText={"Next"}
+                            rightdisabled={!similarity}
+                            onClickBtnLeftAction={capturedImage ? recapture : () => { }}
+                        />
+                    ) : (
+                        <AgreementFooter
+                            currentNumber={2}
+                            outOf={4}
+                            onPagination={false}
+                            onLeftButton={false}
+                            onRightButton={true}
+                            btnLeftLink={''}
+                            btnRightLink={''}
+                            btnLeftText={'Clear'}
+                            btnRightText={'Capture'}
+                            onClickBtnRightAction={captureFrame}
+                            rightdisabled={!faceDetected}
+                        />
+                    )}
+                </div>
+            }
+        </>
     );
 };
 

@@ -105,13 +105,16 @@ const CameraIDCardDetection = () => {
             {sigCanvasH !== 700 ?
                 <div className="id-detection-container" style={{ position: 'relative' }}>
                     <>
+                        {showBCModal &&
+                            <div style={{ position: 'absolute', left: '0', width: '100%', height: '100vh', zIndex: '1000' }}>
+                                <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
+                            </div>
+                        }
                         <AgreementHeader title="PIP - Step 2 " />
                         <br />
                         <div className='test-items-wrap-desktop_'>
 
-                            {showBCModal && <div style={{ position: 'absolute', left: '0', width: '100%', height: '100%', zIndex: '1000' }}>
-                                <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
-                            </div>}
+
                             {!capturedImage &&
                                 <div className="sub-item">
                                     <p className="vid-text">
@@ -176,12 +179,13 @@ const CameraIDCardDetection = () => {
                 </div > :
                 <div className="id-detection-container_" >
                     <>
+                        {showBCModal && <div style={{ position: 'absolute', left: '0', top: '0', width: '100%', height: '100%', zIndex: '1000' }}>
+                            <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
+                        </div>}
                         <AgreementHeader title="PROOF Identity Profile (PIP)" />
                         <div className='camera-items-wrap-desktop_'>
 
-                            {showBCModal && <div style={{ position: 'absolute', left: '0', width: '100%', height: '100%', zIndex: '1000' }}>
-                                <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
-                            </div>}
+
 
                             <div className="sub-item">
                                 <h3 className="">PIP - Step 2</h3>

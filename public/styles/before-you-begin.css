@@ -49,7 +49,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        padding: 32px;
+        padding: 0px 32px;
         width: 100%;
         height: 100%;
     }

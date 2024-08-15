@@ -64,6 +64,19 @@ const extractFaceImage = (img: HTMLImageElement, face: any, paddingRatio = 0.5) 
 };
 
 const CameraIDCardDetection = () => {
+
+
+    const [capturedImage, setCapturedImage] = useState<string | null>(null);
+    const [faceImage, setFaceImage] = useState<string | null>(null);
+    const [faces, setFaces] = useState<any[]>([]);
+    const [faceDetected, setFaceDetected] = useState<boolean>(false);
+    const [brightness, setBrightness] = useState<number>(0);
+    const cameraRef = useRef<Webcam | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const dispatch = useDispatch();
+
+    const permissionsGranted = usePermissions();
+    const faceMesh = useFaceMesh();
     const [sigCanvasH, setSigCanvasH] = useState(0);
 
     useEffect(() => {
@@ -79,19 +92,6 @@ const CameraIDCardDetection = () => {
         window.addEventListener('resize', routeBasedOnScreenSize);
         return () => window.removeEventListener('resize', routeBasedOnScreenSize);
     }, []);
-
-    const [capturedImage, setCapturedImage] = useState<string | null>(null);
-    const [faceImage, setFaceImage] = useState<string | null>(null);
-    const [faces, setFaces] = useState<any[]>([]);
-    const [faceDetected, setFaceDetected] = useState<boolean>(false);
-    const [brightness, setBrightness] = useState<number>(0);
-    const cameraRef = useRef<Webcam | null>(null);
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const dispatch = useDispatch();
-
-    const permissionsGranted = usePermissions();
-    const faceMesh = useFaceMesh();
-
     const calculateBrightness = useCallback((imageData: { data: any; }) => {
         const data = imageData.data;
         let totalBrightness = 0;
