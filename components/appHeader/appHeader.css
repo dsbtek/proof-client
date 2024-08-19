@@ -24,6 +24,16 @@
         /* height: 100%; */
     }
 
+    .cancel-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 135px;
+        padding: 16px;
+        background-color: #FEE2E2;
+        border-radius: 6px;
+    }
+
     .title-container {
         flex-grow: 1;
         text-align: center;

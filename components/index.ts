@@ -22,6 +22,7 @@ export { default as TutorialFooter } from "./tutorial/tutorialFooter";
 export { default as AgreementHeader } from "./agreement/AgreementHeader";
 export { default as AgreementFooter } from "./agreement/AgreementFooter";
 export { default as AppHeader } from "./appHeader/index";
+export { default as AppHeaderDesktop } from "./appHeader/appHeaderDesktop";
 export { default as Header } from "./appHeader/header";
 export { default as ReadOnlyInput } from "./readonlyInput/index";
 export { default as Setting } from "./setting/index";

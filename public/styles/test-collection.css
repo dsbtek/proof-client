@@ -162,9 +162,18 @@
 @media (min-width: 700px) {
     .test-content {
         display: flex;
+        flex-direction: column;
         height: 100%;
-        position: relative;
+        position: static;
         width: 100%;
+    }
+
+    .wrap-conten-cam {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        width: 100%;
+        /* background-color: antiquewhite; */
     }
 
     .test-details {
@@ -190,12 +199,31 @@
 
     .test-text {
         padding: 32px;
-        height: 200px;
+        height: 250px;
     }
+
+
 
     .test-camera-container {
         height: 100%;
-        background-size: cover;
-        background: #838687;
+        object-fit: cover;
+        /* background-size: cover; */
+        /* background: #0d4d62; */
+    }
+
+    .test-audio {
+        display: flex;
+        flex-wrap: unset;
+        background: white;
+        justify-content: center;
+        align-items: center !important;
+        height: 100px;
+        /* background-color: #24527B; */
+    }
+
+    .test-head {
+        border-bottom: 1px solid #E3E6EB;
+        background-color: #FFFFFF;
+        ;
     }
 }
