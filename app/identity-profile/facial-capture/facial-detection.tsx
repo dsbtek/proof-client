@@ -10,7 +10,7 @@ import * as faceapi from 'face-api.js';
 import { toast } from 'react-toastify';
 import * as ml5 from 'ml5';
 
-import { AgreementFooter, AgreementHeader, Loader_ } from '@/components';
+import { AgreementFooter, AgreementHeader, DesktopFooter, Loader_ } from '@/components';
 import {
     appData,
     setIdCardFacialPercentageScore,
@@ -328,7 +328,7 @@ const FacialCapture = () => {
                         )}
                     </div>
                     {capturedImage ? (
-                        <AgreementFooter
+                        <DesktopFooter
                             currentNumber={2}
                             outOf={4}
                             onPagination={false}
@@ -342,7 +342,7 @@ const FacialCapture = () => {
                             onClickBtnLeftAction={capturedImage ? recapture : () => { }}
                         />
                     ) : (
-                        <AgreementFooter
+                        <DesktopFooter
                             currentNumber={2}
                             outOf={4}
                             onPagination={false}

@@ -222,8 +222,10 @@
     }
 
     .test-head {
+        display: flex;
+        justify-content: space-between;
         border-bottom: 1px solid #E3E6EB;
         background-color: #FFFFFF;
-        ;
+        width: 100%;
     }
 }

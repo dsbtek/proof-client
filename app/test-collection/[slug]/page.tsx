@@ -18,7 +18,7 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
 
-import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner, AgreementFooter, AgreementHeader, AppHeaderDesktop } from "@/components";
+import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner, AgreementFooter, AgreementHeader, AppHeaderDesktop, DesktopFooter } from "@/components";
 import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename, setTestSteps } from '@/redux/slices/drugTest';
 import { detectBarcodes, uploadVideoToS3, createPresignedUrl/*, videoEncoder */ } from './action';
 import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, dateTimeInstance, fileToBase64 } from '@/utils/utils';
@@ -634,7 +634,7 @@ function Test() {
                         {/* <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} /> */}
                         <Scanner show={showBCModal} scanType='test' barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
                         {/* <AgreementHeader title='Test' /> */}
-                        <div className='test-head' style={{ display: 'flex', width: '100%', padding: '16px' }}>
+                        <div className='test-head'>
                             {/* <AppHeader title='' /> */}
                             <AppHeaderDesktop title="" />
                             <div className='test-audio'>
@@ -682,7 +682,7 @@ function Test() {
 
                     </div>
                 }
-                <AgreementFooter
+                <DesktopFooter
                     currentNumber={step}
                     outOf={step_}
                     onPagination={false}

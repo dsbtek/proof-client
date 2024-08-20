@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-import { AgreementFooter, AppHeader, AppHeaderDesktop, Button, MiniLoader } from '@/components';
+import { AgreementFooter, AppHeader, AppHeaderDesktop, Button, DesktopFooter, MiniLoader } from '@/components';
 import { testData } from '@/redux/slices/drugTest';
 import { appData } from '@/redux/slices/appConfig';
 import { GoMute } from 'react-icons/go';
@@ -45,7 +45,7 @@ function Desktop() {
 
     return (
         <div className='summary-container'>
-            <div className='test-head' style={{ display: 'flex', justifyContent: "center", width: '100%', padding: '16px' }}>
+            <div className='test-head'>
                 {/* <AppHeader title='' /> */}
                 <AppHeaderDesktop title="" />
                 <div className='test-audio'>
@@ -90,7 +90,8 @@ function Desktop() {
                     <video autoPlay loop muted src={testClip} className="vid-prev"></video>
                 </div>
             </div>
-            <AgreementFooter
+
+            <DesktopFooter
                 currentNumber={3}
                 outOf={5}
                 onPagination={true}
@@ -99,7 +100,8 @@ function Desktop() {
                 btnLeftLink={"/test-collection/signature"}
                 btnRightLink={"/test-collection/before-you-begin"}
                 btnLeftText={"Back"}
-                btnRightText={"Next"} />
+                btnRightText={"Next"}
+            />
         </div>
     )
 };

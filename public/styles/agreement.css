@@ -108,4 +108,16 @@
     background-color: #FFFFFF;
     border-bottom: 1px solid #E3E6EB;
   }
+
+  .dxtop-wrap-btn {
+    display: flex;
+    gap: 32px;
+  }
+
+  .paginate {
+    display: flex;
+    width: 10%;
+    padding: 8px;
+    gap: 4px;
+  }
 }
