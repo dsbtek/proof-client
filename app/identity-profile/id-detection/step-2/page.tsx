@@ -106,7 +106,7 @@ const CameraIDCardDetection = () => {
                 <div className="id-detection-container" style={{ position: 'relative' }}>
                     <>
                         {showBCModal &&
-                            <div style={{ position: 'absolute', left: '0', width: '100%', height: '100vh', zIndex: '1000' }}>
+                            <div style={{ position: 'absolute', left: '0', top:"0",width: '100%', height: '100vh', zIndex: '1000' }}>
                                 <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
                             </div>
                         }
@@ -184,7 +184,7 @@ const CameraIDCardDetection = () => {
                         <AgreementHeader title="PROOF Identity Profile (PIP)" />
                         <div className='camera-items-wrap-desktop_'>
 
-                            {showBCModal && <div style={{ position: 'absolute', left: '0', width: '100%', height: '100%', zIndex: '1000' }}>
+                            {showBCModal && <div style={{ position: 'absolute', left: '0', top: '0', width: '100%', height: '100%', zIndex: '1000' }}>
                                 <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
                             </div>}
 
