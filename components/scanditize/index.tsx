@@ -148,7 +148,7 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
     }
 
     return (
-        show && <div className='barcode-cap-modal'>
+        show && <div className='barcode-cap-modal' style={{top:"0"}}>
             {barcodeUploaded && !enterBarcode && barcode === '' &&
                 <div className='bc-content'>
                     <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>
