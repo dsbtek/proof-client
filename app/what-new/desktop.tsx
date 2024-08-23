@@ -66,4 +66,7 @@ const WhatNew = () => {
   );
 };
 
-export default WhatNew;
+// export default WhatNew;
+export default dynamic(() => Promise.resolve(WhatNew), {
+    ssr: false,
+  });

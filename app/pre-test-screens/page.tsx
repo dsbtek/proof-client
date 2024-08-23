@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { AgreementFooter, AppHeader, Loader_ } from "@/components";
+import { AgreementFooter, AppHeader, AppHeaderDesktop, DesktopFooter, DesktopSwitch, Loader_ } from "@/components";
 import { useSelector } from "react-redux";
 import { GoMute } from "react-icons/go";
 import { RxSpeakerLoud } from "react-icons/rx";
 import { appData } from "@/redux/slices/appConfig";
 import { formatList, transformScreensData } from "@/utils/utils";
+import useResponsive from "@/hooks/useResponsive";
+
 
 const PreTestScreens = () => {
   const user = useSelector(appData);
@@ -15,6 +17,7 @@ const PreTestScreens = () => {
   const screensData = useSelector((state: any) => state.preTest.preTestScreens);
   const [muted, setMuted] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const isDesktop = useResponsive();
 
   const handleNext = () => {
     if (currentScreenIndex < screensData.length - 1) {
@@ -58,7 +61,11 @@ const PreTestScreens = () => {
   return (
     <div className="container-test-collection">
       <div style={{ display: "flex", width: "100%", padding: "16px" }}>
-        <AppHeader title={currentScreen?.[`Screen_${currentScreenIndex_}_Title`] || ""} />
+        {isDesktop?
+                     <AppHeaderDesktop title={currentScreen?.[`Screen_${currentScreenIndex_}_Title`] || ""} />:
+  
+    <AppHeader title={currentScreen?.[`Screen_${currentScreenIndex_}_Title`] || ""} />
+  }
         <div className="test-audio">
           {muted ? (
             <GoMute onClick={muteAudio} color="#adadad" style={{ cursor: "pointer" }} />
@@ -86,6 +93,19 @@ const PreTestScreens = () => {
         )}
       </div>
 
+      {isDesktop?
+        <DesktopFooter
+        currentNumber={currentScreenIndex + 1}
+        outOf={screensData.length}
+        onPagination={true}
+        onLeftButton={currentScreenIndex > 1}
+        onRightButton={true}
+        btnLeftText="Previous"
+        btnRightText="Next"
+        btnRightLink={currentScreenIndex === screensData.length - 1 ? pathLink() : ""}
+        onClickBtnLeftAction={handlePrev}
+        onClickBtnRightAction={handleNext}
+      />:
       <AgreementFooter
         currentNumber={currentScreenIndex + 1}
         outOf={screensData.length}
@@ -98,6 +118,7 @@ const PreTestScreens = () => {
         onClickBtnLeftAction={handlePrev}
         onClickBtnRightAction={handleNext}
       />
+    }
     </div>
   );
 };

@@ -39,14 +39,17 @@ const DesktopFooter = ({
 }: DesktopFooterProps) => {
     return (
         <div className="agreement-footer-container">
+            <div className="wrap-paginate">
             {onPagination && (
                 <div className="paginate">
 
                     <div>Step {currentNumber}</div> <div>of</div> <div>{outOf}</div>
                 </div>
             )}
+            </div>
+            <div className="gap-"></div>
             <div className="dxtop-wrap-btn">
-                <div className="btn-left">
+                {/* <div className="btn-left"> */}
                     {onLeftButton && btnLeftLink != '' ? (
                         <Link href={btnLeftLink ?? ''}>
                             <Button
@@ -67,9 +70,9 @@ const DesktopFooter = ({
                         )
 
                     )}
-                </div>
+                {/* </div> */}
 
-                <div className="btn-right">
+                {/* <div className="btn-right"> */}
                     {onRightButton && btnRightLink != '' ? (
                         <Link href={btnRightLink ?? ''}>
                             <Button
@@ -91,7 +94,7 @@ const DesktopFooter = ({
                             </Button>
                         )
                     )}
-                </div>
+                {/* </div> */}
             </div>
 
 

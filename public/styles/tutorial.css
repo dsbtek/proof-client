@@ -200,10 +200,15 @@
   opacity: 0;
   cursor: pointer;
   border-radius: 0.5em;
+  text-wrap: nowrap;
 }
 
 .tut-overlay:hover {
   opacity: 1;
+}
+
+.tut-overlay p {
+  text-wrap: nowrap;
 }
 
 .grid-card {
@@ -229,6 +234,7 @@
   text-align: center;
   font-size: 16px;
   font-weight: 400;
+  text-wrap: nowrap;
 }
 
 .sub-wrap-grid {
@@ -260,5 +266,28 @@
     border-radius: 16px;
     background: #FFFFFF;
   }
+
+  .tut-overlay p {
+    text-wrap: nowrap;
+  }
+
+  .sub-wrap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .sub-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    width: 100%;
+  }
+/* .tut-overlay {
+  width: 328px;
+  height: 288px;
+} */
 
 }

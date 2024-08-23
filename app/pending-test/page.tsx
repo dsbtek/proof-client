@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Crypto from "crypto-js";
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 
 import { Menu, AppHeader, Button, Loader, DinamicMenuLayout } from '@/components';
 import { uploadVideoToS3 } from '../test-collection/[slug]/action';
@@ -13,6 +14,7 @@ import { saveTestClip, setEndTime, setStartTime, setUploadStatus, testData } fro
 import { retrieveBlobFromIndexedDB, checkDatabaseAndObjectStore, deleteBlobFromIndexedDB } from '@/utils/indexedDB';
 import { authToken } from '@/redux/slices/auth';
 import useTestupload from '@/hooks/testUpload';
+import dynamic from 'next/dynamic';
 
 
 const PendingTest = () => {
@@ -23,6 +25,8 @@ const PendingTest = () => {
   const { participant_id } = useSelector(authToken);
   const { startTime, endTime } = useSelector(testData);
   const { uploader, testUpload } = useTestupload();
+  const device = useGetDeviceInfo();
+
 
   const uploadPending = async () => {
     try {
@@ -111,7 +115,13 @@ const PendingTest = () => {
     <DinamicMenuLayout>
       <div className="tutorial-container">
         {uploading && <Loader />}
+        
+        {device?.screenWidth > 700? 
+      <div className="what-new-dxtp-header">
+        <h1>Pending Test</h1>
+      </div> : 
         <AppHeader title="Pending Test" />
+      }
         <div className="pending-test-container">
           {pendingTest !== undefined || null ? (
             <div className="pending-test">
@@ -133,7 +143,6 @@ const PendingTest = () => {
             <h4 className="pending-text">No Pending drug test videos.</h4>
           )}
         </div>
-        {/* <Menu /> */}
       </div>
     </DinamicMenuLayout >
   );

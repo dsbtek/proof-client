@@ -1,26 +1,24 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 
 const useResponsive = (breakpoint = 700, debounceTime = 200) => {
-  const [isDesktop, setIsDesktop] = useState(() => {
-    // Check if window is defined before accessing it
-    return typeof window !== "undefined"
-      ? window.innerWidth >= breakpoint
-      : false;
-  });
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  useEffect(() => {
-    // Ensure this code only runs in the browser
+  useLayoutEffect(() => {
     if (typeof window === "undefined") return;
 
-    let timeoutId: string | number | NodeJS.Timeout | undefined;
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= breakpoint);
+    };
+
+    handleResize();
+
+    let timeoutId: NodeJS.Timeout | undefined;
 
     const updateView = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        setIsDesktop(window.innerWidth >= breakpoint);
-      }, debounceTime);
+      timeoutId = setTimeout(handleResize, debounceTime);
     };
 
     window.addEventListener("resize", updateView);

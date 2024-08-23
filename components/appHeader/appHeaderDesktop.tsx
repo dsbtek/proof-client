@@ -34,9 +34,9 @@ function AppHeaderDesktop({ title, className, handleDialog }: AppHeaderDesktopPr
     };
 
     const renderIcon = () => {
-        if (pathname === `${navPath}` || "/test-collection/collection-summary") {
+        if (pathname !== `${navPath}` || "/test-collection/collection-summary") {
             return (
-                <div className="cancel-btn">
+                <div className="cancel-btn" onClick={handleDialog}>
                     <p> Cancel</p>
                     <AiFillCloseCircle
                         color="red"

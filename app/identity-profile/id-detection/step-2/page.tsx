@@ -6,7 +6,7 @@ import Webcam from "react-webcam";
 import { useDispatch } from "react-redux";
 import { useRouter } from 'next/navigation';
 
-import { AgreementFooter, AgreementHeader, Scanner } from '@/components';
+import { AgreementFooter, AgreementHeader, DesktopFooter, Scanner } from '@/components';
 import { setIDBack } from '@/redux/slices/appConfig';
 import { uploadFileToS3 } from '../step-1/action';
 import { scanIDAI } from '@/utils/queries';
@@ -114,7 +114,9 @@ const CameraIDCardDetection = () => {
                         <br />
                         <div className='test-items-wrap-desktop_'>
 
-
+                            {/* {showBCModal && <div style={{ position: 'absolute', left: '0', width: '100%', height: '100%', zIndex: '1000' }}>
+                                <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
+                            </div>} */}
                             {!capturedImage &&
                                 <div className="sub-item">
                                     <p className="vid-text">
@@ -177,15 +179,14 @@ const CameraIDCardDetection = () => {
                         />
                     }
                 </div > :
-                <div className="id-detection-container_" >
+                <div className="id-detection-container_" style={{ position: 'relative' }}>
                     <>
-                        {showBCModal && <div style={{ position: 'absolute', left: '0', top: '0', width: '100%', height: '100%', zIndex: '1000' }}>
-                            <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
-                        </div>}
                         <AgreementHeader title="PROOF Identity Profile (PIP)" />
                         <div className='camera-items-wrap-desktop_'>
 
-
+                            {showBCModal && <div style={{ position: 'absolute', left: '0', width: '100%', height: '100%', zIndex: '1000' }}>
+                                <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
+                            </div>}
 
                             <div className="sub-item">
                                 <h3 className="">PIP - Step 2</h3>
@@ -230,7 +231,7 @@ const CameraIDCardDetection = () => {
                     }
 
                     {capturedImage ?
-                        <AgreementFooter
+                        <DesktopFooter
                             onPagination={false}
                             onLeftButton={true}
                             onRightButton={true}
@@ -242,7 +243,7 @@ const CameraIDCardDetection = () => {
                             onClickBtnRightAction={barcodeCapture}
                         />
                         :
-                        <AgreementFooter
+                        <DesktopFooter
                             onPagination={false}
                             onLeftButton={false}
                             onRightButton={true}

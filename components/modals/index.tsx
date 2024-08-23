@@ -1,20 +1,20 @@
-import './modal.css';
+import "./modal.css";
 interface ModalProps {
-    children: JSX.Element | JSX.Element[];
-    show: boolean;
-    onClose?: () => void;
+  children: JSX.Element | JSX.Element[];
+  show: boolean;
+  onClose?: () => void;
 }
 
 const Modal = ({ children, show, onClose }: ModalProps) => {
-    return (
-        <>
-            {show && (
-                <div className='modal' onClick={onClose}>
-                    {children}
-                </div>
-            )}
-        </>
-    )
+  return (
+    <>
+      {show && (
+        <div className="modal" onClick={onClose}>
+          <div style={{ position: "fixed" }}>{children}</div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default Modal;

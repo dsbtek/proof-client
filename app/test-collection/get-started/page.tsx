@@ -2,13 +2,15 @@
 
 "use client";
 import React, { useEffect, useState } from "react";
-import { AgreementHeader, AgreementFooter, Button } from "@/components";
+import { AgreementHeader, AgreementFooter, Button, DesktopFooter } from "@/components";
 import Image from "next/image";
+import useResponsive from "@/hooks/useResponsive";
 
 
 
 const GetStarted = () => {
   const [sigCanvasH, setSigCanvasH] = useState(0);
+  const isDesktop = useResponsive()
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
@@ -58,7 +60,18 @@ const GetStarted = () => {
           <Image className="get-started-img" src="/images/dxtgt.svg" alt="image" width={3000} height={3000} />
         </div>
       }
-      <AgreementFooter
+      {isDesktop?
+        <DesktopFooter
+        currentNumber={3}
+        outOf={5}
+        onPagination={true}
+        onLeftButton={true}
+        onRightButton={true}
+        btnLeftLink={"/test-collection/signature"}
+        btnRightLink={"/test-collection/before-you-begin"}
+        btnLeftText={"Back"}
+        btnRightText={"Next"} />:
+        <AgreementFooter
         currentNumber={3}
         outOf={5}
         onPagination={true}
@@ -68,6 +81,7 @@ const GetStarted = () => {
         btnRightLink={"/test-collection/before-you-begin"}
         btnLeftText={"Back"}
         btnRightText={"Next"} />
+        }
     </div>
   );
 };

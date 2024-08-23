@@ -1,9 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { AgreementHeader, AgreementFooter, CheckBox } from "@/components";
+import { AgreementHeader, AgreementFooter, CheckBox, DesktopFooter } from "@/components";
+import useResponsive from "@/hooks/useResponsive";
 
 const BeforeYouBegin = () => {
+  const isDesktop = useResponsive()
 
   const [sigCanvasH, setSigCanvasH] = useState(0);
 
@@ -70,7 +72,8 @@ const BeforeYouBegin = () => {
         }
 
       </div>
-      <AgreementFooter
+      {isDesktop?
+        <DesktopFooter
         currentNumber={4}
         outOf={5}
         onPagination={true}
@@ -80,6 +83,17 @@ const BeforeYouBegin = () => {
         btnRightLink={"/test-collection/camera-view"}
         btnLeftText={"Decline"}
         btnRightText={"Next"} />
+      :
+      <AgreementFooter
+        currentNumber={4}
+        outOf={5}
+        onPagination={true}
+        onLeftButton={false}
+        onRightButton={allChecked}
+        btnLeftLink={""}
+        btnRightLink={"/test-collection/camera-view"}
+        btnLeftText={"Decline"}
+        btnRightText={"Next"} />}
     </>
 
   );

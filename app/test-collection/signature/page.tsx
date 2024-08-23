@@ -5,10 +5,11 @@ import ReactSignatureCanvas from 'react-signature-canvas';
 import SignatureCanvas from 'react-signature-canvas';
 import { useDispatch, useSelector } from "react-redux";
 import { preTestScreensData } from "@/redux/slices/pre-test";
-import { AgreementHeader, AgreementFooter, Button, Header } from "@/components";
+import { AgreementHeader, AgreementFooter, Button, Header, DesktopFooter } from "@/components";
 import { setSig } from "@/redux/slices/drugTest";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
+import useResponsive from "@/hooks/useResponsive";
 
 interface PreTestScreen {
   Screen_1_Title: string;
@@ -23,7 +24,7 @@ const SignaturePage = () => {
   const [sigCanvasH, setSigCanvasH] = useState(0);
   const router = useRouter();
   const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
-
+  const isDesktop = useResponsive()
   const dispatch = useDispatch();
 
   const handleClearSignature = () => {
@@ -126,10 +127,23 @@ const SignaturePage = () => {
         </div>
         <div className="signBg-with"></div>
       </div>
-
+{isDesktop?
+      <DesktopFooter
+        currentNumber={2}
+        outOf={5}
+        onPagination={true}
+        onLeftButton={true}
+        onRightButton={true}
+        btnLeftLink={""}
+        btnRightLink={!sigCheck ? '' : pathLink()}
+        btnLeftText={"Clear"}
+        btnRightText={"Next"}
+        onClickBtnLeftAction={handleClearSignature}
+        onClickBtnRightAction={!sigCheck ? saveSignature : () => { }}
+      />:
       <AgreementFooter
         currentNumber={2}
-        outOf={4}
+        outOf={5}
         onPagination={true}
         onLeftButton={true}
         onRightButton={true}
@@ -140,6 +154,7 @@ const SignaturePage = () => {
         onClickBtnLeftAction={handleClearSignature}
         onClickBtnRightAction={!sigCheck ? saveSignature : () => { }}
       />
+    }
     </div>
   );
 };

@@ -10,21 +10,9 @@ declare module "@aws-sdk/client-cognito-identity";
 
 declare module "@aws-sdk/credential-provider-cognito-identity";
 
-declare module "quagga";
-
-declare module "html5-qrcode-scanner-dinte";
-
 declare module "crypto-js";
 
-declare module "fast-speedtest-api";
-
-declare module "speed-test";
-
 declare module "ml5";
-
-declare module "pixelmatch";
-
-declare module "pngjs";
 
 interface BluetoothDevice {
   gatt?: BluetoothRemoteGATTServer;

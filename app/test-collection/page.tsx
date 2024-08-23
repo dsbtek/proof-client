@@ -18,20 +18,17 @@ const TestCollection = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isGridView, setIsGridView] = useState(false);
-  const [isListView, setIsListView] = useState(false);
+  const [isListView, setIsListView] = useState(true);
   const [toggleSwitch, setToggleSwitch] = useState(checked);
 
-  const handleToggleGridView = () => {
+  const handleToggleGridView = (isActive: boolean) => {
     setIsGridView(true);
     setIsListView(false);
-    setChecked(false)
   };
 
-  const handleToggleListView = () => {
+  const handleToggleListView = (isActive: boolean) => {
     setIsListView(true);
     setIsGridView(false);
-    setChecked(true)
-
   };
 
   const handleSwitch = () => {
@@ -51,7 +48,13 @@ const TestCollection = () => {
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
       const screenWidth = window.innerWidth;
+
       setToggleSwitch(checked);
+      if (screenWidth <= 700) {
+        setToggleSwitch(checked);
+      } else {
+        setToggleSwitch(isListView);
+      }
     };
 
     routeBasedOnScreenSize();

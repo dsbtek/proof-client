@@ -29,17 +29,15 @@ const DextopMenu = () => {
     return (
         <nav className="menu">
 
-            <Link href="#" className="sub-menu" >
-                {/* <div className="menu-user-name-wrap"> */}
-                {/* <div className="user-home"> */}
+            <Link href="#" className="sub-menu" style={{display: "block", textAlign: "left", borderBottom: "none", height: "80px"}} >
+
                 <p className="greet-text">{"Hello,"}</p>
-                <br />
                 <p className="user-name">
                     {first_name + ' ' + last_name}
                 </p>
-                {/* </div> */}
-                {/* </div> */}
+
             </Link>
+            <br />
             <Link href="/test-collection" className="sub-menu" style={pathname === '/test-collection' ? { backgroundColor: '#E5F5FF' } : {}}>
                 {/* <GoHome size={30} color={pathname === '/home' ? '#009CF9' : '#ADADAD'} /> */}
                 {pathname === '/test-collection' ?

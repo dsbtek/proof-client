@@ -90,6 +90,12 @@
     /* Safari and Chrome */
 }
 
+.what-new-dxtp-header {
+    width: 100%;
+    text-align: left;
+    /* background-color: #009CF9; */
+}
+
 @keyframes lds-ripple {
     0% {
         top: 36px;

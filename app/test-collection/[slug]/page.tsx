@@ -12,9 +12,6 @@ import { BlobVideo, StreamVideo, useMediaCapture } from 'react-media-capture';
 import { toast } from 'react-toastify';
 import Crypto from "crypto-js";
 import { TbCapture } from "react-icons/tb";
-import Quagga from 'quagga';
-import { Html5Qrcode, Html5QrcodeSupportedFormats, Html5QrcodeScanner, QrcodeErrorCallback } from "html5-qrcode";
-import { BrowserQRCodeReader } from '@zxing/browser';
 import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
 

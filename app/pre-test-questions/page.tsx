@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { AgreementHeader, AgreementFooter, RadioButton, DateSelector, Loader_, DatePicker } from "@/components";
+import { AgreementHeader, AgreementFooter, RadioButton, DateSelector, Loader_, DatePicker, DesktopFooter } from "@/components";
 import { useSelector } from "react-redux";
 import { testingKit } from '@/redux/slices/drugTest';
 import { useRouter } from 'next/navigation';
@@ -243,7 +243,7 @@ const PreTest = () => {
       }
 
 
-      <AgreementFooter
+      <DesktopFooter
         currentNumber={currentQuestionIndex + 1}
         outOf={currentSection.questions.length}
         onPagination={true}

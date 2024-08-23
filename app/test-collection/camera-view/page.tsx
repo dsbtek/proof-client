@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
-import { AgreementHeader, AgreementFooter } from "@/components";
+import { AgreementHeader, AgreementFooter, DesktopFooter } from "@/components";
 import { appData } from "@/redux/slices/appConfig";
+import useResponsive from "@/hooks/useResponsive";
 
 const CameraView = () => {
   const { permissions, proof_id_value } = useSelector(appData);
@@ -12,6 +13,7 @@ const CameraView = () => {
   const photo = user?.photo
   const appPermissions = permissions ? permissions.split(";") : undefined;
   const [identityPermission, setIdentityPermission] = useState('');
+  const isDesktop = useResponsive()
   const [sigCanvasH, setSigCanvasH] = useState(0);
 
   useEffect(() => {
@@ -67,7 +69,10 @@ const CameraView = () => {
         </div>
       }
       {/* <AgreementFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={photo ? "/identity-profile/sample-facial-capture" : "/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} /> */}
-      <AgreementFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink="/identity-profile" btnLeftText={"Decline"} btnRightText={"Next"} />
+      {isDesktop?
+        <DesktopFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink="/identity-profile" btnLeftText={"Decline"} btnRightText={"Next"} />:
+        <AgreementFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink="/identity-profile" btnLeftText={"Decline"} btnRightText={"Next"} />
+        }
     </div>
   );
 };

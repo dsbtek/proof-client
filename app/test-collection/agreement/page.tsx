@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 
-import { AgreementHeader, AgreementFooter, AppHeader, Header } from "@/components";
+import { AgreementHeader, AgreementFooter, AppHeader, Header, DesktopFooter } from "@/components";
 import { authToken } from "@/redux/slices/auth";
 import { testingKit, testData, setTestSteps } from "@/redux/slices/drugTest";
 import { preTestScreensData, preTestFeedbackData, setPreTestFeedback } from "@/redux/slices/pre-test";
@@ -13,6 +13,7 @@ import { decryptIdAndCredentials } from "@/utils/utils";
 import { initializeAI } from "@/utils/queries";
 import { RxSpeakerLoud } from "react-icons/rx";
 import { GoMute } from "react-icons/go";
+import useResponsive from "@/hooks/useResponsive";
 
 interface PreTestScreen {
   Screen_1_Title: string;
@@ -26,6 +27,7 @@ const AgreementConsent = () => {
   const { testSteps, testStepsFiltered } = useSelector(testData);
   const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
   const preTestFeedback = useSelector(preTestFeedbackData) as PreTestScreen[];
+  const isDesktop = useResponsive()
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const [muted, setMuted] = useState(false);
@@ -233,6 +235,19 @@ const AgreementConsent = () => {
         <audio ref={audioRef} src="https://rt-mobiletrekvideos.s3.amazonaws.com/consent+and+accept.mp3" controls={false} autoPlay />
       </div>
       <br /> <br />
+      {isDesktop?
+      <DesktopFooter
+        currentNumber={1}
+        outOf={4}
+        onPagination={true}
+        onLeftButton={true}
+        onRightButton={true}
+        btnLeftLink="/home"
+        btnRightLink={isLoading ? "" : "/test-collection/signature"}
+        btnLeftText="Decline"
+        btnRightText={isLoading ? "loading..." : "Accept"}
+        rightdisabled={isLoading || statusCode !== 200}
+      />:
       <AgreementFooter
         currentNumber={1}
         outOf={4}
@@ -245,6 +260,7 @@ const AgreementConsent = () => {
         btnRightText={isLoading ? "loading..." : "Accept"}
         rightdisabled={isLoading || statusCode !== 200}
       />
+    }
     </div>
   );
 
@@ -254,6 +270,19 @@ const AgreementConsent = () => {
       <div className="agreement-items-wrap scroller">
         <p>{content}</p>
       </div>
+      {isDesktop?
+      <DesktopFooter
+        currentNumber={1}
+        outOf={4}
+        onPagination={true}
+        onLeftButton={true}
+        onRightButton={true}
+        btnLeftLink="/home"
+        btnRightLink={isLoading ? "" : "/test-collection/signature"}
+        btnLeftText="Decline"
+        btnRightText={isLoading ? "Loading..." : "Accept"}
+        rightdisabled={isLoading || statusCode !== 200}
+      />:
       <AgreementFooter
         currentNumber={1}
         outOf={4}
@@ -266,6 +295,7 @@ const AgreementConsent = () => {
         btnRightText={isLoading ? "Loading..." : "Accept"}
         rightdisabled={isLoading || statusCode !== 200}
       />
+}
     </>
   );
 

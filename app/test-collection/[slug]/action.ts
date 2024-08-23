@@ -1,114 +1,95 @@
 "use server";
 
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { RekognitionClient, DetectTextCommand } from "@aws-sdk/client-rekognition";
+import {
+  RekognitionClient,
+  DetectTextCommand,
+} from "@aws-sdk/client-rekognition";
 // import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
 // import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile } from '@ffmpeg/util';
-import ffmpeg from 'ffmpeg.js';
+
 import { fileToBase64 } from "@/utils/utils";
 
 //Creates an S3 client used to upload videos to the S3 bucket.
 const s3Client = new S3Client({
-    region: process.env.NEXT_AWS_S3_REGION,
-    credentials: {
-        accessKeyId: process.env.NEXT_AWS_S3_ACCESS_KEY_ID,
-        secretAccessKey: process.env.NEXT_AWS_S3_SECRET_ACCESS_KEY,
-    },
+  region: process.env.NEXT_AWS_S3_REGION,
+  credentials: {
+    accessKeyId: process.env.NEXT_AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_AWS_S3_SECRET_ACCESS_KEY,
+  },
 });
 
 //Uploads video to S3 bucket.
 export async function uploadVideoToS3(formData: FormData, key: string) {
-    try {
-        //Returns the video file.
-        const videoData = formData.get('video') as File;
+  try {
+    //Returns the video file.
+    const videoData = formData.get("video") as File;
 
-        // Converts video file to an array buffer.
-        const buffer = await videoData.arrayBuffer();
+    // Converts video file to an array buffer.
+    const buffer = await videoData.arrayBuffer();
 
-        const params = {
-            Bucket: process.env.NEXT_AWS_S3_BUCKET_NAME,
-            Key: key,
-            Body: Buffer.from(buffer),
-            ContentType: 'video/mp4'
-        };
+    const params = {
+      Bucket: process.env.NEXT_AWS_S3_BUCKET_NAME,
+      Key: key,
+      Body: Buffer.from(buffer),
+      ContentType: "video/mp4",
+    };
 
-        const command = new PutObjectCommand(params);
-        const response = await s3Client.send(command);
-        console.log(response);
-        console.log(key)
-        return response;
-    } catch (error) {
-        console.error('Server Action Error:', error);
-    }
-};
-
+    const command = new PutObjectCommand(params);
+    const response = await s3Client.send(command);
+    console.log(response);
+    console.log(key);
+    return response;
+  } catch (error) {
+    console.error("Server Action Error:", error);
+  }
+}
 
 // Create an Amazon Transcribe service client object.
 const rekognitionClient = new RekognitionClient({
-    region: process.env.NEXT_AWS_S3_REGION,
-    credentials: {
-        accessKeyId: process.env.NEXT_AWS_S3_ACCESS_KEY_ID,
-        secretAccessKey: process.env.NEXT_AWS_S3_SECRET_ACCESS_KEY,
-    },
-    // credentials: fromCognitoIdentityPool({
-    //     client: new CognitoIdentityClient({ region: process.env.NEXT_AWS_S3_REGION }),
-    //     identityPoolId: "IDENTITY_POOL_ID",
-    // }),
+  region: process.env.NEXT_AWS_S3_REGION,
+  credentials: {
+    accessKeyId: process.env.NEXT_AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_AWS_S3_SECRET_ACCESS_KEY,
+  },
+  // credentials: fromCognitoIdentityPool({
+  //     client: new CognitoIdentityClient({ region: process.env.NEXT_AWS_S3_REGION }),
+  //     identityPoolId: "IDENTITY_POOL_ID",
+  // }),
 });
-
 
 //Detects barcode in screen captures.
 export async function detectBarcodes(base64String: string) {
-    try {
-        // Remove the data URL prefix (if present)
-        const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+  try {
+    // Remove the data URL prefix (if present)
+    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
 
-        // Convert the Base64 string to a buffer
-        const buffer = Buffer.from(base64Data, 'base64');
+    // Convert the Base64 string to a buffer
+    const buffer = Buffer.from(base64Data, "base64");
 
-        const params = {
-            Image: {
-                Bytes: buffer
-            }
-        };
+    const params = {
+      Image: {
+        Bytes: buffer,
+      },
+    };
 
-        const response = await rekognitionClient.send(new DetectTextCommand(params));
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.error('Server Action Error:', error);
-    }
-};
+    const response = await rekognitionClient.send(
+      new DetectTextCommand(params)
+    );
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error("Server Action Error:", error);
+  }
+}
 
 // Generates a signed URL for the video file.
 export const createPresignedUrl = (key: string) => {
-    const client = s3Client;
-    const command = new PutObjectCommand({ Bucket: process.env.NEXT_AWS_S3_BUCKET_NAME, Key: key });
-    return getSignedUrl(client, command, { expiresIn: 600000 });
+  const client = s3Client;
+  const command = new PutObjectCommand({
+    Bucket: process.env.NEXT_AWS_S3_BUCKET_NAME,
+    Key: key,
+  });
+  return getSignedUrl(client, command, { expiresIn: 600000 });
 };
-
-// Encode stream feed
-export const videoEncoder = async (testData: Uint8Array) => {
-    try {
-        const fileName = 'initstream.webm';
-        const outputFileName = 'outputstream.mp4';
-
-        const encodedVideo = ffmpeg({
-            MEMFS: [{ name: fileName, data: testData }],
-            arguments: ['-i', fileName, '-r', '30', '-c:v', 'libx264', '-c:a', 'aac', outputFileName],
-        });
-
-        const videoBitArray = encodedVideo.MEMFS[0];
-
-        const processedBlob = new Blob([videoBitArray.data], { type: 'video/mp4' });
-
-        const file = new File([processedBlob], 'video.mp4', { type: 'video/mp4' });
-        const fileData = await fileToBase64(file);
-        return { fileData, processedBlob };
-    } catch (error) {
-        console.error('Server Encoding Failed:', error);
-    }
-}

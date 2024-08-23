@@ -7,8 +7,9 @@ import { useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { IoIosArrowForward, IoMdCloseCircleOutline } from "react-icons/io";
 import Link from 'next/link';
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 
-import { HeaderText, Menu, Switch, TutorialGridView, TutorialListView, Modal, ListViewLoader, GridViewLoader, CheckBox, DinamicMenuLayout } from "@/components";
+import { HeaderText, Menu, Switch, TutorialGridView, TutorialListView, Modal, ListViewLoader, GridViewLoader, CheckBox, DinamicMenuLayout, DesktopSwitch } from "@/components";
 import { authToken } from "@/redux/slices/auth";
 import { setTutorialData, tutorialData, appData } from "@/redux/slices/appConfig";
 import { setCookie } from "@/utils/utils";
@@ -19,7 +20,11 @@ const Tutorial = () => {
     const [showModal, setShowModal] = useState(false);
     const [videoUrl, setVideoUrl] = useState("https://rt-mobiletrekvideos.s3.amazonaws.com/chris+welcome+video+10-14-22.mp4");
     const [videoPoster, setVideoPoster] = useState("https://proof-drug-tutorial.s3.amazonaws.com/AppTutorial/Video Tutorial/Player.png");
+    const [isGridView, setIsGridView] = useState(false);
+    const [isListView, setIsListView] = useState(false);
+    const [toggleSwitch, setToggleSwitch] = useState(checked);
     const tokenCookie = Cookies.get("token");
+    const device = useGetDeviceInfo();
 
     const dispatch = useDispatch();
     const { participant_id, pin } = useSelector(authToken);
@@ -32,6 +37,19 @@ const Tutorial = () => {
         tutorialVid.pause();
         setShowModal(false);
     };
+
+    const handleToggleGridView = () => { 
+        setIsGridView(true);
+        setIsListView(false);
+        setChecked(false)
+      };
+    
+      const handleToggleListView = () => {
+        setIsListView(true);
+        setIsGridView(false);
+        setChecked(true)
+    
+      };
 
     const handleSwitch = () => {
         if (tutsViewCookie === 'false') {
@@ -96,20 +114,26 @@ const Tutorial = () => {
                 </video>
             </Modal>
             <div className="tutorial-container">
-                <HeaderText
-                    title={"Quick & Easy"}
-                    text={
-                        "Ready to Launch Proof Tutorials? Afterwards you can start your Proof Test."
-                    }
-                />
-                <div className="switch-wrap">
-                    <p className="instruction">Select the Tutorial:</p>
-                    <Switch
-                        onToggle={handleSwitch}
-                        showLabel
-                        checked={checked}
-                    />
-                </div>
+            {device?.screenWidth !> 700?
+                <>
+                    <HeaderText
+                            title={"Quick & Easy"}
+                            text={"Ready to Launch Proof Tutorials? Afterwards you can start your Proof Test."} /><div className="switch-wrap">
+                                <p className="instruction">Select the Tutorial:</p>
+                                <Switch
+                                    onToggle={handleSwitch}
+                                    showLabel
+                                    checked={checked} />
+                            </div>
+                </>:
+                <DesktopSwitch
+                title="Quick & Easy"
+                description="Ready to Launch Proof Tutorials? Afterwards you can start your Proof Test."
+                onToggleGridView={handleToggleGridView}
+                onToggleListView={handleToggleListView}
+              />
+            }
+                
                 <div className="tutorial-main">
                     {checked ? (
                         <div className="sub-wrap-grid">
