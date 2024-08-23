@@ -32,7 +32,7 @@ const DextopMenu = () => {
             <Link href="#" className="sub-menu" style={{display: "block", textAlign: "left", borderBottom: "none", height: "80px"}} >
 
                 <p className="greet-text">{"Hello,"}</p>
-                <p className="user-name">
+                <p className="user-name" style={{fontSize="irem"}}>
                     {first_name + ' ' + last_name}
                 </p>
 
