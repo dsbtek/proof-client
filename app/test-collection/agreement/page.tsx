@@ -112,9 +112,11 @@ const AgreementConsent = () => {
 
   const renderAgreementContent = () => (
     <div className="agreement-container">
-      <AgreementHeader title="Agreement & Consent " />
+      {!isDesktop?
 
-      {/* <Header
+      <AgreementHeader title="Agreement & Consent " />:
+
+      <Header
         title="Agreement & Consent"
         icon={
           muted ? (
@@ -123,7 +125,7 @@ const AgreementConsent = () => {
             <RxSpeakerLoud onClick={toggleMute} color="#009cf9" style={{ cursor: "pointer" }} />
           )
         }
-      /> */}
+      />}
       <div className="agreement-items-wrap scroller">
         <p>
           <b>PROOF™ User Agreement</b>
@@ -232,7 +234,7 @@ const AgreementConsent = () => {
           <br />
           You understand that you are free to decline to provide biometric identifiers and biometric information to PROOF™, however, we are not able to provide certain identification verification services unless you consent and make information available to PROOF™ in accordance with this Policy. You may revoke this consent at any time by emailing us at proof@recoverytrek.com (you will not be able to proceed with PROOF™).
         </p>
-        <audio ref={audioRef} src="https://rt-mobiletrekvideos.s3.amazonaws.com/consent+and+accept.mp3" controls={false} autoPlay />
+        {/* <audio ref={audioRef} src="https://rt-mobiletrekvideos.s3.amazonaws.com/consent+and+accept.mp3" controls={false} autoPlay /> */}
       </div>
       <br /> <br />
       {isDesktop?
@@ -303,7 +305,8 @@ const AgreementConsent = () => {
     <div className="">
       {preTestScreens[0]?.Screen_1_Title !== "Agreement and Consent"
         ? renderAgreementContent()
-        : renderCustomContent(preTestScreens[0].Screen_1_Title, preTestScreens[0].Screen_1_Content)}
+        : renderCustomContent(preTestScreens[0].Screen_1_Title, preTestScreens[0].Screen_1_Content)
+      }
       <audio ref={audioRef} autoPlay muted={muted} controls={false}>
         <source src="https://rt-mobiletrekvideos.s3.amazonaws.com/consent+and+accept.mp3" type="audio/mpeg" />
         Your browser does not support the audio element.

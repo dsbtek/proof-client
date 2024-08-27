@@ -11,6 +11,7 @@ import { appData } from "@/redux/slices/appConfig";
 import { setKit } from "@/redux/slices/drugTest";
 import { extractAndFormatPreTestScreens, setCookie } from "@/utils/utils";
 import { setPreTestScreens } from '@/redux/slices/pre-test';
+import useResponsive from "@/hooks/useResponsive";
 
 const TestCollection = () => {
   const testViewCookie = Cookies.get("testView");
@@ -20,6 +21,7 @@ const TestCollection = () => {
   const [isGridView, setIsGridView] = useState(false);
   const [isListView, setIsListView] = useState(true);
   const [toggleSwitch, setToggleSwitch] = useState(checked);
+  const isDesktop = useResponsive()
 
   const handleToggleGridView = (isActive: boolean) => {
     setIsGridView(true);
@@ -47,19 +49,14 @@ const TestCollection = () => {
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
-      const screenWidth = window.innerWidth;
-
       setToggleSwitch(checked);
-      if (screenWidth <= 700) {
+      if (!isDesktop) {
         setToggleSwitch(checked);
       } else {
         setToggleSwitch(isListView);
       }
     };
-
     routeBasedOnScreenSize();
-    window.addEventListener('resize', routeBasedOnScreenSize);
-    return () => window.removeEventListener('resize', routeBasedOnScreenSize);
   }, [checked, isListView]);
 
   return (
@@ -67,13 +64,14 @@ const TestCollection = () => {
       <div className="container-test-collection">
         <AppHeader className="no-herder" title="Test/Collections" />
         <div className="views-container">
-          <Switch onToggle={handleSwitch} showLabel checked={checked} />
+          {!isDesktop?
+          <Switch onToggle={handleSwitch} showLabel checked={checked} />:
           <DesktopSwitch
             title="Test/Collection"
             description="Select the test you want to perform"
             onToggleGridView={handleToggleGridView}
             onToggleListView={handleToggleListView}
-          />
+          />}
           <div className="grid-list">
             {toggleSwitch ? (
               <Link href={"/test-collection/system-check"}>

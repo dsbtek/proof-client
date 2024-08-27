@@ -5,7 +5,7 @@ import Image from "next/image";
 import Webcam from "react-webcam";
 import { useDispatch } from "react-redux";
 import { useRouter } from 'next/navigation';
-
+import useResponsive from "@/hooks/useResponsive";
 import { AgreementFooter, AgreementHeader, DesktopFooter, Scanner } from '@/components';
 import { setIDBack } from '@/redux/slices/appConfig';
 import { uploadFileToS3 } from '../step-1/action';
@@ -20,7 +20,7 @@ const CameraIDCardDetection = () => {
     const [faceDetected, setFaceDetected] = useState<boolean>(false);
     const [brightness, setBrightness] = useState<number>(0);
     const [sigCanvasH, setSigCanvasH] = useState(0);
-
+    const isDesktop = useResponsive();
     const cameraRef = useRef<Webcam | null>(null);
 
     const dispatch = useDispatch();
@@ -82,19 +82,7 @@ const CameraIDCardDetection = () => {
 
 
 
-    useEffect(() => {
-        const routeBasedOnScreenSize = () => {
-            const screenWidth = window.innerWidth;
-            if (screenWidth <= 700) {
-                setSigCanvasH(250);
-            } else {
-                setSigCanvasH(700);
-            }
-        };
-        routeBasedOnScreenSize();
-        window.addEventListener('resize', routeBasedOnScreenSize);
-        return () => window.removeEventListener('resize', routeBasedOnScreenSize);
-    }, []);
+   
 
     // useEffect(() => {
     //     calculateBrightness(cameraRef as any)
@@ -102,21 +90,17 @@ const CameraIDCardDetection = () => {
 
     return (
         <>
-            {sigCanvasH !== 700 ?
+            {!isDesktop ?
                 <div className="id-detection-container" style={{ position: 'relative' }}>
                     <>
                         {showBCModal &&
-                            <div style={{ position: 'absolute', left: '0', top:"0",width: '100%', height: '100vh', zIndex: '1000' }}>
+                            <div style={{ position: 'absolute', left: '0', top:"0 !important", width: '100%', height: '100vh', zIndex: '1000' }}>
                                 <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
                             </div>
                         }
                         <AgreementHeader title="PIP - Step 2 " />
                         <br />
                         <div className='test-items-wrap-desktop_'>
-
-                            {/* {showBCModal && <div style={{ position: 'absolute', left: '0', width: '100%', height: '100%', zIndex: '1000' }}>
-                                <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
-                            </div>} */}
                             {!capturedImage &&
                                 <div className="sub-item">
                                     <p className="vid-text">
@@ -125,7 +109,6 @@ const CameraIDCardDetection = () => {
                                     </p>
                                 </div>}
                             <br />
-                            {/* <div className="vid-items-wrap"> */}
                             {!capturedImage ?
                                 <div className='camera-container'>
                                     <Webcam
@@ -135,18 +118,10 @@ const CameraIDCardDetection = () => {
                                         screenshotFormat="image/png"
                                         imageSmoothing={true} />
 
-                                    <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}>
-                                        {/* {brightness < 120 && (
-                                        <div className='brightness-detection'>
-                                            <p>Insufficient light detected.</p>
-                                        </div>
-                                    )} */}
-                                    </div>
+                                    <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}></div>
                                 </div>
                                 :
-                                // <div className='id-image'>
                                 !showBCModal && <Image className='id-image-2' src={capturedImage!} alt="captured Image" width={5000} height={5000} loading='lazy' />
-                                // </div>
                             }
                         </div>
                     </>
@@ -156,14 +131,11 @@ const CameraIDCardDetection = () => {
                         </p>
                     }
 
-                    {/* </div> */}
                     {capturedImage ?
                         <AgreementFooter
                             onPagination={false}
                             onLeftButton={true}
                             onRightButton={true}
-                            // btnRightLink={'/identity-profile/id-detection/scan-result'}
-                            // btnRightText={"Next"}
                             btnRightText={"Scan ID"}
                             btnLeftText={capturedImage ? 'Recapture' : ""}
                             onClickBtnLeftAction={capturedImage ? recapture : () => { }}
@@ -184,7 +156,7 @@ const CameraIDCardDetection = () => {
                         <AgreementHeader title="PROOF Identity Profile (PIP)" />
                         <div className='camera-items-wrap-desktop_'>
 
-                            {showBCModal && <div style={{ position: 'absolute', left: '0', top: '0', width: '100%', height: '100%', zIndex: '1000' }}>
+                            {showBCModal && <div style={{ position: 'absolute', left: '0', width: '100%', height: '100%', zIndex: '1000' }}>
                                 <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
                             </div>}
 
@@ -196,7 +168,6 @@ const CameraIDCardDetection = () => {
 
                             </div>
 
-                            {/* <div className="vid-items-wrap"> */}
                             {!capturedImage ?
                                 <div className='camera-container'>
                                     <Webcam
@@ -206,13 +177,7 @@ const CameraIDCardDetection = () => {
                                         screenshotFormat="image/png"
                                         imageSmoothing={true} />
 
-                                    <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}>
-                                        {/* {brightness < 120 && (
-                                        <div className='brightness-detection'>
-                                            <p>Insufficient light detected.</p>
-                                        </div>
-                                    )} */}
-                                    </div>
+                                    <div className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"}`}></div>
                                 </div>
                                 :
                                 <div className="id-img_">
@@ -235,12 +200,11 @@ const CameraIDCardDetection = () => {
                             onPagination={false}
                             onLeftButton={true}
                             onRightButton={true}
-                            // btnRightLink={'/identity-profile/id-detection/scan-result'}
-                            // btnRightText={"Next"}
                             btnRightText={"Scan ID"}
                             btnLeftText={capturedImage ? 'Recapture' : ""}
                             onClickBtnLeftAction={capturedImage ? recapture : () => { }}
-                            onClickBtnRightAction={barcodeCapture}
+                            // onClickBtnRightAction={barcodeCapture}
+                            btnRightLink='/identity-profile/id-detection/scan-bar-code'
                         />
                         :
                         <DesktopFooter

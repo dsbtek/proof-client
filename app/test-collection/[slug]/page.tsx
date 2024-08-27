@@ -14,6 +14,7 @@ import Crypto from "crypto-js";
 import { TbCapture } from "react-icons/tb";
 import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
+import useResponsive from "@/hooks/useResponsive";
 
 import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner, AgreementFooter, AgreementHeader, AppHeaderDesktop, DesktopFooter } from "@/components";
 import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename, setTestSteps } from '@/redux/slices/drugTest';
@@ -64,6 +65,7 @@ function Test() {
     const faceScanRef = useRef(0);
     const barcodeStepRef = useRef(0);
     const labelScanRef = useRef(0);
+    const isDesktop = useResponsive()
 
     const dispatch = useDispatch();
     const router = useRouter();
@@ -570,7 +572,7 @@ function Test() {
             <DialogBox show={showDialog} handleReject={handleDialog} handleAccept={endTest} title='End Test' content2='Are you sure you want to end your test?' content1='WARNING: Ending the test before the final step will result in a failed test.' rejectText='No' acceptText='Yes' />
             <div className="test-container">
                 {status !== 'acquiring' && !barcodeStep && <Alert show={faceDetected} />}
-                {sigCanvasH !== 700 ?
+                {!isDesktop ?
                     <>
                         <div style={{ display: 'flex', width: '100%', padding: '16px' }}>
                             <AppHeader title='' />
@@ -647,7 +649,7 @@ function Test() {
                                         // setStep_(test.length)
                                         return (
                                             <React.Fragment key={index}>
-                                                <div className="test-graphic_" key={index + 2} style={{position:"relative"}}>
+                                                <div className="test-graphic_" key={index + 2}>
                                                     <div className='test-text'>
                                                         <article className='test-step'>
                                                             <h5>{step.step}</h5>
@@ -655,8 +657,7 @@ function Test() {
                                                         <p className='t-text'>{step.directions}</p>
                                                     </div>
                                                     <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
-                                                    <div style={{ position: 'absolute', background:"transparent", display:"flex", height:"100%", width:"100%", alignItems: "center", justifyContent:"center" }}>
-
+                                                    <div style={{ position: 'relative', display:"flex", height:"100%", width:"100%", alignItems: "center", justifyContent:"center" }}>
                                                     {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
                                                     </div>
                                                 </div>
@@ -682,12 +683,13 @@ function Test() {
 
                     </div>
                 }
-                <DesktopFooter
+                {isDesktop &&
+                    <DesktopFooter
                     currentNumber={step}
                     outOf={step_}
                     onPagination={false}
-                    onLeftButton={true}
-                    onRightButton={true}
+                    onLeftButton={!isPlaying}
+                    onRightButton={!isPlaying && !barcodeStep && !performLabelScan}
                     btnLeftLink={""}
                     btnRightLink={""}
                     btnLeftText={"Repeat"}
@@ -695,7 +697,7 @@ function Test() {
                     rightdisabled={false}
                     onClickBtnLeftAction={repeatAudio}
                     onClickBtnRightAction={handleNextStep}
-                />
+                />}
                 {barcodeStep && <div className='barcode-btns'>
                     {barcodeIsLoading ? <Loader_ /> : <Button classname='cap-btn' onClick={barcodeCapture}><TbCapture /> Capture</Button>}
                 </div>}

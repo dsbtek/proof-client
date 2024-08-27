@@ -4,17 +4,19 @@ import { useCallback, useEffect, useState } from "react";
 import { useBattery } from 'react-use';
 import Image from "next/image";
 
-import { AgreementHeader, AppHeader, Button, Menu, MiniLoader } from "@/components";
+import { AgreementHeader, AppHeader, Button, DesktopFooter, Menu, MiniLoader } from "@/components";
 import { checkAvailableStorage, decryptIdAndCredentials, checkSignalStrength, /*FastTest,*/ generateSystemChecks, removeSkipQuestions } from "@/utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { testingKit } from "@/redux/slices/drugTest";
 import { toast } from "react-toastify";
 import { setPreTestQuestionnaire } from "@/redux/slices/pre-test";
+import useResponsive from "@/hooks/useResponsive";
 
 
 const SystemCheck = () => {
   const battery = useBattery();
   const dispatch = useDispatch();
+  const isDesktop = useResponsive()
 
   const deviceBatteryLevel = battery.isSupported && battery.fetched ? parseFloat((battery.level * 100).toFixed(0)) : 0;
   const [storageLevel, setStorageLevel] = useState<number>(0);
@@ -112,9 +114,22 @@ const SystemCheck = () => {
             </div>
           </div>
         ))}
+        {isDesktop?
+        <DesktopFooter
+        currentNumber={0}
+        outOf={0}
+        onPagination={false}
+        onLeftButton={false}
+        onRightButton={true}
+        btnLeftText=""
+        btnRightText="Next"
+        btnRightLink={"/test-collection/agreement"}
+        onClickBtnLeftAction={()=>{}}
+        onClickBtnRightAction={()=>{}}
+      />:
         <div className="btn-system-chk" style={{ width: '95%', marginLeft: 'auto', marginRight: 'auto', marginTop: '32px' }}>
           <Button blue type="submit" link={'/test-collection/agreement'}>Next</Button>
-        </div>
+        </div>}
       </div>
     </div>
   );

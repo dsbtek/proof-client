@@ -148,6 +148,7 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
     }
 
     return (
+        
         show && <div className='barcode-cap-modal'>
             {barcodeUploaded && !enterBarcode && barcode === '' &&
                 <div className='bc-content'>
@@ -178,7 +179,8 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
                 <div id="data-capture-view">
                 </div >
             </div>
-            {!enterBarcode && <div className='barcode-btns' style={{ flexDirection: 'column', alignItems: 'center' }}>
+            {!enterBarcode && 
+            <div className='barcode-btns' style={{ flexDirection: 'column', alignItems: 'center' }}>
                 <Button classname='cap-btn' onClick={() => {
                     runScanner().catch((error) => {
                         console.error(error);

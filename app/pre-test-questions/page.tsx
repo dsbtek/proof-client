@@ -5,6 +5,7 @@ import { AgreementHeader, AgreementFooter, RadioButton, DateSelector, Loader_, D
 import { useSelector } from "react-redux";
 import { testingKit } from '@/redux/slices/drugTest';
 import { useRouter } from 'next/navigation';
+import useResponsive from "@/hooks/useResponsive";
 
 interface Question {
   skip_logic: boolean;
@@ -40,6 +41,7 @@ const PreTest = () => {
   const [selectedDate_, setSelectedDate] = useState('');
   const router = useRouter();
   const [sigCanvasH, setSigCanvasH] = useState(0);
+  const isDesktop = useResponsive();
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
@@ -171,7 +173,7 @@ const PreTest = () => {
   return (
     <div className="container-test-collection">
       <AgreementHeader title={currentSection?.sectionName} />
-      {sigCanvasH !== 700 ?
+      {!isDesktop ?
         <div className="agreement-items-wrap">
           {currentQuestion.image_url && (
             <Image
@@ -221,8 +223,6 @@ const PreTest = () => {
                 ))}
               </div>
             )}
-
-
             {currentQuestion?.question_type?.includes('Date') && (
               <div className="radio-button-container">
                 <DatePicker title={"Select a date"} onDateSelect={handleDateSelect} />
@@ -243,7 +243,8 @@ const PreTest = () => {
       }
 
 
-      <DesktopFooter
+      {isDesktop?
+        <DesktopFooter
         currentNumber={currentQuestionIndex + 1}
         outOf={currentSection.questions.length}
         onPagination={true}
@@ -254,7 +255,20 @@ const PreTest = () => {
         btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
         onClickBtnLeftAction={handlePrev}
         onClickBtnRightAction={handleNext}
-      />
+      />:
+      <AgreementFooter
+      currentNumber={currentQuestionIndex + 1}
+      outOf={currentSection.questions.length}
+      onPagination={true}
+      onLeftButton={currentQuestionIndex > 0}
+      onRightButton={true}
+      btnLeftText="Previous"
+      btnRightText="Next"
+      btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
+      onClickBtnLeftAction={handlePrev}
+      onClickBtnRightAction={handleNext}
+    />
+    }
     </div>
   );
 };

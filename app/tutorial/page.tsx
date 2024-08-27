@@ -7,7 +7,8 @@ import { useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { IoIosArrowForward, IoMdCloseCircleOutline } from "react-icons/io";
 import Link from 'next/link';
-import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import useResponsive from "@/hooks/useResponsive";
+
 
 import { HeaderText, Menu, Switch, TutorialGridView, TutorialListView, Modal, ListViewLoader, GridViewLoader, CheckBox, DinamicMenuLayout, DesktopSwitch } from "@/components";
 import { authToken } from "@/redux/slices/auth";
@@ -24,7 +25,7 @@ const Tutorial = () => {
     const [isListView, setIsListView] = useState(false);
     const [toggleSwitch, setToggleSwitch] = useState(checked);
     const tokenCookie = Cookies.get("token");
-    const device = useGetDeviceInfo();
+    const isDesktop = useResponsive()
 
     const dispatch = useDispatch();
     const { participant_id, pin } = useSelector(authToken);
@@ -114,7 +115,7 @@ const Tutorial = () => {
                 </video>
             </Modal>
             <div className="tutorial-container">
-            {device?.screenWidth !> 700?
+            {!isDesktop?
                 <>
                     <HeaderText
                             title={"Quick & Easy"}
@@ -181,9 +182,6 @@ const Tutorial = () => {
                         </div>
                     )}
                 </div>
-                {/* <div className="menu-wrapper-style" style={{ padding: "16px" }}>
-                    <Menu />
-                </div> */}
             </div>
         </DinamicMenuLayout>
     );

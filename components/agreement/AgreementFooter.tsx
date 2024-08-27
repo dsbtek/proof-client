@@ -2,9 +2,7 @@
 import React from "react";
 import { Button } from "@/components";
 import Link from "next/link";
-import { GoHome } from "react-icons/go";
-import { BsMortarboardFill, BsFillPersonCheckFill } from "react-icons/bs";
-import { IoSettingsOutline } from "react-icons/io5";
+
 
 interface AgreementFooterProps {
   onPagination: boolean;

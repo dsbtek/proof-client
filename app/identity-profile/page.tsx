@@ -1,29 +1,16 @@
 "use client";
 import Image from "next/image";
-
+import useResponsive from "@/hooks/useResponsive";
 import { AgreementHeader, AgreementFooter, DesktopFooter } from "@/components";
 import { useEffect, useState } from "react";
 
 const IdentityProfile = () => {
-  const [sigCanvasH, setSigCanvasH] = useState(0);
+  const isDesktop = useResponsive();
 
-  useEffect(() => {
-    const routeBasedOnScreenSize = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth <= 700) {
-        setSigCanvasH(250);
-      } else {
-        setSigCanvasH(700);
-      }
-    };
-    routeBasedOnScreenSize();
-    window.addEventListener("resize", routeBasedOnScreenSize);
-    return () => window.removeEventListener("resize", routeBasedOnScreenSize);
-  }, []);
   return (
     <div className="container-test-collection">
       <AgreementHeader title="PROOF Identity Profile (PIP)" />
-      {sigCanvasH !== 700 ? (
+      {!isDesktop ? (
         <div className="agreement-items-wrap">
           <Image
             className="get-started-img"

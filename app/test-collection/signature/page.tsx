@@ -74,16 +74,14 @@ const SignaturePage = () => {
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth <= 700) {
+      if (!isDesktop) {
         setSigCanvasH(250);
       } else {
         setSigCanvasH(680);
       }
     };
     routeBasedOnScreenSize();
-    window.addEventListener('resize', routeBasedOnScreenSize);
-    return () => window.removeEventListener('resize', routeBasedOnScreenSize);
+    
   }, []);
 
 
@@ -111,17 +109,21 @@ const SignaturePage = () => {
 
       {/* <Header title="Signature" /> */}
       <div className="sign-items-wrap">
-        <div className="signBg-with-img" style={{ backgroundImage: sigCanvasH !== 680 ? 'url("../images/signBg.png")' : "", backgroundSize: "cover", backgroundRepeat: "no-repeat", }}>
+        <div className="signBg-with-img" style={{ backgroundImage: !isDesktop ? 'url("../images/signBg.png")' : "", backgroundSize: "cover", backgroundRepeat: "no-repeat", }}>
+          {isDesktop?
+            <p className="sign-text">
+            Please Sign in the white box in acceptance of <br /> the Agreement and Consent and press Next <br /> to continue.
+          </p>:
           <p className="sign-text">
-            Please Sign in the white box in acceptance of the Agreement and Consent and press Next to continue.
-          </p>
+          Please Sign in the white box in acceptance of the Agreement and Consent and press Next to continue.
+        </p>}
         </div>
         <div className="wrap-signature">
           <div style={{ width: '100%', height: '100%' }}>
             <SignatureCanvas
               ref={data => setSigCanvas(data)}
               penColor='#24527B'
-              canvasProps={{ width: 600, height: sigCanvasH, className: 'sigCanvas' }}
+              canvasProps={{ width: 600, height: isDesktop? "680px":"250px", className: 'sigCanvas' }}
             />
           </div>
         </div>

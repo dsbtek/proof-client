@@ -61,11 +61,7 @@ const PreTestScreens = () => {
   return (
     <div className="container-test-collection">
       <div style={{ display: "flex", width: "100%", padding: "16px" }}>
-        {isDesktop?
-                     <AppHeaderDesktop title={currentScreen?.[`Screen_${currentScreenIndex_}_Title`] || ""} />:
-  
-    <AppHeader title={currentScreen?.[`Screen_${currentScreenIndex_}_Title`] || ""} />
-  }
+          <AppHeader title={currentScreen?.[`Screen_${currentScreenIndex_}_Title`] || ""} />
         <div className="test-audio">
           {muted ? (
             <GoMute onClick={muteAudio} color="#adadad" style={{ cursor: "pointer" }} />
@@ -74,8 +70,9 @@ const PreTestScreens = () => {
           )}
         </div>
       </div>
-      <div className="agreement-items-wrap">
-        {currentScreen?.[`Screen_${currentScreenIndex_}_Image_URL`] && (
+      <div className="agreement-items-wrap"  style={{flexDirection:isDesktop? "row": "" as any}}>
+        {!isDesktop && currentScreen?.[`Screen_${currentScreenIndex_}_Image_URL`] && (
+          <div className="wrap-prescreen-img">
           <Image
             className="get-started-img"
             src={currentScreen[`Screen_${currentScreenIndex_}_Image_URL`]}
@@ -83,11 +80,26 @@ const PreTestScreens = () => {
             width={3000}
             height={3000}
           />
+          </div>
         )}
-        <p
+        <div className="prescreen-text">
+           <p
           className="screen-content"
           dangerouslySetInnerHTML={{ __html: formatList(currentScreen?.[`Screen_${currentScreenIndex_}_Content`] || "") }}
         />
+        </div>
+       
+        {isDesktop && currentScreen?.[`Screen_${currentScreenIndex_}_Image_URL`] && (
+          <div className="wrap-prescreen-img">
+          <Image
+            className="get-started-img"
+            src={currentScreen[`Screen_${currentScreenIndex_}_Image_URL`]}
+            alt="Screen Image"
+            width={3000}
+            height={3000}
+          />
+          </div>
+        )}
         {currentScreen?.[`Screen_${currentScreenIndex_}_Audio_URL`] && (
           <audio ref={audioRef} src={currentScreen[`Screen_${currentScreenIndex_}_Audio_URL`]} controls={false} autoPlay />
         )}

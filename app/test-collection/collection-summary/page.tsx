@@ -10,7 +10,7 @@ import { testData } from '@/redux/slices/drugTest';
 import { appData } from '@/redux/slices/appConfig';
 import Mobile from "./mobile"
 import Desktop from "./desktop"
-import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import useResponsive from "@/hooks/useResponsive";
 
 
 function CollectionSummary() {
@@ -18,7 +18,7 @@ function CollectionSummary() {
     const pathname = usePathname();
     const { startTime, endTime, testClip, uploading, confirmationNo } = useSelector(testData);
     const { Shipping_Carrier } = useSelector(appData);
-    const device = useGetDeviceInfo();
+    const isDesktop = useResponsive();
 
     const exitAndSave = () => {
         const a = document.createElement("a");
@@ -45,7 +45,7 @@ function CollectionSummary() {
         };
     }, [uploading, pathname]);
 
-    return device?.screenWidth > 700 ? <Desktop /> : <Mobile />;
+    return isDesktop ? <Desktop /> : <Mobile />;
 }
 
 export default CollectionSummary;

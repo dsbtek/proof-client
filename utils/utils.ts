@@ -436,3 +436,51 @@ export function parseAamvaData(data: string | null): Record<string, any> | strin
 
   return parsedData;
 };
+
+
+
+export const extractFaceImage = (
+  img: HTMLImageElement,
+  face: any,
+  paddingRatio = 0.5
+) => {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (!context) return null;
+
+  const keypoints = face.scaledMesh;
+  const xCoords = keypoints.map((point: number[]) => point[0]);
+  const yCoords = keypoints.map((point: number[]) => point[1]);
+  const minX = Math.min(...xCoords);
+  const maxX = Math.max(...xCoords);
+  const minY = Math.min(...yCoords);
+  const maxY = Math.max(...yCoords);
+
+  const paddingX = (maxX - minX) * paddingRatio;
+  const paddingY = (maxY - minY) * paddingRatio;
+
+  const startX = Math.max(minX - paddingX, 0);
+  const startY = Math.max(minY - paddingY, 0);
+  const endX = Math.min(maxX + paddingX, img.width);
+  const endY = Math.min(maxY + paddingY, img.height);
+
+  canvas.width = endX - startX;
+  canvas.height = endY - startY;
+  context.drawImage(
+    img,
+    startX,
+    startY,
+    canvas.width,
+    canvas.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  // Apply sharpening filter to improve image quality
+  // context.filter = 'contrast(1.2) brightness(1.1)'; // Adjust contrast and brightness
+  // context.drawImage(canvas, 0, 0);
+
+  return canvas.toDataURL("image/png");
+};
