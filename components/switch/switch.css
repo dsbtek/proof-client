@@ -1,98 +1,96 @@
 .wrap-check {
-  display: flex;
-  align-items: center;
-  width: 100px;
+    display: flex;
+    align-items: center;
+    width: 100px;
 }
 
 .wrap-desktop-switch {
-  display: none;
+    display: none;
 }
 
 .wrap-check p {
-  font-size: 12px;
-  font-weight: 400;
-  width: 100px;
+    font-size: 12px;
+    font-weight: 400;
+    width: 100px;
 }
 
 .list-view {
-  color: #959595;
+    color: #959595;
 }
 
 .grid-view {
-  color: rgba(0, 156, 249, 1);
+    color: rgba(0, 156, 249, 1);
 }
 
 .switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 20px;
-  background-color: #ccc;
-  border-radius: 34px;
-  border: none;
-  cursor: pointer;
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 34px;
+    border: none;
+    cursor: pointer;
 }
 
 .switchOn {
-  background-color: #2196f3;
+    background-color: #2196f3;
 }
 
 .switchOff {
-  background-color: #ccc;
+    background-color: #ccc;
 }
 
 .slider {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 1px;
-  bottom: 1px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.4s;
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 1px;
+    bottom: 1px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
 }
 
 .switchOn .slider {
-  transform: translateX(18px);
+    transform: translateX(18px);
 }
 
 .switchOff .slider {
-  transform: translateX(0);
+    transform: translateX(0);
 }
 
 .btn-desktop-switch {
-  background-color: transparent;
-  border: none;
-  border-radius: 8px;
-  margin: 0px 5px;
+    background-color: transparent;
+    border: none;
+    border-radius: 8px;
+    margin: 0px 5px;
 }
 
 .btn-desktop-img {
-  height: 36px;
-  width: 36px;
+    height: 36px;
+    width: 36px;
 }
 
 @media (min-width: 700px) {
-  .wrap-check {
+    /* .wrap-check {
     display: none;
-  }
-
-  .wrap-desktop-switch {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 20px;
-    background-color: #FFFFFF;
-    border-radius: 10px 10px 0px 0px;
-  }
-
-  .destop-switch-btn-wrap {
-    display: flex;
-    justify-content: space-evenly;
-    width: 15%;
-    padding: 16px;
-    background-color: #793b3b;
-  }
+  } */
+    .wrap-desktop-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 20px;
+        background-color: #FFFFFF;
+        border-radius: 10px 10px 0px 0px;
+    }
+    .destop-switch-btn-wrap {
+        display: flex;
+        justify-content: space-evenly;
+        width: 15%;
+        padding: 16px;
+        background-color: #793b3b;
+    }
 }

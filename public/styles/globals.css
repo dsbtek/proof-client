@@ -97,7 +97,7 @@ button:disabled {
     flex-direction: row;
     width: 100vw;
     height: 100vh;
-    background-color:  #FAFAFA;
+    background-color: #FAFAFA;
 }
 
 .items-wrap {
@@ -179,7 +179,8 @@ button:disabled {
 }
 
 .badge {
-    width: 5.9375rem;
+    min-width: 5.9375rem;
+    width: fit-content;
     height: 2.3125rem;
     border-radius: 1.875rem;
     padding: 0.5rem 1rem;
@@ -203,13 +204,13 @@ button:disabled {
 .flex-row {
     display: flex;
     flex-direction: row;
-    gap: .5rem;
+    gap: 8px;
 }
 
 .flex-columns {
     display: flex;
     flex-direction: column;
-    gap: .5rem;
+    gap: 8px;
 }
 
 

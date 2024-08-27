@@ -76,7 +76,12 @@ function Settings() {
               label="Participant ID"
               value={participant_id as string}
             />
-            <Button blue classname="" type="submit">
+            <Button
+              blue
+              classname=""
+              type="submit"
+              style={{ width: "8.5rem", height: "3.1875rem", fontSize: "1rem" }}
+            >
               Save Profile
             </Button>
           </section>

@@ -102,6 +102,54 @@
     color: #ffffff;
 }
 
+
+/* history modal styles */
+
+.history-modal {
+    background-color: #ffffff;
+    width: 416px;
+    min-height: 676px;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.close-icon-row {
+    width: 100%;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.history-modal-title {
+    color: #0C1617;
+    font-weight: 600;
+    font-size: 1.25rem;
+    text-align: center;
+}
+
+.history-modal-subtext {
+    color: #4E555D;
+    font-size: 1.125rem;
+    margin: 16px 0;
+    text-align: center;
+}
+
+.history-modal-details {
+    margin: 24px 0;
+    width: 100%;
+}
+
+.history-modal-details-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid #E3E6EB;
+}
+
 @media screen and (min-width: 700px) {
     .barcode-cap-modal {
         height: 100vh;

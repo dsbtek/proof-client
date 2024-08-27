@@ -9,12 +9,15 @@
 
 .support-content {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    /* flex-direction: row; */
+    /* justify-content: space-between; */
     gap: 12px;
     margin-top: 32px;
     margin-bottom: 12px;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .support-section {
@@ -28,7 +31,6 @@
     align-items: center;
     flex: 1;
     height: 223px;
-    margin: 32px 0;
     webkit-box-shadow: -1px -1px 16px 1px rgba(0, 0, 0, 0.5);
     -moz-box-shadow: -1px -1px 16px px rgba(0, 0, 0, 0.425);
     box-shadow: -1px -1px 16px 1px rgba(0, 0, 0, 0.35);
@@ -43,7 +45,7 @@
     width: 100%;
     overflow-y: scroll;
     /* flex: 1 */
-    height: 350px;
+    height: 400px;
 }
 
 .faqs::-webkit-scrollbar {
@@ -57,12 +59,13 @@
     margin-bottom: 8px;
     width: 100%;
     background-color: #F6F7F8;
-    padding: 20px;
+    padding: 10px;
+    border-radius: 4px;
 }
 
 .faq-title {
     font-weight: 500;
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 24px;
     color: #0C1617;
 }
@@ -78,7 +81,7 @@
 
 .faq-text {
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 24px;
     color: #4E555D;
 }

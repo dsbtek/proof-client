@@ -4,7 +4,10 @@
     color: #ffffff;
     width: 100%;
     height: 65px;
-    padding: 20px 16px;
+    /* padding: 20px 16px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: #009cf9;
     border-radius: 12px;
     border: none;
@@ -70,18 +73,16 @@
     align-items: center;
     gap: 8px;
     background: #FFD5D380;
-
     font-size: 12px;
     font-weight: 400;
     line-height: 24px;
-
     position: absolute;
     right: 0;
 }
 
 .logout-btn-dextop-menu {
     width: 95%;
-    padding: 8px;
+    padding: 24px;
     border-radius: 8px;
     border: none;
     color: #FF6566;
@@ -162,7 +163,6 @@
     border-radius: 8px;
     border: 1px solid #009cf9;
     cursor: pointer;
-
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
@@ -192,7 +192,6 @@
     padding: 12px 16px;
     gap: 10px;
     cursor: pointer;
-
     font-size: 16px;
     line-height: 20px;
     font-weight: 500;
@@ -209,7 +208,6 @@
 }
 
 @media (max-width: 768px) {
-
     .exit-btn,
     .exit-btn-trans {
         padding: 12px 3px;

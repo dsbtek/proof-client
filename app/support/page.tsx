@@ -4,11 +4,18 @@ import { useSelector } from "react-redux";
 import { use, useEffect, useState } from "react";
 import { AiOutlineDown, AiOutlineUp } from "react-icons/ai";
 
-import { appData } from '@/redux/slices/appConfig';
-import { AppHeader, Button, DinamicMenuLayout, Menu, Setting } from '@/components';
+import { appData } from "@/redux/slices/appConfig";
+import {
+  AppHeader,
+  Button,
+  DinamicMenuLayout,
+  Menu,
+  Setting,
+} from "@/components";
 
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import Image from "next/image";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 function Support() {
   const [FAQs, setFAQs] = useState([]);
@@ -145,12 +152,12 @@ function Support() {
                       </h6>
                       <Button classname="faq-btn" onClick={toggleInfo(index)}>
                         {showFAQ && activeTab == index ? (
-                          <AiOutlineUp
+                          <FiChevronUp
                             size={20}
                             color={activeTab == index ? "#009cf9" : "#95a3b4"}
                           />
                         ) : (
-                          <AiOutlineDown size={20} color="#95a3b4" />
+                          <FiChevronDown size={20} color="#95a3b4" />
                         )}
                       </Button>
                     </header>

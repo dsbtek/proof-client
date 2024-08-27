@@ -59,9 +59,13 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           padding: "12px",
           borderRadius: "8px",
           border: "1px solid #C6CED6",
+          height: "48px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <HiOutlineAdjustmentsHorizontal />
+        <HiOutlineAdjustmentsHorizontal size={24} />
 
         {title}
 
