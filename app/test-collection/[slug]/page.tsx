@@ -655,7 +655,7 @@ function Test() {
                                                         <p className='t-text'>{step.directions}</p>
                                                     </div>
                                                     <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
-                                                    <div style={{ position: 'relative' }}>
+                                                    <div style={{ position: 'relative', display:"flex", height:"100%", width:"100%", alignItems: "center", justifyContent:"center" }}>
 
                                                     {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
                                                     </div>
