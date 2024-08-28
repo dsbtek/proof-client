@@ -8,21 +8,20 @@ import {
   HomeFooter,
   DinamicMenuLayout,
 } from "@/components";
+import useResponsive from "@/hooks/useResponsive";
 
 const Home = () => {
   const router = useRouter();
+  const isDesktop = useResponsive()
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth >= 700) {
+      if (isDesktop) {
         router.push("/test-collection");
       }
     };
     routeBasedOnScreenSize();
-    window.addEventListener("resize", routeBasedOnScreenSize);
-    return () => window.removeEventListener("resize", routeBasedOnScreenSize);
-  }, [router]);
+  }, [router, isDesktop]);
 
   return (
     <DinamicMenuLayout>

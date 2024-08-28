@@ -240,6 +240,9 @@ const DesktopHistory = () => {
                               setModdalData(item);
                               setShowModal(!showModal);
                             }}
+                            size={20}
+                            color="#4E555D"
+                            className="clickable-icon-hover"
                           />
                         </div>
                         <div className="flex-row">
@@ -268,8 +271,8 @@ const DesktopHistory = () => {
                           <p>{item?.TestPanel}</p>
                         </div>
                         <Badge
-                          type="positive"
-                          text={item?.DrugTestResultStatus}
+                          type={item?.DrugTestResultStatus || "Inconclusive"}
+                          text={item?.DrugTestResultStatus || "Inconclusive"}
                         />
                       </div>
                     ))

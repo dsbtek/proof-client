@@ -22,7 +22,6 @@ function Support() {
   const [showFAQ, setShowInfo] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const device = useGetDeviceInfo();
-  console.log(device, "device");
 
   const { FAQList, permissions } = useSelector(appData);
   const appPermissions = permissions ? permissions.split(";") : undefined;
@@ -67,8 +66,7 @@ function Support() {
   return (
     <DinamicMenuLayout>
       <div className="tutorial-container support-container">
-        {device?.screenWidth > 700}
-        <AppHeader title="SUPPORT" />
+        {device?.screenWidth < 700 && <AppHeader title="SUPPORT" />}
         <div className="dex-only title-sub-container">
           <h4 className="set-sec-title">Customer Support</h4>
           <p className="settings-title-subtext">

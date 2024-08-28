@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from "next/image";
 import { FaRegCirclePlay } from "react-icons/fa6";
 
 interface GridViewrProps {
@@ -10,12 +10,19 @@ interface GridViewrProps {
 const GridView = ({ imgUrl, title, onClick }: GridViewrProps) => {
   return (
     <div className="grid-card" onClick={onClick}>
-      <div className='tut-overlay'>
+      <div className="tut-overlay">
         <FaRegCirclePlay color="#009CF9" size={40} />
       </div>
-      <Image className="tut-grid-img" src={imgUrl} alt="proof image" width={3000} height={3000} loading='lazy' />
+      <Image
+        className="tut-grid-img"
+        src={imgUrl}
+        alt="proof image"
+        width={3000}
+        height={3000}
+        loading="lazy"
+      />
       <p>{title}</p>
     </div>
-  )
+  );
 };
 export default GridView;

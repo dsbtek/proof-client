@@ -15,6 +15,7 @@ import "./menu.css";
 import Button from "../button";
 import { clearTestData } from "@/redux/slices/drugTest";
 import { logout } from "@/redux/slices/auth";
+import { useEffect, useState } from "react";
 
 const DextopMenu = () => {
   const { first_name, last_name } = useSelector(appData);
@@ -23,6 +24,15 @@ const DextopMenu = () => {
   const photo = user?.photo;
   const dispatch = useDispatch();
   const router = useRouter();
+  // const pendingTest = localStorage.getItem("pendingTest");
+  const [pendingTest, setPendingTest] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedPendingTest = localStorage.getItem("pendingTest");
+      setPendingTest(storedPendingTest);
+    }
+  }, []);
 
   return (
     <nav className="menu">
@@ -77,6 +87,7 @@ const DextopMenu = () => {
             Test/Collection
           </p>
         </Link>
+        {pendingTest &&
 
         <Link
           href="/pending-test"
@@ -111,6 +122,7 @@ const DextopMenu = () => {
             Pending Test
           </p>
         </Link>
+        }
 
         <Link
           href={

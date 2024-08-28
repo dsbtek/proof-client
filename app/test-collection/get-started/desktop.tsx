@@ -6,14 +6,14 @@ import Image from "next/image";
 const Desktop = () => {
 
   return (
-    <div className="container-test-collection">
+    <div className="agreement-container">
       <AgreementHeader title="Device Setup" />
-        <div className="test-items-wrap-desktop_">
+      <div className="test-items-wrap-desktop_" style={{ textAlign: "left" }}>
           <div className="sub-item">
             <p className="get-started-title">
               Getting Started
             </p>
-            <ul>
+          <ul style={{ textAlign: "left" }}>
               <li>Find a clear workspace and take your seat.</li>
               <li>Please remember that you will need approximately 20 uninterrupted minutes.</li>
               <li>Set your phone to DO NOT Disturb and turn OFF Alarms.</li>

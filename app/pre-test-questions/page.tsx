@@ -40,22 +40,8 @@ const PreTest = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedDate_, setSelectedDate] = useState('');
   const router = useRouter();
-  const [sigCanvasH, setSigCanvasH] = useState(0);
   const isDesktop = useResponsive();
 
-  useEffect(() => {
-    const routeBasedOnScreenSize = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth <= 700) {
-        setSigCanvasH(250);
-      } else {
-        setSigCanvasH(700);
-      }
-    };
-    routeBasedOnScreenSize();
-    window.addEventListener('resize', routeBasedOnScreenSize);
-    return () => window.removeEventListener('resize', routeBasedOnScreenSize);
-  }, []);
   useEffect(() => {
     if (preTestQuestionnaire.length) {
       const initialSelectedOptions = preTestQuestionnaire.map((section, sectionIndex) =>
@@ -255,6 +241,7 @@ const PreTest = () => {
         btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
         onClickBtnLeftAction={handlePrev}
         onClickBtnRightAction={handleNext}
+          rightdisabled={selectedOption === null}
       />:
       <AgreementFooter
       currentNumber={currentQuestionIndex + 1}
@@ -267,7 +254,8 @@ const PreTest = () => {
       btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
       onClickBtnLeftAction={handlePrev}
       onClickBtnRightAction={handleNext}
-    />
+          rightdisabled={selectedOption === null}
+        />
     }
     </div>
   );

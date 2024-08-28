@@ -1,10 +1,12 @@
 "use client";
 import { AppHeader } from "@/components";
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 function PrivacyPolicy() {
   const router = useRouter();
+  const device = useGetDeviceInfo();
 
   return (
     <div className="container scroller privacy-container">
@@ -37,7 +39,7 @@ function PrivacyPolicy() {
         </div>
       </div>
       <div className="items-wrap">
-        <AppHeader title="Privacy Policy" />
+        {device?.screenWidth < 700 && <AppHeader title="Privacy Policy" />}
         <div className="privacy-policy-content">
           <br />
           <h4 className="set-text">Cookie User Notice</h4>

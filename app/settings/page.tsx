@@ -20,6 +20,7 @@ import { logout } from "@/redux/slices/auth";
 import { appData, appDataDump, userIdString } from "@/redux/slices/appConfig";
 import { authToken } from "@/redux/slices/auth";
 import { clearTestData } from "@/redux/slices/drugTest";
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 
 function Settings() {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ function Settings() {
   const { first_name, last_name, email } = useSelector(appData);
   const { participant_id } = useSelector(authToken);
   const userId = useSelector(userIdString) ?? "/images/user-avi.png";
+  const device = useGetDeviceInfo();
 
   return (
     <DinamicMenuLayout>
@@ -35,7 +37,7 @@ function Settings() {
         <div className="personal-information-container">
           {/* <div className="items-wrap "> */}
           <div className="settings-header">
-            <AppHeader title="Settings" />
+            {device?.screenWidth < 700 && <AppHeader title="Settings" />}
             <Button
               classname="mobile-only logout-btn"
               onClick={() => {

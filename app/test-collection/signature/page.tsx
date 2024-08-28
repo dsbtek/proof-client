@@ -125,7 +125,7 @@ const SignaturePage = () => {
           }}
         >
           {isDesktop ? (
-            <p className="sign-text">
+            <p className="sign-text" style={{ textAlign: "left" }}>
               Please Sign in the white box in acceptance of <br /> the Agreement
               and Consent and press Next <br /> to continue.
             </p>
@@ -167,7 +167,7 @@ const SignaturePage = () => {
         />
       ) : (
         <AgreementFooter
-          currentNumber={2}
+            currentNumber={2}
           outOf={5}
           onPagination={true}
           onLeftButton={true}

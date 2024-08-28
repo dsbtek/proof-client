@@ -171,7 +171,14 @@
         border-radius: 0px;
     }
 
-
+.collection-summary-submission-status {
+    position: absolute;
+    width: 50%;
+    height: 25px;
+    left: 10px;
+    bottom: 3%;
+    z-index: 100;
+}
 
 
 }

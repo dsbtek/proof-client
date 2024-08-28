@@ -229,18 +229,7 @@
         width: 100%;
     }
     .barcode-btns {
-        background: transparent;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-content: center;
-        width: 100%;
-        padding: 12px;
-        position: static;
-        /* bottom: 50px; */
-        gap: 16px;
+        bottom: 1.5%;
     }
-    #data-capture-view {
-        background-size: cover;
-    }
+   
 }

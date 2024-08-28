@@ -34,7 +34,7 @@ function AppHeaderDesktop({ title, className, handleDialog }: AppHeaderDesktopPr
     };
 
     const renderIcon = () => {
-        if (pathname !== `${navPath}` || "/test-collection/collection-summary") {
+        if (pathname === `${navPath}`) {
             return (
                 <div className="cancel-btn" onClick={handleDialog}>
                     <p> Cancel</p>

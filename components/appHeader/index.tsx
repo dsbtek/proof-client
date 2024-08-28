@@ -31,7 +31,6 @@ function AppHeader({ title, className }: AppHeaderProps) {
     return (
         <div className={`app-header-container ${className}`}>
             <div className="icon-container">
-
                 <AiOutlineArrowLeft onClick={handleBack} />
             </div>
             <div className="title-container">{title}</div>

@@ -201,6 +201,11 @@ button:disabled {
     color: #EF4444;
 }
 
+.badge-inconclusive {
+    background-color: #E3E4E4;
+    color: #4E555D;
+}
+
 .flex-row {
     display: flex;
     flex-direction: row;

@@ -122,6 +122,11 @@
     margin-bottom: 12px;
 }
 
+.clickable-icon-hover:hover {
+    background-color: #E3E6EB;
+    border-radius: 30px;
+}
+
 .history-modal-title {
     color: #0C1617;
     font-weight: 600;
@@ -149,10 +154,10 @@
     padding: 24px 0;
     border-bottom: 1px solid #E3E6EB;
 }
-
+/* 
 @media screen and (min-width: 700px) {
     .barcode-cap-modal {
         height: 100vh;
         top: 0px;
     }
-}
+} */

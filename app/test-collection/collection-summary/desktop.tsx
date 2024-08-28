@@ -89,16 +89,17 @@ function Desktop() {
                 <div className="video-preview">
                     <video autoPlay loop muted src={testClip} className="vid-prev"></video>
                 </div>
+                <div className='collection-summary-submission-status'> {uploading ? "Uploading Process..." : "Uploaded Successfully"}</div>
             </div>
 
             <DesktopFooter
-                currentNumber={3}
-                outOf={5}
-                onPagination={true}
-                onLeftButton={true}
-                onRightButton={true}
-                btnLeftLink={"/test-collection/signature"}
-                btnRightLink={"/test-collection/before-you-begin"}
+                currentNumber={0}
+                outOf={0}
+                onPagination={false}
+                onLeftButton={false}
+                onRightButton={false}
+                btnLeftLink={"/"}
+                btnRightLink={""}
                 btnLeftText={"Back"}
                 btnRightText={"Next"}
             />

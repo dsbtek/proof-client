@@ -6,6 +6,7 @@ import { AppHeader, DinamicMenuLayout, Switch } from "@/components";
 import { setCookie } from "@/utils/utils";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 
 function ApplicationSettings() {
   const welcomeCookie = Cookies.get("welView");
@@ -22,12 +23,16 @@ function ApplicationSettings() {
       setChecked(false);
     }
   };
+  const device = useGetDeviceInfo();
+
   return (
     <DinamicMenuLayout>
       <div className="tutorial-container application-settings-container ">
         {/* <div className="container"> */}
         {/* <div className="items-wrap"> */}
-        <AppHeader title="Application Settings" />
+        {device?.screenWidth < 700 && (
+          <AppHeader title="Application Settings" />
+        )}
         <div className="dex-only back-button" onClick={() => router.back()}>
           <Image
             className=""
@@ -48,7 +53,7 @@ function ApplicationSettings() {
         </div>
         <div className="app-toggles">
           <div className="toggle-tutorial">
-            <p>Show Welcome Tutorial</p>
+            Show Welcome Tutorial
             <Switch onToggle={handleSwitch} checked={checked} />
           </div>
           <div className="toggle-tutorial">

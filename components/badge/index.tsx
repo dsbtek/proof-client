@@ -1,7 +1,7 @@
 import React from "react";
 
 interface BadgeProps {
-  type?: "pending" | "negative" | "positive";
+  type?: "Pending" | "Negative" | "Positive" | "Inconclusive";
   text?: string;
 }
 
@@ -9,11 +9,13 @@ function Badge({ type, text }: BadgeProps) {
   return (
     <div
       className={`badge ${
-        type === "positive"
+        type === "Positive"
           ? "badge-positive"
-          : type === "negative"
+          : type === "Negative"
           ? "badge-negative"
-          : "badge-positive"
+          : type == "Pending"
+          ? "badge-pending"
+          : "badge-inconclusive"
       }`}
     >
       {text}

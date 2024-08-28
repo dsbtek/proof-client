@@ -29,7 +29,11 @@ const HistoryModal = ({ show, onClose, data }: SessionModalProps) => {
     <Modal show={show} onClose={onClose}>
       <div className="history-modal">
         <div className="close-icon-row" onClick={onClose}>
-          <SlClose size={30} style={{ float: "right" }} />
+          <SlClose
+            size={30}
+            style={{ float: "right" }}
+            className="clickable-icon-hover"
+          />
         </div>
         <h4 className="history-modal-title">{data?.ServiceType}</h4>
         <p className="history-modal-subtext">
@@ -38,7 +42,11 @@ const HistoryModal = ({ show, onClose, data }: SessionModalProps) => {
           )} days ago`}
         </p>
         <Badge
-          type="positive"
+          type={
+            data?.DrugTestResultStatus
+              ? data?.DrugTestResultStatus
+              : "Inconclusive"
+          }
           text={
             data?.DrugTestResultStatus
               ? data?.DrugTestResultStatus

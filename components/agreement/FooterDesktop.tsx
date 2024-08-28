@@ -43,7 +43,7 @@ const DesktopFooter = ({
             {onPagination && (
                 <div className="paginate">
 
-                    <div style={{width:"50px"}}>Step {currentNumber}</div> <div>of</div> <div>{outOf}</div>
+                        <div style={{ width: "50px", gap: "8px" }}>Step {currentNumber} </div>-<div>of</div>-<div>{outOf}</div>
                 </div>
             )}
             </div>

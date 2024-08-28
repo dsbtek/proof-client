@@ -238,15 +238,7 @@ const CameraIDCardDetection = () => {
                       />
                     </div>
                   )}
-                  {!faceImage && (
-                    <Button
-                      blue
-                      onClick={recaptureImage}
-                      style={{ marginTop: "2em" }}
-                    >
-                      Recapture
-                    </Button>
-                  )}
+
                 </>
               )
             ) : (
@@ -275,7 +267,7 @@ const CameraIDCardDetection = () => {
             onLeftButton={faceImage ? true : false}
             onRightButton={true}
             btnLeftText={"Recapture"}
-            onClickBtnLeftAction={faceImage ? recaptureImage : () => {}}
+            onClickBtnLeftAction={recaptureImage}
             btnRightText={capturedImage ? "Next" : "Capture"}
             onClickBtnRightAction={capturedImage ? undefined : captureFrame}
             rightdisabled={!faceDetected}
@@ -380,15 +372,6 @@ const CameraIDCardDetection = () => {
                     )}
                   </div>
 
-                  {!faceImage && (
-                    <Button
-                      blue
-                      onClick={recaptureImage}
-                      style={{ marginTop: "2em" }}
-                    >
-                      Recapture
-                    </Button>
-                  )}
                 </>
               )
             ) : (
@@ -417,7 +400,7 @@ const CameraIDCardDetection = () => {
             onLeftButton={faceImage ? true : false}
             onRightButton={true}
             btnLeftText={"Recapture"}
-            onClickBtnLeftAction={faceImage ? recaptureImage : () => {}}
+              onClickBtnLeftAction={recaptureImage}
             btnRightText={capturedImage ? "Next" : "Capture"}
             onClickBtnRightAction={capturedImage ? undefined : captureFrame}
             rightdisabled={!faceDetected}

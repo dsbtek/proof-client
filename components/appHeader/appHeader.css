@@ -22,7 +22,6 @@
     .app-header-container {
         /* border-bottom: 1px solid #E3E6EB; */
         /* height: 100%; */
-        display: none;
     }
     .cancel-btn {
         display: flex;

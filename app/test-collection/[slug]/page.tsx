@@ -49,8 +49,6 @@ function Test() {
     const [performFaceScan, setPerformFaceScan] = useState<boolean>(false);
     const [performLabelScan, setPerformLabelScan] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [step, setStep] = useState<number>(1);
-    const [step_, setStep_] = useState<number>(1);
     const cameraRef = useRef<Webcam | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const blobCount = useRef(0);
@@ -80,21 +78,8 @@ function Test() {
     const isVisible = usePageVisibility();
     const { faceDetected } = useFaceDetector(cameraRef);
     const { uploader, testUpload } = useTestupload();
-    const [sigCanvasH, setSigCanvasH] = useState(0);
 
-    useEffect(() => {
-        const routeBasedOnScreenSize = () => {
-            const screenWidth = window.innerWidth;
-            if (screenWidth <= 700) {
-                setSigCanvasH(250);
-            } else {
-                setSigCanvasH(700);
-            }
-        };
-        routeBasedOnScreenSize();
-        window.addEventListener('resize', routeBasedOnScreenSize);
-        return () => window.removeEventListener('resize', routeBasedOnScreenSize);
-    }, []);
+
     const {
         status,
         liveVideo,
@@ -635,7 +620,7 @@ function Test() {
                         {/* <AgreementHeader title='Test' /> */}
                         <div className='test-head'>
                             {/* <AppHeader title='' /> */}
-                            <AppHeaderDesktop title="" />
+                            <AppHeaderDesktop handleDialog={handleDialog} title="" />
                             <div className='test-audio'>
                                 {muted ? <GoMute onClick={muteAudio} color='#adadad' style={{ cursor: 'pointer' }} /> : <RxSpeakerLoud onClick={muteAudio} color='#009cf9' style={{ cursor: 'pointer' }} />}
                                 {/* <AiFillCloseCircle color='red' onClick={handleDialog} style={{ cursor: 'pointer' }} /> */}
@@ -645,11 +630,9 @@ function Test() {
                             <div className='test-details'>
                                 {test.map((step: any, index: number) => {
                                     if (activeStep === step.step && step.step !== null) {
-                                        // setStep(step.step)
-                                        // setStep_(test.length)
                                         return (
                                             <React.Fragment key={index}>
-                                                <div className="test-graphic_" key={index + 2}>
+                                                <div className="test-graphic_" key={index + 2} style={{ position: 'relative' }}>
                                                     <div className='test-text'>
                                                         <article className='test-step'>
                                                             <h5>{step.step}</h5>
@@ -657,7 +640,7 @@ function Test() {
                                                         <p className='t-text'>{step.directions}</p>
                                                     </div>
                                                     <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
-                                                    <div style={{ position: 'relative', display:"flex", height:"100%", width:"100%", alignItems: "center", justifyContent:"center" }}>
+                                                    <div style={{ position: 'absolute', display: "flex", height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
                                                     {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
                                                     </div>
                                                 </div>
@@ -685,15 +668,15 @@ function Test() {
                 }
                 {isDesktop &&
                     <DesktopFooter
-                    currentNumber={step}
-                    outOf={step_}
-                    onPagination={false}
+                    currentNumber={activeStep}
+                    outOf={test.length}
+                    onPagination={true}
                     onLeftButton={!isPlaying}
                     onRightButton={!isPlaying && !barcodeStep && !performLabelScan}
                     btnLeftLink={""}
                     btnRightLink={""}
                     btnLeftText={"Repeat"}
-                    btnRightText={"Next"}
+                    btnRightText={showTimer ? 'Wait...' : 'Next'}
                     rightdisabled={false}
                     onClickBtnLeftAction={repeatAudio}
                     onClickBtnRightAction={handleNextStep}
