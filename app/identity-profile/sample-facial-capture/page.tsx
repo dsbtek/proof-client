@@ -43,7 +43,7 @@ const SampleFacialCapture = () => {
         :
         <div className="test-items-wrap-desktop_">
           <div className="sub-item">
-            <p className="idd-txt m-5 bold-headigs">
+            <p className="idd-txt m-5 bold-action-word">
               Next, we will conduct a facial recognition scan so that we may compare you to the photo that is shown on your Government ID.
               <br />
               <br />

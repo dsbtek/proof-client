@@ -125,7 +125,7 @@ const SignaturePage = () => {
           }}
         >
           {isDesktop ? (
-            <p className="sign-text" style={{ textAlign: "left", margin: "auto auto" }}>
+            <p className="sign-text" style={{ textAlign: "left" }}>
               Please Sign in the white box in acceptance of <br /> the Agreement
               and Consent and press Next <br /> to continue.
             </p>

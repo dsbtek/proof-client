@@ -521,7 +521,7 @@ function Test() {
                 {!isDesktop ?
                     <>
                         <div style={{ display: 'flex', width: '100%', padding: '16px' }}>
-                            <AppHeader title={testingKit.kit_name} />
+                            <AppHeader /*title={testingKit.kit_name} */ title='' />
                             <div className='test-audio'>
                                 {muted ? <GoMute onClick={muteAudio} color='#adadad' style={{ cursor: 'pointer' }} /> : <RxSpeakerLoud onClick={muteAudio} color='#009cf9' style={{ cursor: 'pointer' }} />}
                                 <AiFillCloseCircle color='red' onClick={handleDialog} style={{ cursor: 'pointer' }} />
@@ -577,7 +577,7 @@ function Test() {
                     </>
                     :
                     <div className='test-content'>
-                        {showBCModal && <div style={{ position: 'absolute', right: '0', top: "100px", width: '50%', height: '78.5%', zIndex: '1000' }}>
+                        {showBCModal && <div className='desktop-scanner' /*style={{ position: 'absolute', right: '0', top: "100px", width: '50%', height: '78.5%', zIndex: '1000' }}*/>
                             <Scanner show={showBCModal} scanType={scanType} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
                         </div>}
                         <div className='test-head'>

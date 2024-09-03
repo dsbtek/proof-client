@@ -14,10 +14,8 @@ const CameraIDCardDetection = () => {
     const isDesktop = useResponsive();
 
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
-    const [showBCModal, setShowBCModal] = useState<boolean>(true);
-    // const [showBCModal, setShowBCModal] = useState<boolean>(isDesktop ? true : false);
-    const [barcodeUploaded, setBarcodeUploaded] = useState<boolean>(true);
-    // const [barcodeUploaded, setBarcodeUploaded] = useState<boolean>(isDesktop ? true : false);
+    const [showBCModal, setShowBCModal] = useState<boolean>(false);
+    const [barcodeUploaded, setBarcodeUploaded] = useState<boolean>(false);
     const [faceDetected, setFaceDetected] = useState<boolean>(false);
     const [brightness, setBrightness] = useState<number>(0);
     const [sigCanvasH, setSigCanvasH] = useState(0);
@@ -120,31 +118,17 @@ const CameraIDCardDetection = () => {
                                 </div>
                             </div>
                             <div style={{ position: 'absolute', right: '0', top: "0", width: '50%', height: '100%', zIndex: '1000' }}>
-                                <Scanner show={showBCModal} scanType='id' barcodeUploaded={barcodeUploaded} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
+                                <Scanner show={true} scanType='id' barcodeUploaded={true} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
                             </div>
                         </div>
                     </>
-
-                    {
-                        // !showBCModal ?
-                        //     <DesktopFooter
-                        //         onPagination={false}
-                        //         onLeftButton={false}
-                        //         onRightButton={true}
-                        //         btnRightText={"Scan ID"}
-                        //         onClickBtnRightAction={barcodeCapture}
-                        //     />
-                        //     :
-                        <DesktopFooter
-                            onPagination={false}
-                            onLeftButton={false}
-                            onRightButton={true}
-                            btnRightText={"Next"}
-                            btnLeftLink='/identity-profile/sample-facial-capture'
-                            btnRightLink='/identity-profile/sample-facial-capture'
-                            onClickBtnRightAction={closeBCModal}
-                        />
-                    }
+                    {/* <DesktopFooter
+                        onPagination={false}
+                        onLeftButton={false}
+                        onRightButton={true}
+                        btnRightText={"Next"}
+                        onClickBtnRightAction={closeBCModal}
+                    /> */}
                 </div >
             }
         </>
