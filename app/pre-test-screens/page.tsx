@@ -1,14 +1,15 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { AgreementFooter, AppHeader, AppHeaderDesktop, DesktopFooter, DesktopSwitch, Loader_ } from "@/components";
+import { AgreementFooter, AppHeader, DesktopFooter, Loader_ } from "@/components";
 import { useSelector } from "react-redux";
 import { GoMute } from "react-icons/go";
 import { RxSpeakerLoud } from "react-icons/rx";
 import { appData } from "@/redux/slices/appConfig";
 import { formatList, transformScreensData } from "@/utils/utils";
 import useResponsive from "@/hooks/useResponsive";
-
+import DesktopView from "./desktop";
+import MobileView from "./mobile";
 
 const PreTestScreens = () => {
   const user = useSelector(appData);
@@ -60,79 +61,34 @@ const PreTestScreens = () => {
 
   return (
     <div className="container-test-collection">
-      <div style={{ display: "flex", width: "100%", padding: "16px" }}>
-          <AppHeader title={currentScreen?.[`Screen_${currentScreenIndex_}_Title`] || ""} />
-        <div className="test-audio">
-          {muted ? (
-            <GoMute onClick={muteAudio} color="#adadad" style={{ cursor: "pointer" }} />
-          ) : (
-            <RxSpeakerLoud onClick={muteAudio} color="#009cf9" style={{ cursor: "pointer" }} />
-          )}
-        </div>
-      </div>
-      <div className="agreement-items-wrap"  style={{flexDirection:isDesktop? "row": "" as any}}>
-        {!isDesktop && currentScreen?.[`Screen_${currentScreenIndex_}_Image_URL`] && (
-          <div className="wrap-prescreen-img">
-          <Image
-            className="get-started-img"
-            src={currentScreen[`Screen_${currentScreenIndex_}_Image_URL`]}
-            alt="Screen Image"
-            width={3000}
-            height={3000}
-          />
-          </div>
-        )}
-        <div className="prescreen-text">
-           <p
-          className="screen-content"
-          dangerouslySetInnerHTML={{ __html: formatList(currentScreen?.[`Screen_${currentScreenIndex_}_Content`] || "") }}
+      {isDesktop ? (
+        <DesktopView
+          currentScreen={currentScreen}
+          currentScreenIndex_={currentScreenIndex_}
+          currentScreenIndex={currentScreenIndex}
+          screensData={screensData}
+          handlePrev={handlePrev}
+          handleNext={handleNext}
+          pathLink={pathLink}
+          muted={muted}
+          muteAudio={muteAudio}
+          audioRef={audioRef}
         />
-        </div>
-       
-        {isDesktop && currentScreen?.[`Screen_${currentScreenIndex_}_Image_URL`] && (
-          <div className="wrap-prescreen-img">
-          <Image
-            className="get-started-img"
-            src={currentScreen[`Screen_${currentScreenIndex_}_Image_URL`]}
-            alt="Screen Image"
-            width={3000}
-            height={3000}
+      ) : (
+          <MobileView
+            currentScreen={currentScreen}
+            currentScreenIndex_={currentScreenIndex_}
+            currentScreenIndex={currentScreenIndex}
+            screensData={screensData}
+            handlePrev={handlePrev}
+            handleNext={handleNext}
+            pathLink={pathLink}
+            muted={muted}
+            muteAudio={muteAudio}
+            audioRef={audioRef}
           />
-          </div>
-        )}
-        {currentScreen?.[`Screen_${currentScreenIndex_}_Audio_URL`] && (
-          <audio ref={audioRef} src={currentScreen[`Screen_${currentScreenIndex_}_Audio_URL`]} controls={false} autoPlay />
-        )}
-      </div>
-
-      {isDesktop?
-        <DesktopFooter
-        currentNumber={currentScreenIndex + 1}
-        outOf={screensData.length}
-        onPagination={true}
-        onLeftButton={currentScreenIndex > 1}
-        onRightButton={true}
-        btnLeftText="Previous"
-        btnRightText="Next"
-        btnRightLink={currentScreenIndex === screensData.length - 1 ? pathLink() : ""}
-        onClickBtnLeftAction={handlePrev}
-        onClickBtnRightAction={handleNext}
-      />:
-      <AgreementFooter
-        currentNumber={currentScreenIndex + 1}
-        outOf={screensData.length}
-        onPagination={true}
-        onLeftButton={currentScreenIndex > 1}
-        onRightButton={true}
-        btnLeftText="Previous"
-        btnRightText="Next"
-        btnRightLink={currentScreenIndex === screensData.length - 1 ? pathLink() : ""}
-        onClickBtnLeftAction={handlePrev}
-        onClickBtnRightAction={handleNext}
-      />
-    }
+      )}
     </div>
   );
 };
-
 export default PreTestScreens;

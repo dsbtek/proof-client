@@ -1,9 +1,8 @@
-.camera-container-wrap {}
-
 .id-detection-container {
     display: flex;
     flex-direction: column;
-    width: 100% !important;
+    align-items: center;
+    width: 100%;
     background: #f8f8f8;
     height: 100vh;
 }
@@ -196,8 +195,12 @@
         height: 100%;
     }
 
-    .vid-text {
-        /* margin-top: 4em; */
+    .camera-wrap-desktop {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        height: 100%;
     }
 
     .id-card-frame-guide {

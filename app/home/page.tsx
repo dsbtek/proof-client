@@ -12,7 +12,7 @@ import useResponsive from "@/hooks/useResponsive";
 
 const Home = () => {
   const router = useRouter();
-  const isDesktop = useResponsive()
+  const isDesktop = useResponsive();
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {

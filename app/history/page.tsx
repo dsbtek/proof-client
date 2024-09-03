@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
+
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
-import DesktopHistory from "./desktop";
+import DesktopHistory from "./desktopPage";
 import MobileHistory from "./mobile";
 
 function Page() {

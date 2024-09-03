@@ -375,7 +375,7 @@ const ScanLabReport = () => {
                         }}>
                             + Add
                         </Button>
-                        <FileUpload
+                        {/* <FileUpload
                             style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                             onChange={() => { }}
                             onClose={function (): void {
@@ -383,7 +383,7 @@ const ScanLabReport = () => {
                             }}
                             onUpload={function (files: FileList): void {
                                 throw new Error('Function not implemented.');
-                            } }                        />
+                            } }                        /> */}
                     </div>
 
                     <Button blue classname="prompt-yes-btn w-scan-btn" onClick={handleSubmit}>

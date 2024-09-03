@@ -1,21 +1,13 @@
 "use client";
 
 import { useSelector } from "react-redux";
-import { use, useEffect, useState } from "react";
-import { AiOutlineDown, AiOutlineUp } from "react-icons/ai";
-
-import { appData } from "@/redux/slices/appConfig";
-import {
-  AppHeader,
-  Button,
-  DinamicMenuLayout,
-  Menu,
-  Setting,
-} from "@/components";
-
-import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+
+import { appData } from "@/redux/slices/appConfig";
+import { AppHeader, Button, DinamicMenuLayout, Setting } from "@/components";
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 
 function Support() {
   const [FAQs, setFAQs] = useState([]);
@@ -107,7 +99,7 @@ function Support() {
               title="greatsupport@recoverytrek.com"
             />
           </section>
-          <section className="support-section">
+          {/* <section className="support-section">
             <Image
               className="dex-only"
               src="/icons/feedback.svg"
@@ -122,7 +114,7 @@ function Support() {
               email="greatsupport@recoverytrek.com"
               title="Send Feedback"
             />
-          </section>
+          </section> */}
         </div>
         {FAQs.length > 0 ? (
           <div className="" style={{ marginTop: "24px", width: "100%" }}>
@@ -155,7 +147,12 @@ function Support() {
                             color={activeTab == index ? "#009cf9" : "#95a3b4"}
                           />
                         ) : (
-                          <FiChevronDown size={20} color="#95a3b4" />
+                          <FiChevronDown
+                            size={20}
+                            color={
+                              device?.screenWidth > 700 ? "#0C1617" : "#95a3b4"
+                            }
+                          />
                         )}
                       </Button>
                     </header>

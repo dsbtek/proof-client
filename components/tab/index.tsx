@@ -40,4 +40,4 @@ const TabBar: React.FC<TabBarProps> = ({ tabs, activeTab, onTabPress }) => {
   );
 };
 
-export { TabPill, TabBar };
+export default TabBar;

@@ -187,6 +187,9 @@ function LoginForm() {
           </Formik>
         </div>
         <br />
+        {/* <Link href="https://proofapp.my.salesforce-sites.com/New2Proof" className="links">
+        <Button classname="custom-button-1">{"New to Proof?"}</Button>
+      </Link> */}
         <Button classname="custom-button-1" onClick={sendMail}>{"New to Proof?"}</Button>
       </div>
       <div className="auth-img" style={{ backgroundImage: 'url("../images/dsk-login-img.svg")' }}></div>

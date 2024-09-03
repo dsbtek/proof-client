@@ -82,47 +82,54 @@ const DextopMenu = () => {
           )}
           <p
             className="menu-text"
-            style={pathname === "/test-collection" ? { color: "#009CF9" } : {}}
+            style={
+              pathname === "/test-collection"
+                ? { color: "#009CF9" }
+                : { color: "#0C1617" }
+            }
           >
             Test/Collection
           </p>
         </Link>
-        {pendingTest &&
-
-        <Link
-          href="/pending-test"
-          className="sub-menu"
-          style={
-            pathname === "/pending-test" ? { backgroundColor: "#E5F5FF" } : {}
-          }
-        >
-          {pathname === "/pending-test" ? (
-            <Image
-              className=""
-              src="/icons/pending-test.svg"
-              alt="Pending Test Icon"
-              width={5000}
-              height={5000}
-              loading="lazy"
-            />
-          ) : (
-            <Image
-              className=""
-              src="/icons/un-select-pending-test.svg"
-              alt="Pending Test Icon"
-              width={5000}
-              height={5000}
-              loading="lazy"
-            />
-          )}
-          <p
-            className="menu-text"
-            style={pathname === "/pending-test" ? { color: "#009CF9" } : {}}
+        {pendingTest && (
+          <Link
+            href="/pending-test"
+            className="sub-menu"
+            style={
+              pathname === "/pending-test" ? { backgroundColor: "#E5F5FF" } : {}
+            }
           >
-            Pending Test
-          </p>
-        </Link>
-        }
+            {pathname === "/pending-test" ? (
+              <Image
+                className=""
+                src="/icons/pending-test.svg"
+                alt="Pending Test Icon"
+                width={5000}
+                height={5000}
+                loading="lazy"
+              />
+            ) : (
+              <Image
+                className=""
+                src="/icons/un-select-pending-test.svg"
+                alt="Pending Test Icon"
+                width={5000}
+                height={5000}
+                loading="lazy"
+              />
+            )}
+            <p
+              className="menu-text"
+              style={
+                pathname === "/pending-test"
+                  ? { color: "#009CF9" }
+                  : { color: "#0C1617" }
+              }
+            >
+              Pending Test
+            </p>
+          </Link>
+        )}
 
         <Link
           href={
@@ -145,7 +152,7 @@ const DextopMenu = () => {
           ) : (
             <Image
               className=""
-              src="/icons/un-select-bac.svg"
+              src="/icons/bac-unselected.svg"
               alt="BAC Icon"
               width={5000}
               height={5000}
@@ -154,7 +161,9 @@ const DextopMenu = () => {
           )}
           <p
             className="menu-text"
-            style={pathname === "/bac" ? { color: "#009CF9" } : {}}
+            style={
+              pathname === "/bac" ? { color: "#009CF9" } : { color: "#0C1617" }
+            }
           >
             Bac Test
           </p>
@@ -186,7 +195,11 @@ const DextopMenu = () => {
           )}
           <p
             className="menu-text"
-            style={pathname === "/tutorial" ? { color: "#009CF9" } : {}}
+            style={
+              pathname === "/tutorial"
+                ? { color: "#009CF9" }
+                : { color: "#0C1617" }
+            }
           >
             Tutorials
           </p>
@@ -218,7 +231,11 @@ const DextopMenu = () => {
           )}
           <p
             className="menu-text"
-            style={pathname === "/history" ? { color: "#009CF9" } : {}}
+            style={
+              pathname === "/history"
+                ? { color: "#009CF9" }
+                : { color: "#0C1617" }
+            }
           >
             History
           </p>
@@ -250,7 +267,11 @@ const DextopMenu = () => {
           )}
           <p
             className="menu-text"
-            style={pathname === "/what-new" ? { color: "#009CF9" } : {}}
+            style={
+              pathname === "/what-new"
+                ? { color: "#009CF9" }
+                : { color: "#0C1617" }
+            }
           >
             What`s New
           </p>
@@ -282,7 +303,11 @@ const DextopMenu = () => {
           )}
           <p
             className="menu-text"
-            style={pathname === "/settings" ? { color: "#009CF9" } : {}}
+            style={
+              pathname === "/settings"
+                ? { color: "#009CF9" }
+                : { color: "#0C1617" }
+            }
           >
             Settings
           </p>
@@ -314,7 +339,11 @@ const DextopMenu = () => {
           )}
           <p
             className="menu-text"
-            style={pathname === "/support" ? { color: "#009CF9" } : {}}
+            style={
+              pathname === "/support"
+                ? { color: "#009CF9" }
+                : { color: "#0C1617" }
+            }
           >
             Support
           </p>
@@ -336,7 +365,7 @@ const DextopMenu = () => {
           width={20}
           height={20}
         />
-        <p>Logout</p>
+        <p className="">Logout</p>
       </Button>
     </nav>
   );

@@ -1,7 +1,7 @@
 "use client";
 import { Menu, AppHeader, Button, DinamicMenuLayout } from "@/components";
 import { appData } from "@/redux/slices/appConfig";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useSelector } from "react-redux";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
@@ -15,6 +15,7 @@ const WhatNew = () => {
     Array(data?.length).fill(false)
   );
   const device = useGetDeviceInfo();
+  const isDesktop = useMemo(() => device?.screenWidth > 700, [device]);
 
   const toggleInfo = (index: number) => {
     return () => {
@@ -34,11 +35,11 @@ const WhatNew = () => {
 
   return (
     <DinamicMenuLayout>
-      <div className="tutorial-container">
+      <div className="tutorial-container what-new-container">
         {device?.screenWidth > 700 ? (
           <div className="what-new-dxtp-header">
-            <h1>What`s New</h1>
-            <p>
+            <h1 className="set-sec-title">What&apos;s New</h1>
+            <p className="settings-title-subtext">
               Need help? Our customer support team is here for you and browse
               our FAQs
             </p>
@@ -49,13 +50,13 @@ const WhatNew = () => {
         <br /> <br />
         <div
           className="what-new-scroller what-new-bg"
-          style={{ padding: "16px" }}
+          style={{ padding: "8px" }}
         >
           {data?.map((item: any, index: number) => {
             const isOpen = openItems[index];
             return (
               <article
-                className="faq"
+                className="faq what-new-article"
                 key={index}
                 style={
                   isOpen
@@ -79,9 +80,15 @@ const WhatNew = () => {
                   <h6 className="faq-title">{item?.Title}</h6>
                   <Button classname="faq-btn">
                     {isOpen ? (
-                      <FiChevronUp size={20} color="grey" />
+                      <FiChevronUp
+                        size={20}
+                        color={isDesktop ? "#0C1617" : "grey"}
+                      />
                     ) : (
-                      <FiChevronDown size={20} color="grey" />
+                      <FiChevronDown
+                        size={20}
+                        color={isDesktop ? "#0C1617" : "grey"}
+                      />
                     )}
                   </Button>
                 </header>

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useQuery } from "react-query";
 import { toast } from "react-toastify";
-
+import { useRouter } from 'next/navigation';
 import { AgreementHeader, AgreementFooter, AppHeader, Header, DesktopFooter } from "@/components";
 import { authToken } from "@/redux/slices/auth";
 import { testingKit, testData, setTestSteps } from "@/redux/slices/drugTest";
@@ -28,7 +28,7 @@ const AgreementConsent = () => {
   const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
   const preTestFeedback = useSelector(preTestFeedbackData) as PreTestScreen[];
   const isDesktop = useResponsive()
-
+  const router = useRouter();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [muted, setMuted] = useState(false);
   const [statusCode, setStatusCode] = useState(0);
@@ -61,6 +61,7 @@ const AgreementConsent = () => {
       },
       onError: (error) => {
         toast.error("Sorry, test data failed to load");
+        router.push('/home');
         console.error(error);
       },
     }
@@ -248,7 +249,7 @@ const AgreementConsent = () => {
         btnRightLink={isLoading ? "" : "/test-collection/signature"}
         btnLeftText="Decline"
         btnRightText={isLoading ? "loading..." : "Accept"}
-        rightdisabled={isLoading || statusCode !== 200}
+          rightdisabled={isLoading}
       />:
       <AgreementFooter
         currentNumber={1}
@@ -260,7 +261,7 @@ const AgreementConsent = () => {
         btnRightLink={isLoading ? "" : "/test-collection/signature"}
         btnLeftText="Decline"
         btnRightText={isLoading ? "loading..." : "Accept"}
-        rightdisabled={isLoading || statusCode !== 200}
+          rightdisabled={isLoading}
       />
     }
     </div>
@@ -283,7 +284,7 @@ const AgreementConsent = () => {
         btnRightLink={isLoading ? "" : "/test-collection/signature"}
         btnLeftText="Decline"
         btnRightText={isLoading ? "Loading..." : "Accept"}
-        rightdisabled={isLoading || statusCode !== 200}
+          rightdisabled={isLoading}
       />:
       <AgreementFooter
         currentNumber={1}
@@ -295,7 +296,7 @@ const AgreementConsent = () => {
         btnRightLink={isLoading ? "" : "/test-collection/signature"}
         btnLeftText="Decline"
         btnRightText={isLoading ? "Loading..." : "Accept"}
-        rightdisabled={isLoading || statusCode !== 200}
+          rightdisabled={isLoading}
       />
 }
     </>

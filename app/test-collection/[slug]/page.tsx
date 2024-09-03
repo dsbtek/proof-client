@@ -14,12 +14,12 @@ import Crypto from "crypto-js";
 import { TbCapture } from "react-icons/tb";
 import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
-import useResponsive from "@/hooks/useResponsive";
 
+import useResponsive from "@/hooks/useResponsive";
 import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner, AgreementFooter, AgreementHeader, AppHeaderDesktop, DesktopFooter } from "@/components";
 import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename, setTestSteps } from '@/redux/slices/drugTest';
 import { detectBarcodes, uploadVideoToS3, createPresignedUrl/*, videoEncoder */ } from './action';
-import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, dateTimeInstance, fileToBase64 } from '@/utils/utils';
+import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, boldActionWords, dateTimeInstance, fileToBase64 } from '@/utils/utils';
 import { storeBlobInIndexedDB } from '@/utils/indexedDB';
 import { authToken } from '@/redux/slices/auth';
 import usePageVisibility from '@/hooks/visibilityHook';
@@ -45,6 +45,7 @@ function Test() {
     const [barcode, setBarcode] = useState<string>('');
     const [barcodeIsLoading, setBarcodeIsLoading] = useState(false)
     const [barcodeImage, setBarcodeImage] = useState<string>('');
+    const [scanType, setScanType] = useState<string>('test');
     const [barcodeUploaded, setBarcodeUploaded] = useState<boolean>(false);
     const [performFaceScan, setPerformFaceScan] = useState<boolean>(false);
     const [performLabelScan, setPerformLabelScan] = useState<boolean>(false);
@@ -99,13 +100,14 @@ function Test() {
     } = useMediaCapture({ watchVolume: true });
 
     const endTest = useCallback(async () => {
+        showDialog && setShowDialog(false);
         setIsSubmitting(true)
         isFinal.current = true
         setMuted(true);
+        dispatch(setEndTime(dateTimeInstance()));
         mediaRecorderRef.current?.stop();
         stop();
-        dispatch(setEndTime(dateTimeInstance()));
-    }, [dispatch, stop]);
+    }, [dispatch, showDialog, stop]);
 
     const handleDialog = useCallback(() => {
         setShowDialog(!showDialog);
@@ -172,6 +174,9 @@ function Test() {
             const imageSrc = cameraRef?.current!.getScreenshot();
             setBarcodeImage(imageSrc!)
 
+            barcodeStep && setScanType('Test')
+            performLabelScan && setScanType('fedex')
+
             setBarcodeUploaded(true);
 
             setBarcodeIsLoading(false);
@@ -181,69 +186,13 @@ function Test() {
             toast.error('Error detecting barcode. Please try again.');
             console.error('Barcode Capture Error:', error);
         }
-    }, []);
-    // const barcodeCapture = useCallback(async () => {
-    //     try {
-    //         setBarcodeIsLoading(true);
-    //         const imageSrc = cameraRef?.current!.getScreenshot();
-    //         const formats = ['ean_13', 'qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e', 'ean_8', 'pdf417', 'aztec', 'data_matrix', 'itf', 'code_93'];
-    //         const readers = ['ean_reader', 'ean_5_reader', 'ean_2_reader', 'ean_8_reader', 'code_39_reader', 'code_39_vin_reader', 'codabar_reader', 'upc_reader', 'upc_e_reader', 'i2of5_reader', '2of5_reader', 'code_93_reader'];
+    }, [barcodeStep, performLabelScan]);
 
-    //         const barcodeTypes = [Html5QrcodeSupportedFormats.AZTEC, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.CODE_39, Html5QrcodeSupportedFormats.DATA_MATRIX, Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.ITF, Html5QrcodeSupportedFormats.PDF_417, Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.UPC_E];
-
-    //         const imageFile = await base64ToFile(imageSrc!, 'barcode.png', 'image/png');
-
-    //         setBarcodeImage(imageSrc!);
-
-    //         // const barcodeResult = await detectBarcodesAI(imageSrc!);
-    //         const barcodeResult = await detectBarcodesAI2(imageSrc!);
-
-    //         // refetch();
-
-    //         console.log('bc scan res:', barcodeResult)
-
-    //         if (barcodeResult.status === 'complete') {
-    //             // const code = barcodeResult.result[0].data;
-    //             const code = barcodeResult.data.parsed;
-    //             // setBarcode(code);
-    //             // setBarcodeUploaded(true);
-    //             dispatch(saveBarcode(code));
-    //         }
-    //         setBarcodeUploaded(true);
-
-    //         if (barcodeResult.status === 'error') {
-    //             toast.warn(`${barcodeResult.message}`)
-    //         }
-
-    //         // Quagga.decodeSingle({
-    //         //     decoder: {
-    //         //         readers: readers
-    //         //     },
-    //         //     locate: true, // try to locate the barcode in the image
-    //         //     src: imageSrc!
-    //         // }, function (result: any) {
-    //         //     console.log("result-->", result);
-    //         //     if (result !== undefined && result !== null && result.codeResult !== undefined && result.codeResult !== null) {
-    //         //         const code = result.codeResult.code;
-    //         //         setBarcode(code);
-    //         //         setBarcodeUploaded(true);
-    //         //         dispatch(saveBarcode(code));
-    //         //     } else {
-    //         //         toast.warn('No barcode detected. Please try again.');
-    //         //     }
-    //         // })
-    //         setBarcodeIsLoading(false);
-    //         setShowBCModal(true);
-    //     } catch (error) {
-    //         setBarcodeIsLoading(false);
-    //         toast.error('Error detecting barcode. Please try again.');
-    //         console.error('Barcode Capture Error:', error);
-    //     }
-    // }, [dispatch]);
 
     const reCaptureBarcode = () => {
         setBarcode('');
         setShowBCModal(false);
+        setBarcodeUploaded(false);
     };
 
     //Performs security and integrity checks
@@ -426,6 +375,7 @@ function Test() {
     //Streams the video to the AI detection service
     useEffect(() => {
         const handleStreaming = async () => {
+            // Check if the camera stream exists
             if (cameraRef?.current?.stream !== undefined && cameraRef?.current?.stream !== null) {
                 // If there's an existing MediaRecorder, stop it and remove the event listener
                 if (mediaRecorderRef.current) {
@@ -433,16 +383,28 @@ function Test() {
                     mediaRecorderRef.current.removeEventListener("dataavailable", handleDataAvailable);
                 }
 
-                // Create a new MediaRecorder instance
-                mediaRecorderRef.current = new MediaRecorder(cameraRef.current.stream as MediaStream, {
-                    mimeType: 'video/webm;codecs=vp8', audioBitsPerSecond: 128000, videoBitsPerSecond: 2500000
+                // Get the current video stream
+                const stream = cameraRef.current.stream;
+
+                // Check if the stream already has an audio track, if not, add one
+                const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const combinedStream = new MediaStream([
+                    ...stream.getVideoTracks(),
+                    ...audioStream.getAudioTracks()
+                ]);
+
+                // Create a new MediaRecorder instance with both video and audio tracks
+                mediaRecorderRef.current = new MediaRecorder(combinedStream, {
+                    mimeType: 'video/webm;codecs=vp8,opus', // Include both video and audio codecs
+                    audioBitsPerSecond: 128000,
+                    videoBitsPerSecond: 2500000
                 });
 
                 // Add the dataavailable event listener
                 mediaRecorderRef.current.addEventListener("dataavailable", handleDataAvailable);
 
                 // Start recording
-                mediaRecorderRef.current.start(30000);
+                mediaRecorderRef.current.start(30000); // 30 seconds chunks
             }
         };
 
@@ -513,7 +475,6 @@ function Test() {
 
                         if (analysis_data.status === 'complete') {
                             if (analysis_data.result) {
-                                const detections = Object.entries(analysis_data.result);
                                 const sendMail = async () => {
                                     const response = await fetch("/api/send-email", {
                                         method: 'POST',
@@ -524,7 +485,7 @@ function Test() {
                                             'confirmation_no': confirmationNo,
                                             'videoLink': `https://proofdata.s3.amazonaws.com/${filename}`,
                                             'face_scan_score': facialScanScore,
-                                            'detections': detections
+                                            'detections': analysis_data
                                         })
                                     })
                                     const data = await response.json();
@@ -560,15 +521,14 @@ function Test() {
                 {!isDesktop ?
                     <>
                         <div style={{ display: 'flex', width: '100%', padding: '16px' }}>
-                            <AppHeader title='' />
+                            <AppHeader title={testingKit.kit_name} />
                             <div className='test-audio'>
                                 {muted ? <GoMute onClick={muteAudio} color='#adadad' style={{ cursor: 'pointer' }} /> : <RxSpeakerLoud onClick={muteAudio} color='#009cf9' style={{ cursor: 'pointer' }} />}
                                 <AiFillCloseCircle color='red' onClick={handleDialog} style={{ cursor: 'pointer' }} />
                             </div>
                         </div>
                         <div className='test-content'>
-                            {/* <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} /> */}
-                            <Scanner show={showBCModal} scanType='test' barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
+                            <Scanner show={showBCModal} scanType={scanType} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
                             <Webcam
                                 className='test-camera-container'
                                 ref={cameraRef}
@@ -602,8 +562,9 @@ function Test() {
                                                             <article className='test-step'>
                                                                 <h5>{step.step}</h5>
                                                             </article>
-                                                            <p className='t-text'>{step.directions}</p>
-                                                        </div>}
+                                                            <p className='t-text' dangerouslySetInnerHTML={{ __html: boldActionWords(step.directions) }} />
+                                                        </div>
+                                                    }
                                                     {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
                                                 </div>
                                                 <audio key={index + 3} id='test-audio' src={step.audio_path} controls autoPlay muted={muted} style={{ display: 'none' }} />
@@ -612,36 +573,44 @@ function Test() {
                                     }
                                 })}
                             </div>
-                        </div></>
+                        </div>
+                    </>
                     :
                     <div className='test-content'>
-                        {/* <BarcodeCaptureModal show={showBCModal} barcode={barcode} barcodeImage={barcodeImage} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} /> */}
-                        <Scanner show={showBCModal} scanType='test' barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
-                        {/* <AgreementHeader title='Test' /> */}
+                        {showBCModal && <div style={{ position: 'absolute', right: '0', top: "100px", width: '50%', height: '78.5%', zIndex: '1000' }}>
+                            <Scanner show={showBCModal} scanType={scanType} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
+                        </div>}
                         <div className='test-head'>
                             {/* <AppHeader title='' /> */}
-                            <AppHeaderDesktop handleDialog={handleDialog} title="" />
+                            <AppHeaderDesktop handleDialog={handleDialog} title={testingKit.kit_name} />
                             <div className='test-audio'>
                                 {muted ? <GoMute onClick={muteAudio} color='#adadad' style={{ cursor: 'pointer' }} /> : <RxSpeakerLoud onClick={muteAudio} color='#009cf9' style={{ cursor: 'pointer' }} />}
                                 {/* <AiFillCloseCircle color='red' onClick={handleDialog} style={{ cursor: 'pointer' }} /> */}
                             </div>
                         </div>
-                        <div className="wrap-conten-cam">
+                        <div className="wrap-content-cam">
                             <div className='test-details'>
                                 {test.map((step: any, index: number) => {
                                     if (activeStep === step.step && step.step !== null) {
                                         return (
                                             <React.Fragment key={index}>
                                                 <div className="test-graphic_" key={index + 2} style={{ position: 'relative' }}>
-                                                    <div className='test-text'>
+                                                    {/* <div className='test-text'>
                                                         <article className='test-step'>
-                                                            <h5>{step.step}</h5>
+                                                            <h5>Step {step.step}</h5>
                                                         </article>
                                                         <p className='t-text'>{step.directions}</p>
+                                                    </div> */}
+
+                                                    <div className='test-text'>
+                                                        <article className='test-step'>
+                                                            <h5>Step {step.step}</h5>
+                                                        </article>
+                                                        <p className='t-text' dangerouslySetInnerHTML={{ __html: boldActionWords(step.directions) }} />
                                                     </div>
                                                     <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
                                                     <div style={{ position: 'absolute', display: "flex", height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                                                    {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
+                                                        {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
                                                     </div>
                                                 </div>
                                                 <audio key={index + 3} id='test-audio' src={step.audio_path} controls autoPlay muted={muted} style={{ display: 'none' }} />
@@ -668,23 +637,23 @@ function Test() {
                 }
                 {isDesktop &&
                     <DesktopFooter
-                    currentNumber={activeStep}
-                    outOf={test.length}
-                    onPagination={true}
-                    onLeftButton={!isPlaying}
-                    onRightButton={!isPlaying && !barcodeStep && !performLabelScan}
-                    btnLeftLink={""}
-                    btnRightLink={""}
-                    btnLeftText={"Repeat"}
-                    btnRightText={showTimer ? 'Wait...' : 'Next'}
-                    rightdisabled={false}
-                    onClickBtnLeftAction={repeatAudio}
-                    onClickBtnRightAction={handleNextStep}
-                />}
-                {barcodeStep && <div className='barcode-btns'>
+                        currentNumber={activeStep}
+                        outOf={test.length}
+                        onPagination={true}
+                        onLeftButton={!isPlaying}
+                        onRightButton={!isPlaying && !barcodeStep && !performLabelScan}
+                        btnLeftLink={""}
+                        btnRightLink={""}
+                        btnLeftText={"Repeat"}
+                        btnRightText={showTimer ? 'Wait...' : 'Next'}
+                        rightdisabled={false}
+                        onClickBtnLeftAction={repeatAudio}
+                        onClickBtnRightAction={handleNextStep}
+                    />}
+                {barcodeStep && !barcodeUploaded && <div className='barcode-btns'>
                     {barcodeIsLoading ? <Loader_ /> : <Button classname='cap-btn' onClick={barcodeCapture}><TbCapture /> Capture</Button>}
                 </div>}
-                {performLabelScan && <div className='barcode-btns'>
+                {performLabelScan && !barcodeUploaded && <div className='barcode-btns'>
                     {barcodeIsLoading ? <Loader_ /> : <Button classname='cap-btn' onClick={barcodeCapture}><TbCapture /> Capture</Button>}
                 </div>}
             </div>

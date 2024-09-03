@@ -17,3 +17,12 @@
     height: auto;
     object-fit: cover;
 }
+
+.prescreen-img {
+    height:  471px;
+    width: 720px;
+}
+
+@media screen and (min-width: 700px) {
+    
+}

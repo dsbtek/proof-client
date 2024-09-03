@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AiOutlineRight } from "react-icons/ai";
-import { HiOutlineEnvelope } from "react-icons/hi2";
+import { HiArrowUpRight, HiOutlineEnvelope } from "react-icons/hi2";
 import { FiPhoneCall } from "react-icons/fi";
 import Link from "next/link";
 
 import "./setting.css";
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import Image from "next/image";
 
 interface SettingProps {
   title: string;
@@ -15,14 +17,24 @@ interface SettingProps {
 }
 
 function Setting({ icon, title, link, tel, email }: SettingProps) {
+  const device = useGetDeviceInfo();
+  const isDesktop = useMemo(() => device?.screenWidth > 700, [device]);
   return tel ? (
     <Link className="set-con" href={`tel: ${tel}`}>
-      <FiPhoneCall size={20} color="#009CF9" />
+      <FiPhoneCall size={20} color={isDesktop ? "#4E555D" : "#009CF9"} />
       <p className="set-text">{title}</p>
     </Link>
   ) : email ? (
     <Link className="set-con" href={`mailto: ${email}`}>
-      <HiOutlineEnvelope size={20} color="#009CF9" />
+      <Image
+        className="dex-only"
+        src="/icons/inbox.svg"
+        alt="inbox"
+        width={20}
+        height={20}
+        loading="lazy"
+      />
+      <HiOutlineEnvelope size={20} color="#009CF9" className="mobile-only" />
       <p className="set-text">{title}</p>
     </Link>
   ) : (
@@ -32,7 +44,7 @@ function Setting({ icon, title, link, tel, email }: SettingProps) {
         <p className="set-text">{title}</p>
       </div>
       <div style={{ cursor: "pointer" }}>
-        <AiOutlineRight color="#95A3B4" />
+        {isDesktop ? <HiArrowUpRight /> : <AiOutlineRight color="#95A3B4" />}
       </div>
     </Link>
   );

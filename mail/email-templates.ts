@@ -1,18 +1,16 @@
 import { detections } from './mailData';
+import type { UndetectedItem } from './mailData';
 
 export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024', kit = 'PR Urine Kit', confirmation_no = '000111', videoLink = '#', face_scan_score = '', detection = detections): string {
     let resultRows = '';
-    let totalScore = '';
-    let scoreRatio = '';
-    // let videoLink = '#';
+    let faceRows = '';
+    let handRows = '';
+    let speakers = `${detections.result.speaker_segments.length}`
+    let totalScore = `${(detections.result.score_ratios.current / detections.result.score_ratios.total * 100).toFixed(0)}%`;
+    let scoreRatio = `${detections.result.score_ratios.current.toFixed(2)}/${detections.result.score_ratios.total}`;
 
-    detection.map((data) => {
-        if (data[0] === "score_ratios") {
-            totalScore = `${(data[1].current! / data[1].total! * 100).toFixed(0)}%`;
-            scoreRatio = `${data[1].current?.toFixed(2)}/${data[1].total}`;
-
-        } else {
-            resultRows += `<tr style="margin:0;padding:0;border:0;background-color:#f9f9f9;">
+    Object.entries(detections.result.test_review).map((data) => {
+        resultRows += `<tr style="margin:0;padding:0;border:0;background-color:#f9f9f9;">
                                 <td
                                     style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
                                     ${data[1].label ?? data[0]}</td>
@@ -29,8 +27,19 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
                                     style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
                                     ${data[1].detection_hotspot_last}</td>
                             </tr>`
-        }
     });
+
+    detections.result.undetected_faces.map((noFace) => {
+        faceRows += `<li>${(noFace?.last / 1000).toFixed(0)}s - ${(noFace?.current / 1000).toFixed(0)}s </li><br/>`
+    })
+
+    if (typeof detections.result.undetected_hands !== "string") {
+        (detections.result.undetected_hands as UndetectedItem[]).map((noHand) => {
+            handRows += `<li>${(noHand?.last / 1000).toFixed(0)}s - ${(noHand?.current / 1000).toFixed(0)}s </li><br/>`
+        })
+    } else {
+        handRows += `<p>${detections.result.undetected_hands} </p>`
+    }
 
     const template = `<!DOCTYPE html>
 <html lang="en">
@@ -90,6 +99,13 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
                                 <p
                                     style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
                                     Kit: ${kit}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    No. of Speakers: ${speakers}</p>
                             </td>
                         </tr>
                         <tr style="margin:0;padding:0;border:0;">
@@ -165,6 +181,48 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
                         <tbody style="margin:0;padding:0;border:0;">
                             ${resultRows}
                         </tbody>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="padding: 30px 20px;">
+                    <table width="100%"
+                        style="background-color: #ffffff; box-shadow: 0 0 25px rgba(0, 0, 0, .15); border-radius: 16px; padding: 20px;">
+                        <tr>
+                            <td>
+                                <h1 style="font-weight: 600; font-size: 20px; line-height: 48.41px; color: #009cf9;">
+                                    Times Faces Were Not Detected</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="">
+                                <ol style="">
+                                    ${faceRows}
+                                </ol>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="padding: 30px 20px;">
+                    <table width="100%"
+                        style="background-color: #ffffff; box-shadow: 0 0 25px rgba(0, 0, 0, .15); border-radius: 16px; padding: 20px;">
+                        <tr>
+                            <td>
+                                <h1 style="font-weight: 600; font-size: 20px; line-height: 48.41px; color: #009cf9;">
+                                    Times Hands Were Not Detected</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="">
+                                <ol style="">
+                                    ${handRows}
+                                </ol>
+                            </td>
+                        </tr>
                     </table>
                 </td>
             </tr>

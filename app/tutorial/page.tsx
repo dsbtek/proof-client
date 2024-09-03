@@ -5,20 +5,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 import Cookies from "js-cookie";
-import { IoIosArrowForward, IoMdCloseCircleOutline } from "react-icons/io";
-import Link from "next/link";
-import useResponsive from "@/hooks/useResponsive";
+import { IoMdCloseCircleOutline } from "react-icons/io";
 
 import {
   HeaderText,
-  Menu,
   Switch,
   TutorialGridView,
   TutorialListView,
   Modal,
   ListViewLoader,
   GridViewLoader,
-  CheckBox,
   DinamicMenuLayout,
   DesktopSwitch,
 } from "@/components";
@@ -28,6 +24,7 @@ import {
   tutorialData,
   appData,
 } from "@/redux/slices/appConfig";
+import useResponsive from "@/hooks/useResponsive";
 import { setCookie } from "@/utils/utils";
 
 const Tutorial = () => {
@@ -44,7 +41,6 @@ const Tutorial = () => {
   );
   const [isGridView, setIsGridView] = useState(false);
   const [isListView, setIsListView] = useState(false);
-  const [toggleSwitch, setToggleSwitch] = useState(checked);
   const tokenCookie = Cookies.get("token");
   const isDesktop = useResponsive();
 

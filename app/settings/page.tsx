@@ -1,16 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { IoSettingsOutline } from "react-icons/io5";
-import { IoPersonCircleOutline } from "react-icons/io5";
-import { IoNewspaperOutline } from "react-icons/io5";
-import { IoIosPaper } from "react-icons/io";
-import { RxExit } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+
 import {
   AppHeader,
-  Menu,
   ReadOnlyInput,
   Setting,
   Button,

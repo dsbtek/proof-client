@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Cookies from "js-cookie";
-import { AppHeader, DinamicMenuLayout, Switch } from "@/components";
-import { setCookie } from "@/utils/utils";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+
+import { AppHeader, DinamicMenuLayout, Switch } from "@/components";
+import { setCookie } from "@/utils/utils";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 
 function ApplicationSettings() {
@@ -53,16 +54,14 @@ function ApplicationSettings() {
         </div>
         <div className="app-toggles">
           <div className="toggle-tutorial">
-            Show Welcome Tutorial
+            <p style={{ width: "80%" }}>Show Welcome Tutorial</p>
             <Switch onToggle={handleSwitch} checked={checked} />
           </div>
-          <div className="toggle-tutorial">
+          {/* <div className="toggle-tutorial">
             <p>Email Notifications</p>
             <Switch onToggle={handleSwitch} checked={checked} />
-          </div>
+          </div> */}
         </div>
-        {/* </div> */}
-        {/* </div> */}
       </div>
     </DinamicMenuLayout>
   );

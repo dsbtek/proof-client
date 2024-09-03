@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useRef } from "react";
 import "./FilterDropdown.css";
 import { FiChevronDown, FiChevronsDown, FiFilter } from "react-icons/fi";

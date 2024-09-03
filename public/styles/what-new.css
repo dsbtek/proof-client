@@ -53,7 +53,9 @@
     color: #009CF9;
 }
 
+
 /* For webkit browsers like Chrome, Safari */
+
 .what-new-scroller {
     overflow-y: scroll;
     -ms-overflow-style: none;
@@ -79,7 +81,9 @@
     background: #009CF9;
 }
 
+
 /* Hide scrollbar for other browsers */
+
 .what-new-scroller {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
@@ -96,6 +100,10 @@
     /* background-color: #009CF9; */
 }
 
+.what-new-container {
+    padding: 0 16px;
+}
+
 @keyframes lds-ripple {
     0% {
         top: 36px;
@@ -104,7 +112,6 @@
         height: 8px;
         opacity: 0;
     }
-
     4.9% {
         top: 36px;
         left: 36px;
@@ -112,7 +119,6 @@
         height: 8px;
         opacity: 0;
     }
-
     5% {
         top: 36px;
         left: 36px;
@@ -120,12 +126,24 @@
         height: 8px;
         opacity: 1;
     }
-
     100% {
         top: 0;
         left: 0;
         width: 80px;
         height: 80px;
         opacity: 0;
+    }
+}
+
+@media screen and (min-width: 700px) {
+    .what-new-bg {
+        background-color: #FFFFFF;
+        padding: 0!important
+    }
+    .what-new-article {
+        background-color: #F6F7F8!important;
+    }
+    .what-new-container {
+        padding: 16px;
     }
 }

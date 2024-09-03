@@ -38,7 +38,7 @@ const IdentityProfile = () => {
       ) : (
         <div className="test-items-wrap-desktop_">
           <div className="sub-item">
-            <p className="idd-title">
+              <p className="idd-title bold-headigs">
               Before we begin, PROOF will establish a secure PROOF Identity
               Profile for you.
             </p>

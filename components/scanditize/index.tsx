@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic';
 import { FiEdit } from "react-icons/fi";
 import { TbCapture } from "react-icons/tb";
@@ -15,8 +15,9 @@ import Loader from '../loaders/loader';
 import { saveBarcode } from '@/redux/slices/drugTest';
 import { toast } from 'react-toastify';
 import { parseAamvaData } from '@/utils/utils';
+import { Loader_ } from '..';
 
-const licenseKey = process.env.NEXT_PUBLIC_SCANDIT_KEY
+const licenseKey = process.env.NEXT_PUBLIC_SCANDIT_KEY;
 
 interface BarcodeCaptureProps {
     show: boolean;
@@ -30,6 +31,7 @@ interface BarcodeCaptureProps {
 
 function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, recapture, closeModal }: BarcodeCaptureProps) {
     const [enterBarcode, setEnterBarcode] = useState(false);
+    const [scannerLoad, setScannerLoad] = useState(false);
     const [barcodeValue, setBarcodeValue] = useState('');
     const [barcode, setBarcode] = useState<string | Record<string, any>>('');
 
@@ -48,7 +50,8 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
         dispatch(saveBarcode(barcode));
     };
 
-    async function runScanner() {
+    const runScanner = useCallback(async () => {
+        setScannerLoad(true);
 
         await SDCCore.configure({
             licenseKey: licenseKey as string,
@@ -93,7 +96,7 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
             SDCBarcode.Symbology.IATATwoOfFive,
             SDCBarcode.Symbology.MatrixTwoOfFive,
         ]
-        settings.enableSymbologies(scanType !== 'id' ? generalScanner : [SDCBarcode.Symbology.PDF417]);
+        settings.enableSymbologies(scanType === 'id' ? [SDCBarcode.Symbology.PDF417] : scanType === 'fedex' ? [SDCBarcode.Symbology.Code128] : generalScanner);
 
         console.log('scantype:', scanType)
 
@@ -114,8 +117,8 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
 
                 if (scanType === 'id' && symbology.readableName === 'PDF417') {
                     console.log(barcode.data)
-                    const idData = parseAamvaData(barcode.data);
-                    setBarcode(JSON.stringify(idData!))
+                    const idData: any = parseAamvaData(barcode.data);
+                    setBarcode(idData["Last Name"] + '-' + idData["Driver's License Number"])
                 } else {
                     setBarcode(barcode.data!)
                 };
@@ -144,18 +147,28 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
         await barcodeCaptureOverlay.setViewfinder(viewfinder);
 
         await camera.switchToDesiredState(SDCCore.FrameSourceState.On);
+
         await barcodeCapture.setEnabled(true);
-    }
+
+        setScannerLoad(false);
+    }, [scanType])
+
+    useEffect(() => {
+        runScanner().catch((error) => {
+            console.error('Scandit Error:', error);
+            toast.error(error);
+        })
+    }, [runScanner])
 
     return (
         show && <div className='barcode-cap-modal'>
             {barcodeUploaded && !enterBarcode && barcode === '' &&
                 <div className='bc-content'>
-                    <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>
-                    <div className='bc-upload-stats'>
-                        <h2 style={{ color: '#24527b' }}>Click on Scan Barcode</h2>
+                    {scanType === 'id' && <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>}
+                    {scanType !== 'id' && <div className='bc-upload-stats'>
+                        <h2 style={{ color: '#24527b' }}></h2>
                         <Button classname='man-btn' onClick={recapture}>Hide Scanner</Button>
-                    </div>
+                    </div>}
                 </div>}
 
             {barcodeUploaded && !enterBarcode && barcode !== '' && <div className='bc-content'>
@@ -175,17 +188,18 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
                 <input className='bc-input' type='text' placeholder='Enter Barcode or N/A, if no text is present.' onChange={barcodeInput} />
             </div>}
             <div className='barcode-cap' style={{ background: '#000000' }}>
+                {scannerLoad && <Loader_ />}
                 <div id="data-capture-view">
                 </div >
             </div>
             {!enterBarcode && <div className='barcode-btns' style={{ flexDirection: 'column', alignItems: 'center' }}>
-                <Button classname='cap-btn' onClick={() => {
+                {!scannerLoad && <Button classname='cap-btn' onClick={() => {
                     runScanner().catch((error) => {
-                        console.error(error);
+                        console.error('Scandit Error:', error);
                         toast.error(error);
                     })
-                }}><TbCapture /> Scan Barcode</Button>
-                <Button classname='man-btn' onClick={() => setEnterBarcode(true)}><FiEdit /> Enter Manually</Button>
+                }}><TbCapture /> Re-Scan</Button>}
+                {scanType !== 'id' && <Button classname='man-btn' onClick={() => setEnterBarcode(true)}><FiEdit /> Enter Manually</Button>}
             </div>}
         </div>
     )

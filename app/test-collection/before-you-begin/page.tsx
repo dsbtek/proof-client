@@ -6,22 +6,6 @@ import useResponsive from "@/hooks/useResponsive";
 
 const BeforeYouBegin = () => {
   const isDesktop = useResponsive()
-
-  const [sigCanvasH, setSigCanvasH] = useState(0);
-
-  useEffect(() => {
-    const routeBasedOnScreenSize = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth <= 700) {
-        setSigCanvasH(250);
-      } else {
-        setSigCanvasH(700);
-      }
-    };
-    routeBasedOnScreenSize();
-    window.addEventListener('resize', routeBasedOnScreenSize);
-    return () => window.removeEventListener('resize', routeBasedOnScreenSize);
-  }, []);
   const [checkboxes, setCheckboxes] = useState([
     { id: 1, label: 'Unopened Proof Collection Kit', isChecked: false },
     { id: 2, label: 'Ballpoint Pen', isChecked: false },
@@ -45,7 +29,7 @@ const BeforeYouBegin = () => {
     <>
       <div className="container-test-collection">
         <AgreementHeader title="Confirmation" />
-        {sigCanvasH !== 700 ?
+        {!isDesktop ?
           <div className="agreement-items-wrap what-new-scroller">
             <Image className="get-started-img" src="/images/before-you-begin.svg" alt="image" width={3000} height={3000} />
             <p className="get-started-title">Before You Begin</p>
@@ -59,7 +43,7 @@ const BeforeYouBegin = () => {
 
           <div className="test-items-wrap-desktop_ ">
             <div className="sub-item">
-              <p className="get-started-title">Before You Begin</p>
+              <p className="get-started-title bold-headigs">Before You Begin</p>
               <p className="get-started-title">Please confirm the following.</p>
               <div className="checkbox-container">
                 {checkboxes.map((checkbox, index) => (

@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 
 /* COOKIE HANDLERS */
 import Crypto from "crypto-js";
+import nlp from "compromise";
 
 export const setCookie = (key: string, value: string, life: number) => {
   Cookies.set(key, value, {
@@ -484,3 +485,15 @@ export const extractFaceImage = (
 
   return canvas.toDataURL("image/png");
 };
+
+export function boldActionWords(text: string) {
+  const doc = nlp(text);
+  const verbs = doc.verbs().out('array');
+
+  // Replace each verb with bolded version
+  verbs.forEach((verb: string[]) => {
+    const boldedVerb = `<strong class="bold-action-word">${verb}</strong>`;
+    text = text.replace(new RegExp(`\\b${verb}\\b`, 'gi'), boldedVerb);
+  });
+  return text;
+}

@@ -128,3 +128,53 @@ interface TestUploadType {
   state: string;
   zipcode: string;
 }
+
+// Type for a single screen object
+type ScreenData = {
+  [`Screen_${number}_Title`]: string;
+  [`Screen_${number}_Image_URL`]: string;
+  [`Screen_${number}_Content`]: string;
+  [`Screen_${number}_Audio_URL`]: string;
+  [key: string]: string;
+};
+
+// Type for the currentScreen prop
+type CurrentScreen = ScreenData | undefined;
+
+// Type for currentScreenIndex_ (transformed index)
+type CurrentScreenIndex_ = number | undefined;
+
+// Type for currentScreenIndex (index state)
+type CurrentScreenIndex = number;
+
+// Type for screensData (array of screens)
+type ScreensData = ScreenData[];
+
+// Type for handlePrev and handleNext functions
+type HandleNavigation = () => void;
+
+// Type for pathLink function
+type PathLink = () => string;
+
+// Type for muted state
+type Muted = boolean;
+
+// Type for muteAudio function
+type MuteAudio = () => void;
+
+// Type for audioRef (ref for HTMLAudioElement)
+type AudioRef = React.RefObject<HTMLAudioElement>;
+
+// Props Type for the DesktopView and MobileView components
+type PreTestScreensProps = {
+  currentScreen: CurrentScreen;
+  currentScreenIndex_: CurrentScreenIndex_;
+  currentScreenIndex: CurrentScreenIndex;
+  screensData: ScreensData;
+  handlePrev: HandleNavigation;
+  handleNext: HandleNavigation;
+  pathLink: PathLink;
+  muted: Muted;
+  muteAudio: MuteAudio;
+  audioRef: AudioRef;
+};

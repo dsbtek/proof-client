@@ -10,7 +10,7 @@ const Desktop = () => {
       <AgreementHeader title="Device Setup" />
       <div className="test-items-wrap-desktop_" style={{ textAlign: "left" }}>
           <div className="sub-item">
-            <p className="get-started-title">
+          <p className="get-started-title bold-action-word">
               Getting Started
             </p>
           <ul style={{ textAlign: "left" }}>

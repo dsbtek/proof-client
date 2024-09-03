@@ -1,18 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
-import {
-  Menu,
-  AppHeader,
-  Button,
-  Loader_,
-  DinamicMenuLayout,
-} from "@/components";
+import { useEffect } from "react";
 import { AiOutlineRight } from "react-icons/ai";
 import { useQuery } from "react-query";
 import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+
+import { AppHeader, Button, Loader_, DinamicMenuLayout } from "@/components";
 import { authToken } from "@/redux/slices/auth";
 import { setHistoryData, historyData, appData } from "@/redux/slices/appConfig";
-import { toast } from "react-toastify";
 import { hasPermission } from "@/utils/utils";
 
 const MobileHistory = () => {
