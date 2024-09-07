@@ -1,12 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-import { AgreementFooter, AppHeader, DesktopFooter, Loader_ } from "@/components";
+import { Loader_ } from "@/components";
 import { useSelector } from "react-redux";
-import { GoMute } from "react-icons/go";
-import { RxSpeakerLoud } from "react-icons/rx";
 import { appData } from "@/redux/slices/appConfig";
-import { formatList, transformScreensData } from "@/utils/utils";
+import { transformScreensData } from "@/utils/utils";
 import useResponsive from "@/hooks/useResponsive";
 import DesktopView from "./desktop";
 import MobileView from "./mobile";

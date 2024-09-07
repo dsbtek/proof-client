@@ -23,6 +23,47 @@
     width: 720px;
 }
 
+.pre-test-questions-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+    padding: 0px 32px;
+}
+
 @media screen and (min-width: 700px) {
-    
+    .feed-back-destop-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 416px;
+        height: 500px;
+        padding: 29px;
+        border-radius: 16px;
+        gap: 10px;
+        background-color: #FFFFFF;
+        box-shadow: 0px 0px 30px 0px #0000000D;
+    }
+    .feedback-items-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .pre-test-questions-holder {
+        align-items: center;
+        border-radius: 16px;
+        width: 416px;
+        padding: 32px;
+        height: 450px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 30px 0px #0000000D;
+    }
+    .radio-button-container {
+        width: 100%;
+    }
 }

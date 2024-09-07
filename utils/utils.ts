@@ -368,7 +368,7 @@ export const transformScreensData = (data: Object) => {
 };
 
 export const formatList = (input: string): string => {
-  return input.replace(/-/g, "<br> <span>&#8226;</span>");
+  return input.replace(/-/g, "<br><br> <span>&#8226;</span>");
 };
 
 export function parseAamvaData(data: string | null): Record<string, any> | string {

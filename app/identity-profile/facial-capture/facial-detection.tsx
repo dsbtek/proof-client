@@ -247,7 +247,7 @@ const FacialCapture = () => {
                             btnLeftText={capturedImage ? "Recapture" : ""}
                             btnRightText={"Next"}
                             rightdisabled={!similarity}
-                            onClickBtnLeftAction={capturedImage ? recapture : () => { }}
+                            onClickBtnLeftAction={capturedImage ? recapture : () => { }} 
                         />
                     ) : (
                         <AgreementFooter

@@ -114,7 +114,9 @@ const SystemCheck = () => {
             </div>
           </div>
         ))}
-        {isDesktop?
+
+      </div>
+      {isDesktop ?
         <DesktopFooter
         currentNumber={0}
         outOf={0}
@@ -130,7 +132,6 @@ const SystemCheck = () => {
         <div className="btn-system-chk" style={{ width: '95%', marginLeft: 'auto', marginRight: 'auto', marginTop: '32px' }}>
           <Button blue type="submit" link={'/test-collection/agreement'}>Next</Button>
         </div>}
-      </div>
     </div>
   );
 };

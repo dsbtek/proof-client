@@ -595,18 +595,11 @@ function Test() {
                                         return (
                                             <React.Fragment key={index}>
                                                 <div className="test-graphic_" key={index + 2} style={{ position: 'relative' }}>
-                                                    {/* <div className='test-text'>
-                                                        <article className='test-step'>
-                                                            <h5>Step {step.step}</h5>
-                                                        </article>
-                                                        <p className='t-text'>{step.directions}</p>
-                                                    </div> */}
-
                                                     <div className='test-text'>
-                                                        <article className='test-step'>
-                                                            <h5>Step {step.step}</h5>
+                                                        <article className='test-step_'>
+                                                            <h5 style={{ textAlign: "left", fontSize: "20px" }}>Step {step.step}</h5>
                                                         </article>
-                                                        <p className='t-text' dangerouslySetInnerHTML={{ __html: boldActionWords(step.directions) }} />
+                                                        <p className='t-text' style={{ textAlign: "left" }} dangerouslySetInnerHTML={{ __html: boldActionWords(step.directions) }} />
                                                     </div>
                                                     <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
                                                     <div style={{ position: 'absolute', display: "flex", height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
@@ -649,7 +642,9 @@ function Test() {
                         rightdisabled={false}
                         onClickBtnLeftAction={repeatAudio}
                         onClickBtnRightAction={handleNextStep}
-                    />}
+                        onProgressBar={true}
+                    />
+                }
                 {barcodeStep && !barcodeUploaded && <div className='barcode-btns'>
                     {barcodeIsLoading ? <Loader_ /> : <Button classname='cap-btn' onClick={barcodeCapture}><TbCapture /> Capture</Button>}
                 </div>}

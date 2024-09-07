@@ -92,7 +92,7 @@ const SignaturePage = () => {
         <div className="overLay">
           <div className="prompt">
             <div className="prompt-item">
-              <p>Clear Signature</p>
+              <p className={isDesktop ? "bold-headigs" : ""}>Clear Signature</p>
               <p>Are you sure you want to clear the signature?</p>
             </div>
             <div className="prompt-btn">
@@ -122,6 +122,9 @@ const SignaturePage = () => {
             backgroundImage: !isDesktop ? 'url("../images/signBg.png")' : "",
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
         >
           {isDesktop ? (

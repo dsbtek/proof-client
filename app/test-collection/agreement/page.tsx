@@ -303,7 +303,7 @@ const AgreementConsent = () => {
   );
 
   return (
-    <div className="">
+    <div className="system-chk-container">
       {preTestScreens[0]?.Screen_1_Title !== "Agreement and Consent"
         ? renderAgreementContent()
         : renderCustomContent(preTestScreens[0].Screen_1_Title, preTestScreens[0].Screen_1_Content)

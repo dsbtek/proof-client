@@ -43,7 +43,7 @@ const BeforeYouBegin = () => {
 
           <div className="test-items-wrap-desktop_ ">
             <div className="sub-item">
-              <p className="get-started-title bold-action-word">Before You Begin</p>
+              <p className="get-started-title bold-headig">Before You Begin</p>
               <p className="get-started-title">Please confirm the following.</p>
               <div className="checkbox-container">
                 {checkboxes.map((checkbox, index) => (

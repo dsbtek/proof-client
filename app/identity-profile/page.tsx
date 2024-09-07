@@ -32,13 +32,13 @@ const IdentityProfile = () => {
             <br /> <br />
             We do not sell nor share your information with outside parties.
             <br />
-            Click `Next` when you are ready.
+            Click <span className="bold-headigs">`Next`</span> when you are ready.
           </p>
         </div>
       ) : (
         <div className="test-items-wrap-desktop_">
           <div className="sub-item">
-              <p className="idd-title bold-action-word">
+              <p className="idd-title bold-headigs">
               Before we begin, PROOF will establish a secure PROOF Identity
               Profile for you.
             </p>
@@ -51,7 +51,8 @@ const IdentityProfile = () => {
               <br /> <br />
               We do not sell nor share your information with outside parties.
               <br />
-              Click `Next` when you are ready.
+                <br />
+                Click <span className="bold-headigs">Next</span> when you are ready.
             </p>
           </div>
           <Image

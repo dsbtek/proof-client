@@ -53,7 +53,7 @@ const SampleFacialCapture = () => {
               We do not sell nor share your information with the outside parties.
               <br />
               <br />
-              Click `Next` when you are ready.
+              Click <span className="bold-headigs">`Next`</span> when you are ready.
             </p>
           </div>
           <Image className="get-started-img" src="/images/pip3-dxtp.svg" alt="PIP 3" width={3000} height={3000} />

@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components";
 import Link from "next/link";
 import { GoHome } from "react-icons/go";
@@ -10,12 +10,13 @@ interface DesktopFooterProps {
     onPagination: boolean;
     onLeftButton: boolean;
     onRightButton: boolean;
+    onProgressBar?: boolean;
     onClickBtnLeftAction?: () => void;
     onClickBtnRightAction?: () => void;
     currentNumber?: number;
     outOf?: number;
-    btnLeftLink?: string; // Optional link
-    btnRightLink?: string; // Optional link
+    btnLeftLink?: string;
+    btnRightLink?: string;
     btnLeftText?: string;
     btnRightText?: string;
     leftdisabled?: boolean;
@@ -36,14 +37,17 @@ const DesktopFooter = ({
     btnRightText,
     leftdisabled,
     rightdisabled,
+    onProgressBar,
 }: DesktopFooterProps) => {
+    const progress = (currentNumber! / outOf!) * 100;
     return (
-        <div className="agreement-footer-container">
+        <div className="agreement-footer-container" style={{ position: "fixed" }}>
+            {onProgressBar && <div className="deskTopProgressBar" style={{ width: `${progress}%` }}></div>}
             <div className="wrap-paginate">
             {onPagination && (
                 <div className="paginate">
 
-                        <div style={{ width: "50px", gap: "8px" }} className="m-5">Step {currentNumber} </div><div className="m-5">of</div><div className="m-5">{outOf}</div>
+                        <div style={{ width: "50px", gap: "8px" }} className="ms-5">Step {currentNumber} </div><div className="ms-5">of</div><div className="ms-5">{outOf}</div>
                 </div>
             )}
             </div>

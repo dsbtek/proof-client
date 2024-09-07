@@ -78,6 +78,7 @@ const DesktopView = ({
                 btnRightLink={currentScreenIndex === screensData.length - 1 ? pathLink() : ""}
                 onClickBtnLeftAction={handlePrev}
                 onClickBtnRightAction={handleNext}
+                onProgressBar={true}
             />
         </>
 

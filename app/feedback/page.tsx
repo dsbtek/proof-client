@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { AgreementHeader, AgreementFooter, RadioButton, TextAreaField, Loader_ } from "@/components";
+import { AgreementHeader, AgreementFooter, RadioButton, TextAreaField, Loader_, DesktopFooter } from "@/components";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { decryptIdAndCredentials } from "@/utils/utils";
 import { testingKit } from "@/redux/slices/drugTest";
 import { useRouter } from "next/navigation";
-
+import useResponsive from "@/hooks/useResponsive";
 
 interface Question {
   skip_logic: boolean;
@@ -36,9 +36,10 @@ const FeedbackRating = () => {
   const [textResponse, setTextResponse] = useState<string>("");
   const [responses, setResponses] = useState<any[]>([]);
   const router = useRouter();
+  const isDesktop = useResponsive();
 
   if (!data || data.length === 0) {
-    return < Loader_ />;
+    return <Loader_ />;
   }
 
   const questions = data[0]?.questions;
@@ -59,9 +60,10 @@ const FeedbackRating = () => {
   const allChecked = selectedRadio !== null || textResponse !== "";
 
   const handleNextClick = async () => {
-    const selectedOption = currentQuestion?.question_type === "Pick list"
-      ? radioOptions.find(option => option.id === selectedRadio)?.label
-      : textResponse;
+    const selectedOption =
+      currentQuestion?.question_type === "Pick list"
+        ? radioOptions.find((option) => option.id === selectedRadio)?.label
+        : textResponse;
 
     const response = {
       question: currentQuestion?.question,
@@ -76,8 +78,8 @@ const FeedbackRating = () => {
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedRadio(null); // Reset selected radio for the next question
-      setTextResponse(""); // Reset text response for the next question
+      setSelectedRadio(null);
+      setTextResponse("");
     } else {
       // Post responses to the server
       try {
@@ -107,51 +109,113 @@ const FeedbackRating = () => {
     }
   };
 
-  return (
+  const renderQuestionContentMobile = () => (
+
     <>
-      <div className="container-test-collection">
-        <AgreementHeader title={data[0].sectionName} />
-        <div className="agreement-items-wrap">
-          <div className="feedback-gesture-wrap">
-            {currentQuestion?.image_url && (
-              <Image className="feedback-imoji" src={currentQuestion.image_url} alt="feedback image" width={3000} height={3000} />
-            )}
-          </div>
-          <p className="feedback-text">{currentQuestion?.question}</p>
-          {currentQuestion?.question_type === "Pick list" && (
-            <div className="radio-container">
-              {radioOptions.map((option) => (
-                <RadioButton
-                  key={option.id}
-                  onChange={() => handleRadioChange(option.id)}
-                  checked={selectedRadio === option.id}
-                  label={option.label}
-                />
-              ))}
-            </div>
-          )}
-          {currentQuestion?.question_type === "Text" && (
-            <TextAreaField
-              placeholder={"Your feedback here..."}
-              value={textResponse}
-              onChange={handleTextChange}
-              style={{ width: '100%' }} />
-          )}
-        </div>
+      <div className="feedback-gesture-wrap">
+        {currentQuestion?.image_url && (
+          <Image className="feedback-imoji" src={currentQuestion.image_url} alt="feedback image" width={3000} height={3000} />
+        )}
       </div>
-      <AgreementFooter
-        currentNumber={currentQuestionIndex + 1}
-        outOf={questions.length}
-        onPagination={true}
-        onLeftButton={false}
-        onRightButton={allChecked || currentQuestion?.question_type === "Text"}
-        btnLeftLink=""
-        btnRightLink=""
-        btnLeftText="Decline"
-        btnRightText={currentQuestionIndex < questions.length - 1 ? "Next" : "Submit"}
-        onClickBtnRightAction={handleNextClick}
-      />
+      <p className="feedback-text">{currentQuestion?.question}</p>
+      {currentQuestion?.question_type === "Pick list" && (
+        <div className="radio-container">
+          {radioOptions.map((option) => (
+            <RadioButton
+              key={option.id}
+              onChange={() => handleRadioChange(option.id)}
+              checked={selectedRadio === option.id}
+              label={option.label}
+            />
+          ))}
+        </div>
+      )}
+      {currentQuestion?.question_type === "Text" && (
+        <TextAreaField
+          placeholder="Your feedback here..."
+          value={textResponse}
+          onChange={handleTextChange}
+          style={{ width: "100%" }}
+        />
+      )}
     </>
+  );
+
+  const renderQuestionContentDesktop = () => (
+
+    <div className="feed-back-destop-card">
+      <p className="bold-headig">Give feedback</p>
+      <div className="feedback-gesture-wrap">
+        {currentQuestion?.image_url && (
+          <Image className="feedback-imoji" src={currentQuestion.image_url} alt="feedback image" width={3000} height={3000} />
+        )}
+      </div>
+      <p className="feedback-text">{currentQuestion?.question}</p>
+      {currentQuestion?.question_type === "Pick list" && (
+        <div className="radio-button-container">
+          {radioOptions.map((option) => (
+            <RadioButton
+              key={option.id}
+              onChange={() => handleRadioChange(option.id)}
+              checked={selectedRadio === option.id}
+              label={option.label}
+            />
+          ))}
+        </div>
+      )}
+      {currentQuestion?.question_type === "Text" && (
+        <TextAreaField
+          placeholder="Your feedback here..."
+          value={textResponse}
+          onChange={handleTextChange}
+          style={{ width: "100%" }}
+        />
+      )}
+    </div>
+  );
+
+  return (
+    <div className="container-test-collection">
+      <AgreementHeader title={data[0].sectionName} />
+
+      {isDesktop ?
+        <div className="feedback-items-wrap">
+          {renderQuestionContentDesktop()}
+      </div>
+        :
+        <div className="agreement-items-wrap">
+          {renderQuestionContentMobile()}
+        </div>
+
+      }
+      {!isDesktop ? (
+        <AgreementFooter
+          currentNumber={currentQuestionIndex + 1}
+          outOf={questions.length}
+          onPagination={true}
+          onLeftButton={false}
+          onRightButton={allChecked || currentQuestion?.question_type === "Text"}
+          btnLeftLink=""
+          btnRightLink=""
+          btnLeftText="Decline"
+          btnRightText={currentQuestionIndex < questions.length - 1 ? "Next" : "Submit"}
+          onClickBtnRightAction={handleNextClick}
+        />
+      ) : (
+        <DesktopFooter
+          currentNumber={currentQuestionIndex + 1}
+          outOf={questions.length}
+          onPagination={true}
+          onLeftButton={false}
+          onRightButton={allChecked || currentQuestion?.question_type === "Text"}
+          btnLeftLink=""
+          btnRightLink=""
+          btnLeftText="Decline"
+          btnRightText={currentQuestionIndex < questions.length - 1 ? "Next" : "Submit"}
+          onClickBtnRightAction={handleNextClick}
+        />
+      )}
+    </div>
   );
 };
 

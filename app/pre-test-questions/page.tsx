@@ -82,6 +82,9 @@ const PreTest = () => {
     const currentSection = preTestQuestionnaire[currentSectionIndex];
     const totalQuestionsInSection = currentSection.questions.length;
 
+    console.log("Current Section Index:", nextSectionIndex);
+    console.log("Current Question Index:", nextQuestionIndex);
+
     // Move to the next question
     nextQuestionIndex++;
 
@@ -89,6 +92,9 @@ const PreTest = () => {
     while (nextQuestionIndex < totalQuestionsInSection && currentSection.questions[nextQuestionIndex].skip_logic) {
       nextQuestionIndex++;
     }
+
+    console.log("After Skip Logic - Next Section Index:", nextSectionIndex);
+    console.log("After Skip Logic - Next Question Index:", nextQuestionIndex);
 
     // If we have reached the end of the current section's questions, move to the next section
     if (nextQuestionIndex >= totalQuestionsInSection) {
@@ -104,15 +110,18 @@ const PreTest = () => {
       }
     }
 
+    console.log("Final Section Index:", nextSectionIndex);
+    console.log("Final Question Index:", nextQuestionIndex);
+
     // Check if we have reached the end of the questionnaire
     if (nextSectionIndex >= preTestQuestionnaire.length) {
-      // Handle completion or navigation logic when at the end of the questionnaire
       router.push(`/test-collection/${kit_id}`);
     } else {
       setCurrentSectionIndex(nextSectionIndex);
       setCurrentQuestionIndex(nextQuestionIndex);
     }
   };
+
 
   const handlePrev = () => {
     let prevSectionIndex = currentSectionIndex;
@@ -142,6 +151,24 @@ const PreTest = () => {
   const handleDateSelect = (date: string) => {
     setSelectedDate(date);
   };
+  const handleDisableNextBtn = (): boolean => {
+    const currentSelection = selectedOptions.find(
+      (option) => option.sectionIndex === currentSectionIndex && option.questionIndex === currentQuestionIndex
+    );
+
+    const selectedOption = currentSelection?.selectedOption;
+    const selectedDate = currentSelection?.selectedDate;
+
+    if (currentQuestion?.question_type?.includes('Date')) {
+      // If the question requires a date and the date is not selected
+      return !selectedDate_;
+    }
+
+    // If it's not a date question, check for selected option
+    return selectedOption === null;
+  };
+
+
   if (!preTestQuestionnaire?.length) {
     return <Loader_ />;
   }
@@ -194,9 +221,10 @@ const PreTest = () => {
         :
         <div className="test-items-wrap-desktop_ ">
 
-          <div className="sub-item">
+          <div className={currentQuestion.image_url ? "sub-item" : "pre-test-questions-holder"}>
             <p className="get-started-title">{currentQuestion?.question}</p>
             <br />
+
             {currentQuestion?.options && (
               <div className="radio-button-container">
                 {currentQuestion.options.map((opt, optIndex) => (
@@ -209,11 +237,21 @@ const PreTest = () => {
                 ))}
               </div>
             )}
+
             {currentQuestion?.question_type?.includes('Date') && (
               <div className="radio-button-container">
-                <DatePicker title={"Select a date"} onDateSelect={handleDateSelect} />
+                <p style={{ textAlign: "left", color: "#4E555D" }}>
+                  Please provide us your date of birth to be continue. This information helps us verify your identity and ensure a personalized experience.
+                </p>
+                <br />
+                <DatePicker title={"Select a date"} onDateSelect={handleDateSelect} date={selectedDate_} />
+                <br />
+                <p style={{ textAlign: "left", color: "#EF4444" }}>
+                  Your date of birth will be used solely for verification purposes and will not be shared with third parties.
+                </p>
               </div>
             )}
+
           </div>
 
           {currentQuestion.image_url && (
@@ -231,30 +269,31 @@ const PreTest = () => {
 
       {isDesktop?
         <DesktopFooter
-        currentNumber={currentQuestionIndex + 1}
-        outOf={currentSection.questions.length}
-        onPagination={true}
-        onLeftButton={currentQuestionIndex > 0}
-        onRightButton={true}
-        btnLeftText="Previous"
-        btnRightText="Next"
-        btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
-        onClickBtnLeftAction={handlePrev}
-        onClickBtnRightAction={handleNext}
-          rightdisabled={selectedOption === null}
-      />:
+          currentNumber={currentQuestionIndex + 1}
+          outOf={currentSection.questions.length}
+          onPagination={true}
+          onLeftButton={currentQuestionIndex > 0}
+          onRightButton={true}
+          btnLeftText="Previous"
+          btnRightText="Next"
+          btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
+          onClickBtnLeftAction={handlePrev}
+          onClickBtnRightAction={handleNext}
+          rightdisabled={handleDisableNextBtn()}
+          onProgressBar={true}
+        /> :
       <AgreementFooter
-      currentNumber={currentQuestionIndex + 1}
-      outOf={currentSection.questions.length}
-      onPagination={true}
-      onLeftButton={currentQuestionIndex > 0}
-      onRightButton={true}
-      btnLeftText="Previous"
-      btnRightText="Next"
-      btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
-      onClickBtnLeftAction={handlePrev}
-      onClickBtnRightAction={handleNext}
-          rightdisabled={selectedOption === null}
+          currentNumber={currentQuestionIndex + 1}
+          outOf={currentSection.questions.length}
+          onPagination={true}
+          onLeftButton={currentQuestionIndex > 0}
+          onRightButton={true}
+          btnLeftText="Previous"
+          btnRightText="Next"
+          btnRightLink={currentQuestionIndex < currentSection.questions.length - 1 || currentSectionIndex < preTestQuestionnaire.length - 1 ? '' : `/test-collection/${kit_id}`}
+          onClickBtnLeftAction={handlePrev}
+          onClickBtnRightAction={handleNext}
+          rightdisabled={handleDisableNextBtn()}
         />
     }
     </div>
