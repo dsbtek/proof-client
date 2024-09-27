@@ -1,3 +1,4 @@
+//Data shown at the landing page
 export const welcomeData = [
   {
     imgUri: "/images/caution.png",
@@ -83,6 +84,7 @@ export const proofPassResult = [
   },
 ];
 
+// All Permissions available in the app
 export const permissions = [
   "Admin",
   "Monitoring",
@@ -138,3 +140,30 @@ export const permissions = [
   "New App Features Tutorial",
   "PROOFpass PROOF Collection",
 ];
+
+// Object mapping of test kits and their respective IDs
+interface TestKitMapping {
+  [key: string]: string;
+}
+
+export const testMapping: TestKitMapping = {
+  'a0qPI000003Ud8gYAC': 'DEMO Pr Blood Kit',
+  'a0q2J00000BM9IDQA1': 'DEMO Pr Saliva Kit (Intercept)',
+  'a0q2J00000BMfozQAD': 'Pr Nail Kit',
+  'a0qPI000003EYZcYAO': 'DEMO Pr Dual Rapid Saliva Kit (OralTox/ALCO)',
+  'a0q2J00000BMNJoQAP': 'CRL Saliva Kit',
+  'a0qPI000003BM8OYAW': 'Pr Dual Rapid Saliva Kit (OralTox/ALCO)',
+  'a0qHt00000C8ETwIAN': '2SAN Home Drug Test Collection & Result Recording',
+  'a0q2J00000Ciy3bQAB': 'Pr Saliva Kit (DOCTox Quantisal)',
+  'a0q2J00000A07UpQAJ': 'DOCTox-Quantisal-Spanish',
+  'a0q2J00000ANlwbQAD': 'DOCtox-Quantisal-Caregiver Assisted',
+  'a0q2J00000Cj7WGQAZ': 'CRL Saliva & Blood Kit',
+  'a0qPI000004WV6PYAW': 'FRENCH Pr Dual Rapid Saliva Kit (OralTox/ALCO)',
+  'a0qHt00000C8KsdIAF': 'Laboratory Confirmation (Optional)',
+  'a0qHt00000C8B8gIAF': 'NO ID Pr Blood Kit',
+  'a0qHt00000C8NptIAF': 'Pr Urine Kit',
+  'a0qPI000003GXkgYAG': 'Pr Whole Blood Kit',
+  'a0qHt00000AiRGcIAN': 'INACTIVE-Pr Rapid Saliva Kit (Honor)',
+  'a0qPI0000040W7GYAU': 'DEMO PR Nail Kit'
+};
+

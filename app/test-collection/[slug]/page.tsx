@@ -14,19 +14,20 @@ import Crypto from "crypto-js";
 import { TbCapture } from "react-icons/tb";
 import { v4 as uuidv4 } from 'uuid';
 import { useQuery } from "react-query";
-
 import useResponsive from "@/hooks/useResponsive";
 import { AppHeader, Button, DialogBox, Timer, BarcodeCaptureModal, Alert, Loader_, Loader, Scanner, AgreementFooter, AgreementHeader, AppHeaderDesktop, DesktopFooter } from "@/components";
-import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename, setTestSteps } from '@/redux/slices/drugTest';
+import { testData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, saveConfirmationNo, setFilename, setTestSteps, setFaceScans } from '@/redux/slices/drugTest';
 import { detectBarcodes, uploadVideoToS3, createPresignedUrl/*, videoEncoder */ } from './action';
-import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, boldActionWords, dateTimeInstance, fileToBase64 } from '@/utils/utils';
+import { base64ToBlob, base64ToFile, blobToBase64, blobToBuffer, blobToUint8Array, boldActionWords, dateTimeInstance, fileToBase64, getConnectionType } from '@/utils/utils';
 import { storeBlobInIndexedDB } from '@/utils/indexedDB';
 import { authToken } from '@/redux/slices/auth';
-import usePageVisibility from '@/hooks/visibilityHook';
+import usePageVisibility from '@/hooks/useVisibility';
 import { FacialCaptureString, IdCardFacialPercentageScoreString, appData } from '@/redux/slices/appConfig';
 import useFaceDetector from '@/hooks/faceDetector';
 import { compareFacesAI, detectBarcodesAI, detectBarcodesAI2 } from '@/utils/queries';
 import useTestupload from '@/hooks/testUpload';
+import { uploadFileToS3 } from '@/app/identity-profile/id-detection/step-1/action';
+import { scoreMatrix } from '@/redux/slices/score-matrix';
 
 
 function Test() {
@@ -59,23 +60,25 @@ function Test() {
     const timeRef = useRef(0);
     const stepNameRef = useRef(0);
     const activeStepRef = useRef(activeStep);
-    const timerStepRef = useRef<null | number>(timerStep)
-    const temperatureReaderRef = useRef(0);
-    const faceScanRef = useRef(0);
-    const barcodeStepRef = useRef(0);
-    const labelScanRef = useRef(0);
-    const isDesktop = useResponsive()
+    const timerStepRef = useRef<boolean>(false)
+    const temperatureReaderRef = useRef(false);
+    const faceScanRef = useRef(false);
+    const barcodeStepRef = useRef(false);
+    const labelScanRef = useRef(false);
+    const AIOptions = useRef<any>(null);
 
     const dispatch = useDispatch();
     const router = useRouter();
     const pathname = usePathname();
-    const { testSteps, testStepsFiltered, timerObjs, testingKit, startTime, endTime, signature, confirmationNo, filename } = useSelector(testData);
+    const { AIConfig, storage, lookAway, handsOut, testSteps, testStepsFiltered, timerObjs, testingKit, startTime, endTime, signature, confirmationNo, filename, trackingNumber, shippingLabel, barcodeKit, detectKit, proofId, faceCompare, faceScans, imageCaptures, passport, governmentID, idDetails } = useSelector(testData);
     const { participant_id } = useSelector(authToken);
     const { first_name, last_name } = useSelector(appData);
     const facialCapture = useSelector(FacialCaptureString);
     const facialScanScore = useSelector(IdCardFacialPercentageScoreString);
     const feedbackData = useSelector((state: any) => state.preTest.preTestFeedback);
+    const scoringData = useSelector(scoreMatrix);
 
+    const isDesktop = useResponsive();
     const isVisible = usePageVisibility();
     const { faceDetected } = useFaceDetector(cameraRef);
     const { uploader, testUpload } = useTestupload();
@@ -123,21 +126,22 @@ function Test() {
         } else {
             //Logic helps timer step stay on track with the active step
             if (activeStep + 1 !== test[activeStep].step && test[activeStep].step !== null && activeStep === test[activeStep - 1].step) {
-                setActiveStep(test[activeStep].step);
+                const newActiveStep = test[activeStep].step;
+                setActiveStep(newActiveStep);
             } else if (time === 0 && timerStep !== activeStep) {
-                const newActiveStep = activeStep + 1;
+                const newActiveStep = activeStep + 1; //Needs to be set because useState is asynchronous and does not update before assigning the values below
                 mediaRecorderRef.current?.stop();
-                // setActiveStep((prevActiveStep) => prevActiveStep + 1);
                 setActiveStep(newActiveStep);
                 setTimeout(() => {
                     timeRef.current = time;
                     stepNameRef.current = test[newActiveStep - 1].step_name;
                     activeStepRef.current = newActiveStep;
-                    timerStepRef.current = typeof timerStep === 'number' ? 1 : 0;
-                    temperatureReaderRef.current = test[newActiveStep - 1].is_temperature_reader ? 1 : 0;
-                    faceScanRef.current = performFaceScan ? 1 : 0;
-                    barcodeStepRef.current = barcodeStep ? 1 : 0;
-                    labelScanRef.current = performLabelScan ? 1 : 0;
+                    timerStepRef.current = typeof timerStep === 'number' ? true : false;
+                    temperatureReaderRef.current = test[newActiveStep - 1].is_temperature_reader ? true : false;
+                    faceScanRef.current = performFaceScan ? true : false;
+                    barcodeStepRef.current = barcodeStep ? true : false;
+                    labelScanRef.current = performLabelScan ? true : false;
+                    AIOptions.current = test[newActiveStep - 1].ai_options;
                 }, 1000)
             } else {
                 setShowTimer(true);
@@ -149,8 +153,21 @@ function Test() {
         setShowTimer(false);
         setTime(0);
         setTimerStep(null);
+        mediaRecorderRef.current?.stop();
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }, [])
+        const newActiveStep = activeStep + 1;
+        setTimeout(() => {
+            timeRef.current = time;
+            stepNameRef.current = test[newActiveStep - 1].step_name;
+            activeStepRef.current = newActiveStep;
+            timerStepRef.current = typeof timerStep === 'number' ? true : false;
+            temperatureReaderRef.current = test[newActiveStep - 1].is_temperature_reader ? true : false;
+            faceScanRef.current = performFaceScan ? true : false;
+            barcodeStepRef.current = barcodeStep ? true : false;
+            labelScanRef.current = performLabelScan ? true : false;
+            AIOptions.current = test[newActiveStep - 1].ai_options;
+        }, 1000)
+    }, [activeStep, barcodeStep, performFaceScan, performLabelScan, test, time, timerStep])
 
     const muteAudio = () => {
         setMuted(!muted);
@@ -174,8 +191,15 @@ function Test() {
             const imageSrc = cameraRef?.current!.getScreenshot();
             setBarcodeImage(imageSrc!)
 
-            barcodeStep && setScanType('Test')
-            performLabelScan && setScanType('fedex')
+            barcodeStep && setScanType('test')
+            performLabelScan && setScanType('fedex');
+            if (performLabelScan) {
+                setScanType('fedex');
+                const shippingLabelCapture = `${participant_id}-ShippingLabelCapture-${Date.now()}.png`
+                uploadFileToS3(imageSrc!, shippingLabelCapture).catch((error) => {
+                    console.error('Shipping Label Capture Upload Error:', error);
+                });
+            }
 
             setBarcodeUploaded(true);
 
@@ -186,7 +210,7 @@ function Test() {
             toast.error('Error detecting barcode. Please try again.');
             console.error('Barcode Capture Error:', error);
         }
-    }, [barcodeStep, performLabelScan]);
+    }, [barcodeStep, participant_id, performLabelScan]);
 
 
     const reCaptureBarcode = () => {
@@ -199,12 +223,16 @@ function Test() {
     useEffect(() => {
         if (performFaceScan) {
             const faceScan = cameraRef?.current!.getScreenshot();
+            const facialScan = `${participant_id}-FacialScan-${Date.now()}.png`;
             (async () => {
                 try {
                     const similarity = await compareFacesAI(facialCapture.replace(/^data:image\/\w+;base64,/, ''), faceScan!.replace(/^data:image\/\w+;base64,/, ''));
                     console.log('simi in test-->', similarity.result.percentage)
-                    // setPerformFaceScan(false);
-                    dispatch
+                    await uploadFileToS3(faceScan!, facialScan).catch((error) => {
+                        console.error('Facial Scan Upload Error:', error);
+                    });
+                    dispatch(setFaceScans({ url: facialScan, percentage: similarity.result.percentage }))
+                    setPerformFaceScan(false);
                 } catch (error) {
                     console.error('Test Face Compare Error:', error);
                 }
@@ -230,7 +258,7 @@ function Test() {
                 audioRef.current.pause();
             }
         };
-    }, [barcodeStep, dispatch, faceDetected, facialCapture, isVisible, performFaceScan, status, testingKit.Scan_Shipping_Label]);
+    }, [barcodeStep, dispatch, faceDetected, facialCapture, isVisible, participant_id, performFaceScan, status, testingKit.Scan_Shipping_Label]);
 
     //General Test Collection functions and logic
     useEffect(() => {
@@ -241,11 +269,12 @@ function Test() {
             timeRef.current = time;
             stepNameRef.current = test[0].step_name;
             activeStepRef.current = test[0].step;
-            timerStepRef.current = typeof timerStep === 'number' ? 1 : 0;
-            temperatureReaderRef.current = test[activeStep - 1].is_temperature_reader ? 1 : 0;
-            faceScanRef.current = performFaceScan ? 1 : 0;
-            barcodeStepRef.current = barcodeStep ? 1 : 0;
-            labelScanRef.current = performLabelScan ? 1 : 0;
+            timerStepRef.current = typeof timerStep === 'number' ? true : false;
+            temperatureReaderRef.current = test[activeStep - 1].is_temperature_reader ? true : false;
+            faceScanRef.current = performFaceScan ? true : false;
+            barcodeStepRef.current = barcodeStep ? true : false;
+            labelScanRef.current = performLabelScan ? true : false;
+            AIOptions.current = test[0].ai_options;
 
             dispatch(setFilename(`${participant_id}-${testingKit.kit_name.split(' ').join('-')}-${testingKit.kit_id}-${uuid.current}.mp4`));
         }
@@ -293,7 +322,23 @@ function Test() {
                     kit: testingKit,
                     startTime: startTime,
                     endTime: endTime,
-                    id: blobId
+                    id: blobId,
+                    filename: filename,
+                    barcode: barcode,
+                    storage: storage,
+                    lookAway: lookAway,
+                    handsOut: handsOut,
+                    trackingNumber: trackingNumber,
+                    shippingLabel: shippingLabel,
+                    barcodeKit: barcodeKit,
+                    detectKit: detectKit,
+                    proofId: proofId,
+                    faceCompare: faceCompare,
+                    faceScans: faceScans,
+                    imageCaptures: imageCaptures,
+                    passport: passport,
+                    governmentID: governmentID,
+                    idDetails: idDetails
                 }
                 const encryptedpendingTest = Crypto.AES.encrypt(JSON.stringify(testPending), process.env.NEXT_PUBLIC_SECRET_KEY as string).toString();
                 localStorage.setItem('pendingTest', encryptedpendingTest);
@@ -317,7 +362,7 @@ function Test() {
 
                         await testUpload();
 
-                        await uploadVideoToS3(formData, `${testingKit.kit_id}.mp4`).then((response) => {
+                        await uploadVideoToS3(formData, `dev-${filename}.mp4`).then((response) => {
                             if (response['$metadata'].httpStatusCode === 200) {
                                 dispatch(setUploadStatus(false));
                             } else {
@@ -369,7 +414,7 @@ function Test() {
             audio?.removeEventListener('ended', handleAudioEnd);
             window.removeEventListener('beforeunload', beforeUnloadHandler);
         };
-    }, [activeStep, barcodeStep, cameraRef, capturedVideo, dispatch, endTest, endTime, feedbackData, handleDialog, isFinal, participant_id, pathname, performFaceScan, performLabelScan, record, router, showTimer, startTime, status, test, testStart, testSteps, testStepsFiltered, testUpload, testingKit, testingKit.kit_id, time, timerObjs, timerStep, uploader])
+    }, [activeStep, barcode, barcodeKit, barcodeStep, cameraRef, capturedVideo, detectKit, dispatch, endTest, endTime, faceCompare, faceScans, feedbackData, filename, governmentID, handleDialog, handsOut, idDetails, imageCaptures, isFinal, lookAway, participant_id, passport, pathname, performFaceScan, performLabelScan, proofId, record, router, shippingLabel, showTimer, startTime, status, storage, test, testStart, testSteps, testStepsFiltered, testUpload, testingKit, testingKit.kit_id, time, timerObjs, timerStep, trackingNumber, uploader])
 
 
     //Streams the video to the AI detection service
@@ -420,13 +465,14 @@ function Test() {
                     const unencodedString = await blobToBase64(data);
                     console.log('as:', activeStep)
                     const body = JSON.stringify({
+                        'inference_config': AIConfig,
+                        'inference_score': scoringData[testingKit.kit_id],
                         'chunks': unencodedString,
                         'test_type': `${testingKit.kit_id}`,
                         'video_path': '',
                         'record': filename,
-                        // 'record': `${participant_id}-${testingKit.kit_name}-${testingKit.kit_id}-${uuid.current}`,
                         'index': blobCount.current,
-                        'is_final': isFinal.current ? 1 : 0,
+                        'is_final': isFinal.current ? true : false,
                         'step': {
                             step_time: timeRef.current,
                             step_name: stepNameRef.current,
@@ -435,7 +481,8 @@ function Test() {
                             is_temperature_reader: temperatureReaderRef.current,
                             is_scan_face: faceScanRef.current,
                             is_barcode: barcodeStepRef.current,
-                            shippinglabel: labelScanRef.current
+                            shippinglabel: labelScanRef.current,
+                            ai_options: AIOptions.current
                         }
                     })
 
@@ -469,23 +516,28 @@ function Test() {
                             return;
                         }
 
-                        if (analysis_data.status === 'pending' && !isFinal.current) {
+                        // if (analysis_data.status === 'pending' && !isFinal.current) {
+                        //     toast.info('AI detecting...');
+                        // }
+
+                        if (typeof analysis_data.task_id === 'string' && !isFinal.current) {
                             toast.info('AI detecting...');
                         }
 
-                        if (analysis_data.status === 'complete') {
-                            if (analysis_data.result) {
+                        if (analysis_data.status === 'success') {
+                            if (analysis_data.data) {
                                 const sendMail = async () => {
                                     const response = await fetch("/api/send-email", {
                                         method: 'POST',
                                         body: JSON.stringify({
+                                            'config': AIConfig,
                                             'participant_id': participant_id,
                                             'date': endTime,
                                             'kit': testingKit.kit_name,
                                             'confirmation_no': confirmationNo,
                                             'videoLink': `https://proofdata.s3.amazonaws.com/${filename}`,
                                             'face_scan_score': facialScanScore,
-                                            'detections': analysis_data
+                                            'detections': analysis_data.data
                                         })
                                     })
                                     const data = await response.json();
@@ -510,14 +562,14 @@ function Test() {
                 console.error('Stream Error:', error);
             });
         }
-    }, [activeStep, barcodeStep, cameraRef, confirmationNo, dispatch, endTime, facialScanScore, filename, isFinal, participant_id, performFaceScan, performLabelScan, status, test, testingKit.kit_id, testingKit.kit_name, time, timerStep])
+    }, [AIConfig, activeStep, barcodeStep, cameraRef, confirmationNo, dispatch, endTime, facialScanScore, filename, isFinal, participant_id, performFaceScan, performLabelScan, scoringData, status, test, testingKit.kit_id, testingKit.kit_name, time, timerStep])
 
     return (
         <>
             {isSubmitting && <Loader />}
             <DialogBox show={showDialog} handleReject={handleDialog} handleAccept={endTest} title='End Test' content2='Are you sure you want to end your test?' content1='WARNING: Ending the test before the final step will result in a failed test.' rejectText='No' acceptText='Yes' />
             <div className="test-container">
-                {status !== 'acquiring' && !barcodeStep && <Alert show={faceDetected} />}
+                {status !== 'acquiring' && !barcodeStep && !performLabelScan && <Alert show={faceDetected} />}
                 {!isDesktop ?
                     <>
                         <div style={{ display: 'flex', width: '100%', padding: '16px' }}>
@@ -562,7 +614,7 @@ function Test() {
                                                             <article className='test-step'>
                                                                 <h5>{step.step}</h5>
                                                             </article>
-                                                            <p className='t-text' dangerouslySetInnerHTML={{ __html: boldActionWords(step.directions) }} />
+                                                            <p className='t-text'>{step.directions}</p>
                                                         </div>
                                                     }
                                                     {showTimer && <Timer time={time} showTimer={showTimer} handleEnd={handleTimerEnd} />}
@@ -581,11 +633,9 @@ function Test() {
                             <Scanner show={showBCModal} scanType={scanType} barcodeUploaded={barcodeUploaded} step={activeStep} totalSteps={test.length} recapture={reCaptureBarcode} closeModal={closeBCModal} />
                         </div>}
                         <div className='test-head'>
-                            {/* <AppHeader title='' /> */}
                             <AppHeaderDesktop handleDialog={handleDialog} title={testingKit.kit_name} />
                             <div className='test-audio'>
                                 {muted ? <GoMute onClick={muteAudio} color='#adadad' style={{ cursor: 'pointer' }} /> : <RxSpeakerLoud onClick={muteAudio} color='#009cf9' style={{ cursor: 'pointer' }} />}
-                                {/* <AiFillCloseCircle color='red' onClick={handleDialog} style={{ cursor: 'pointer' }} /> */}
                             </div>
                         </div>
                         <div className="wrap-content-cam">
@@ -597,9 +647,9 @@ function Test() {
                                                 <div className="test-graphic_" key={index + 2} style={{ position: 'relative' }}>
                                                     <div className='test-text'>
                                                         <article className='test-step_'>
-                                                            <h5 style={{ textAlign: "left", fontSize: "20px" }}>Step {step.step}</h5>
+                                                            <h5>Step {step.step}</h5>
                                                         </article>
-                                                        <p className='t-text' style={{ textAlign: "left" }} dangerouslySetInnerHTML={{ __html: boldActionWords(step.directions) }} />
+                                                        <p className='t-text'>{step.directions}</p>
                                                     </div>
                                                     <Image className='test-graphic' src={step.image_path} alt="Proof Test Image" width={5000} height={5000} priority unoptimized placeholder='blur' blurDataURL='image/png' />
                                                     <div style={{ position: 'absolute', display: "flex", height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>

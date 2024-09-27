@@ -175,7 +175,7 @@ const FeedbackRating = () => {
   );
 
   return (
-    <div className="container-test-collection">
+    <div className="container-test-collection" style={{ height: "calc(100vh - 12rem)" }}>
       <AgreementHeader title={data[0].sectionName} />
 
       {isDesktop ?

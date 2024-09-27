@@ -5,7 +5,7 @@ import sendEmail from '@/mail/mailer';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const html = emailTestResults(body.participant_id, body.date, body.kit, body.confirmation_no, body.videoLink, body.face_scan_score, body.detections);
+        const html = emailTestResults(body.participant_id, body.date, body.kit, body.confirmation_no, body.videoLink, body.face_scan_score, body.detections, body.config);
 
         // const res = await sendEmail('osheviremajoroh@punch.agency', 'Test Results', html)
         const mail1 = await sendEmail('osheviremajoroh@gmail.com', 'Test Results', html);

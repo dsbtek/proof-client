@@ -62,6 +62,19 @@ export async function checkSignalStrength() {
   }
 }
 
+//Checks connection type
+export function getConnectionType(): string {
+  const nav = navigator as any;
+
+  if (nav.connection && nav.connection.effectiveType) {
+    return nav.connection.effectiveType; // cellular, wifi, etc.
+  } else if (nav.connection && nav.connection.type) {
+    return nav.connection.type; // older API: wifi, cellular, etc.
+  } else {
+    return 'unknown'; // API not supported or cannot detect
+  }
+}
+
 // Generates system checks data
 export async function generateSystemChecks(
   battery: number,

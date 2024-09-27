@@ -30,16 +30,16 @@ const useGetDeviceInfo = (): DeviceInfo => {
     const device = parser.getDevice();
 
     setDeviceInfo({
-      screenWidth: window.screen.width,
-      screenHeight: window.screen.height,
-      devicePixelRatio: window.devicePixelRatio,
-      browserName: browser.name,
-      browserVersion: browser.version,
-      osName: os.name,
-      osVersion: os.version,
-      deviceModel: device.model,
-      deviceType: device.type,
-      deviceVendor: device.vendor,
+      screenWidth: window.screen.width ?? "",
+      screenHeight: window.screen.height ?? "",
+      devicePixelRatio: window.devicePixelRatio ?? "",
+      browserName: browser.name ?? "",
+      browserVersion: browser.version ?? "",
+      osName: os.name ?? "",
+      osVersion: os.version ?? "",
+      deviceModel: device.model ?? "",
+      deviceType: device.type ?? "",
+      deviceVendor: device.vendor ?? "",
     });
 
     const handleResize = () => {

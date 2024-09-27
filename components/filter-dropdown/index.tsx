@@ -4,6 +4,7 @@ import "./FilterDropdown.css";
 import { FiChevronDown, FiChevronsDown, FiFilter } from "react-icons/fi";
 import { AiFillControl } from "react-icons/ai";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
+import { BiXCircle } from "react-icons/bi";
 
 interface Option {
   label: string;
@@ -17,6 +18,7 @@ interface FilterDropdownProps {
   className?: string;
   dropdownClassName?: string;
   optionClassName?: string;
+  onClearFilter?(): void;
 }
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({
@@ -26,6 +28,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   className,
   dropdownClassName,
   optionClassName,
+  onClearFilter,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
@@ -53,8 +56,8 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   return (
     <div className={`filter-dropdown ${className}`} ref={dropdownRef}>
       <button
-        onClick={handleToggle}
         className="flex-row"
+        onClick={handleToggle}
         style={{
           backgroundColor: "transparent",
           padding: "12px",
@@ -70,7 +73,11 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
         {title}
 
-        <FiChevronDown />
+        {title !== "Filter" ? (
+          <BiXCircle size={24} onClick={onClearFilter} />
+        ) : (
+          <FiChevronDown onClick={handleToggle} />
+        )}
       </button>
       {isOpen && (
         <ul className={`dropdown-menu ${dropdownClassName}`}>

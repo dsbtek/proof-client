@@ -1,16 +1,35 @@
 import { detections } from './mailData';
 import type { UndetectedItem } from './mailData';
+import type { AIConfig } from '@/redux/slices/drugTest';
 
-export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024', kit = 'PR Urine Kit', confirmation_no = '000111', videoLink = '#', face_scan_score = '', detection = detections): string {
+export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024', kit = 'PR Urine Kit', confirmation_no = '000111', videoLink = '#', face_scan_score = '', detection = detections, config: AIConfig): string {
     let resultRows = '';
     let faceRows = '';
     let handRows = '';
-    let speakers = `${detections.result.speaker_segments.length}`
-    let totalScore = `${(detections.result.score_ratios.current / detections.result.score_ratios.total * 100).toFixed(0)}%`;
-    let scoreRatio = `${detections.result.score_ratios.current.toFixed(2)}/${detections.result.score_ratios.total}`;
+    let speakers = `${detection.speaker_segments.length}`
+    let totalScore = `${(detection.score_ratios.current / detection.score_ratios.total * 100).toFixed(0)}%`;
+    let scoreRatio = `${detection.score_ratios.current.toFixed(2)}/${detection.score_ratios.total}`;
 
-    Object.entries(detections.result.test_review).map((data) => {
-        resultRows += `<tr style="margin:0;padding:0;border:0;background-color:#f9f9f9;">
+    Object.entries(detection.test_review).map((data) => {
+        resultRows += `<table id="result-table"
+                        style="margin:0;padding:0;border:0;border-spacing:0;width: 100%; border-collapse: collapse; font-size: 16px; text-align: center;">
+                        <thead
+                            style="margin:0;padding:0;border:0;background-color: #EDDAB2; color: #0C1617; font-weight: 500; font-size: 12px; line-height: 22px;">
+                            <tr style="margin:0;padding:0;border:0;">
+                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">${data[0]} Actions
+                                </th>
+                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Note</th>
+                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Score</th>
+                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Max Score</th>
+                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">First
+                                    Detection</th>
+                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Last
+                                    Detection</th>
+                            </tr>
+                        </thead>
+                        <tbody style="margin:0;padding:0;border:0;">
+                        ${Object.entries(data[1].detections).map((data) => {
+            const row = `<tr style="margin:0;padding:0;border:0;background-color:#f9f9f9;">
                                 <td
                                     style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
                                     ${data[1].label ?? data[0]}</td>
@@ -22,23 +41,30 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
                                     ${data[1].score?.toFixed(2)}</td>
                                 <td
                                     style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
+                                    ${data[1].max_score !== undefined ? data[1].max_score?.toFixed(2) : 10}</td>
+                                <td
+                                    style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
                                     ${data[1].detection_hotspot_first}</td>
                                 <td
                                     style="margin:0;border:0;padding:0;padding:18px 8px;font-size:12px;font-weight:400;line-height:20px;">
                                     ${data[1].detection_hotspot_last}</td>
                             </tr>`
+            return row;
+        })}
+                        </tbody>
+                    </table>`
     });
 
-    detections.result.undetected_faces.map((noFace) => {
+    detection.undetected_faces.map((noFace) => {
         faceRows += `<li>${(noFace?.last / 1000).toFixed(0)}s - ${(noFace?.current / 1000).toFixed(0)}s </li><br/>`
     })
 
-    if (typeof detections.result.undetected_hands !== "string") {
-        (detections.result.undetected_hands as UndetectedItem[]).map((noHand) => {
+    if (typeof detection.undetected_hands !== "string") {
+        (detection.undetected_hands as UndetectedItem[]).map((noHand) => {
             handRows += `<li>${(noHand?.last / 1000).toFixed(0)}s - ${(noHand?.current / 1000).toFixed(0)}s </li><br/>`
         })
     } else {
-        handRows += `<p>${detections.result.undetected_hands} </p>`
+        handRows += `<p>${detection.undetected_hands} </p>`
     }
 
     const template = `<!DOCTYPE html>
@@ -119,6 +145,55 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
                             <td style="margin:0;border:0;padding: 5px 0px;">
                                 <p
                                     style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Test Review Threshold: ${config.test_review_threshold}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Test Review Time: ${config.test_review_time}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Hands Tracking Confidence: ${config.hands_tracking_confidence}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Hands Detection Confidence: ${config.hands_detection_confidence}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Face Model Selection: ${config.face_model_selection}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Face Detection Confidence: ${config.face_detection_confidence}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
+                                    Noise Filtering Agressiveness: ${config.noise_filtering_aggressiveness}</p>
+                            </td>
+                        </tr>
+                        <tr style="margin:0;padding:0;border:0;">
+                            <td style="margin:0;border:0;padding: 5px 0px;">
+                                <p
+                                    style="margin:0;padding:0;border:0;font-weight: 400; font-size: 14px; line-height: 16.94px; color: #eaeaea;">
                                     Date: ${date}</p>
                             </td>
                         </tr>
@@ -163,25 +238,7 @@ export function emailTestResults(particpant_id = 8554443303, date = '02/07/2024'
             </tr>
             <tr style="margin:0;padding:0;border:0;">
                 <td style="margin:0;border:0;padding:0;">
-                    <table id="result-table"
-                        style="margin:0;padding:0;border:0;border-spacing:0;width: 100%; border-collapse: collapse; font-size: 16px; text-align: center;">
-                        <thead
-                            style="margin:0;padding:0;border:0;background-color: #EDDAB2; color: #0C1617; font-weight: 500; font-size: 12px; line-height: 22px;">
-                            <tr style="margin:0;padding:0;border:0;">
-                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Action
-                                </th>
-                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Note</th>
-                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Score</th>
-                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">First
-                                    Detection</th>
-                                <th style="margin:0;padding:0;border:0;padding:12px 0;border:1px solid #ddd;">Last
-                                    Detection</th>
-                            </tr>
-                        </thead>
-                        <tbody style="margin:0;padding:0;border:0;">
-                            ${resultRows}
-                        </tbody>
-                    </table>
+                    ${resultRows}
                 </td>
             </tr>
 

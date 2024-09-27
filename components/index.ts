@@ -63,3 +63,4 @@ export { default as SearchInput } from "./search-input";
 export { default as Badge } from "./badge";
 export { default as CustomTable } from "./custom-table";
 export { default as TabBar } from "./tab";
+export { default as ChangePinModal } from './modals/changePinModal';

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as ml5 from "ml5";
 import Image from "next/image";
@@ -17,6 +17,8 @@ import { setIDFront, setExtractedFaceImage } from "@/redux/slices/appConfig";
 import { uploadFileToS3 } from "./action";
 import useFaceMesh from "@/hooks/faceMesh";
 import { extractFaceImage } from "@/utils/utils";
+import { authToken } from "@/redux/slices/auth";
+import { setGovernmentID, setPassport, setProofID } from "@/redux/slices/drugTest";
 
 const usePermissions = () => {
   const [permissionsGranted, setPermissionsGranted] = useState(false);
@@ -44,6 +46,7 @@ const usePermissions = () => {
 
 const CameraIDCardDetection = () => {
   const [sigCanvasH, setSigCanvasH] = useState(0);
+  const { participant_id } = useSelector(authToken);
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
@@ -123,8 +126,11 @@ const CameraIDCardDetection = () => {
   const captureFrame = useCallback(async () => {
     try {
       const imageSrc = cameraRef?.current?.getScreenshot();
+      const idCapture = `${participant_id}-IDCapture-${Date.now()}.png`
       setCapturedImage(imageSrc as any);
+      dispatch(setGovernmentID(idCapture));
       dispatch(setIDFront(imageSrc!));
+      await uploadFileToS3(imageSrc!, idCapture);
 
       if (imageSrc && faceMesh) {
         const img = new window.Image();
@@ -137,10 +143,10 @@ const CameraIDCardDetection = () => {
             if (faceBase64) {
               setFaceImage(faceBase64);
               dispatch(setExtractedFaceImage(faceBase64));
-              await uploadFileToS3(
-                faceBase64,
-                "8554443303-ManualCapture-1712042780.png"
-              );
+              const passportCapture = `${participant_id}-PassportCapture-${Date.now()}.png`
+              dispatch(setPassport(passportCapture));
+              dispatch(setProofID(passportCapture));
+              await uploadFileToS3(faceBase64, passportCapture);
             } else {
               toast.error("Error extracting face image.");
             }
@@ -152,7 +158,7 @@ const CameraIDCardDetection = () => {
     } catch (error) {
       toast.error("Error capturing image. Please try again.");
     }
-  }, [cameraRef, dispatch, faceMesh]);
+  }, [dispatch, faceMesh, participant_id]);
 
   const recaptureImage = () => {
     setCapturedImage(null);
@@ -191,9 +197,8 @@ const CameraIDCardDetection = () => {
                   />
 
                   <div
-                    className={`id-card-frame-guide ${
-                      faceDetected ? "face-detected" : "no-face-detected"
-                    }`}
+                    className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"
+                      }`}
                   >
                     {brightness < 120 && (
                       <div className="brightness-detection">
@@ -317,9 +322,8 @@ const CameraIDCardDetection = () => {
                   />
 
                   <div
-                    className={`id-card-frame-guide ${
-                      faceDetected ? "face-detected" : "no-face-detected"
-                    }`}
+                    className={`id-card-frame-guide ${faceDetected ? "face-detected" : "no-face-detected"
+                      }`}
                   >
                     {brightness < 120 && (
                       <div className="brightness-detection">
@@ -400,7 +404,7 @@ const CameraIDCardDetection = () => {
             onLeftButton={faceImage ? true : false}
             onRightButton={true}
             btnLeftText={"Recapture"}
-              onClickBtnLeftAction={recaptureImage}
+            onClickBtnLeftAction={recaptureImage}
             btnRightText={capturedImage ? "Next" : "Capture"}
             onClickBtnRightAction={capturedImage ? undefined : captureFrame}
             rightdisabled={!faceDetected}

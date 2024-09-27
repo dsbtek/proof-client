@@ -156,6 +156,41 @@
 }
 
 
+/* Change PIN Modal Styles */
+
+.cp-modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 22rem;
+    max-width: 100%;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgb(0, 156, 249);
+    border: 1px solid #009CF9;
+}
+
+
+/* mfa modal styles */
+
+.mfa-modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 30rem;
+    max-width: 80%!important;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+.mfa-form {
+    width: 100%;
+}
+
 @media screen and (min-width: 700px) {
     .bc-content {
         padding: 8px;

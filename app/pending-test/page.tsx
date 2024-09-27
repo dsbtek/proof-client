@@ -6,15 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Crypto from "crypto-js";
-import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 
+import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import { Menu, AppHeader, Button, Loader, DinamicMenuLayout } from '@/components';
 import { uploadVideoToS3 } from '../test-collection/[slug]/action';
-import { saveTestClip, setEndTime, setStartTime, setUploadStatus, testData } from '@/redux/slices/drugTest';
+import { saveBarcode, saveTestClip, setBarcodeKit, setDetectKit, setEndTime, setFaceCompare, setFaceScans, setFilename, setGovernmentID, setHandsOut, setIdDetails, setImageCaptures, setLookAway, setPassport, setProofID, setShippingLabel, setSig, setStartTime, setStorage, setTrackingNumber, setUploadStatus, testData } from '@/redux/slices/drugTest';
 import { retrieveBlobFromIndexedDB, checkDatabaseAndObjectStore, deleteBlobFromIndexedDB } from '@/utils/indexedDB';
 import { authToken } from '@/redux/slices/auth';
 import useTestupload from '@/hooks/testUpload';
-import dynamic from 'next/dynamic';
 
 
 const PendingTest = () => {
@@ -108,6 +107,23 @@ const PendingTest = () => {
     if (pendingTest !== undefined && pendingTest.startTime !== undefined) {
       dispatch(setStartTime(pendingTest.startTime));
       dispatch(setEndTime(pendingTest.endTime));
+      dispatch(setFilename(pendingTest.filename));
+      dispatch(saveBarcode(pendingTest.barcode));
+      dispatch(setSig(pendingTest.signature));
+      dispatch(setStorage(pendingTest.storage));
+      dispatch(setLookAway(pendingTest.lookAway));
+      dispatch(setHandsOut(pendingTest.handsOut));
+      dispatch(setTrackingNumber(pendingTest.trackingNumber));
+      dispatch(setShippingLabel(pendingTest.shippingLabel));
+      dispatch(setBarcodeKit(pendingTest.barcodeKit));
+      dispatch(setDetectKit(pendingTest.detectKit));
+      dispatch(setProofID(pendingTest.proofId));
+      dispatch(setFaceCompare(pendingTest.faceCompare));
+      dispatch(setFaceScans(pendingTest.faceScans));
+      dispatch(setImageCaptures(pendingTest.imageCaptures));
+      dispatch(setPassport(pendingTest.passport));
+      dispatch(setGovernmentID(pendingTest.governmentID));
+      dispatch(setIdDetails(pendingTest.idDetails));
     }
   }, [pendingTest, dispatch]);
 
@@ -115,13 +131,13 @@ const PendingTest = () => {
     <DinamicMenuLayout>
       <div className="tutorial-container">
         {uploading && <Loader />}
-        
-        {device?.screenWidth > 700? 
-      <div className="what-new-dxtp-header">
-        <h1>Pending Test</h1>
-      </div> : 
-        <AppHeader title="Pending Test" />
-      }
+
+        {device?.screenWidth > 700 ?
+          <div className="what-new-dxtp-header">
+            <h1>Pending Test</h1>
+          </div> :
+          <AppHeader title="Pending Test" />
+        }
         <div className="pending-test-container">
           {pendingTest !== undefined || null ? (
             <div className="pending-test">

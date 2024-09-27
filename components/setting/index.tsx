@@ -1,6 +1,10 @@
 import React, { useMemo } from "react";
 import { AiOutlineRight } from "react-icons/ai";
-import { HiArrowUpRight, HiOutlineEnvelope } from "react-icons/hi2";
+import {
+  HiArrowRight,
+  HiArrowUpRight,
+  HiOutlineEnvelope,
+} from "react-icons/hi2";
 import { FiPhoneCall } from "react-icons/fi";
 import Link from "next/link";
 
@@ -14,9 +18,17 @@ interface SettingProps {
   link?: any;
   tel?: string;
   email?: string;
+  openInNewTab?: boolean;
 }
 
-function Setting({ icon, title, link, tel, email }: SettingProps) {
+function Setting({
+  icon,
+  title,
+  link,
+  tel,
+  email,
+  openInNewTab,
+}: SettingProps) {
   const device = useGetDeviceInfo();
   const isDesktop = useMemo(() => device?.screenWidth > 700, [device]);
   return tel ? (
@@ -44,7 +56,15 @@ function Setting({ icon, title, link, tel, email }: SettingProps) {
         <p className="set-text">{title}</p>
       </div>
       <div style={{ cursor: "pointer" }}>
-        {isDesktop ? <HiArrowUpRight /> : <AiOutlineRight color="#95A3B4" />}
+        {isDesktop ? (
+          openInNewTab ? (
+            <HiArrowUpRight />
+          ) : (
+            <HiArrowRight />
+          )
+        ) : (
+          <AiOutlineRight color="#95A3B4" />
+        )}
       </div>
     </Link>
   );

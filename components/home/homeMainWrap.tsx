@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Switch, HomeGridView, HomeListView } from "@/components";
 import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+
+import { Switch, HomeGridView, HomeListView, DialogBox } from "@/components";
 import { appData, setReDirectToBac } from "@/redux/slices/appConfig";
 import { hasPermission, setCookie } from "@/utils/utils";
-import { useDispatch, useSelector } from "react-redux";
 
 const HomeMain = () => {
   const userPermissions = useSelector(appData);
@@ -16,6 +18,9 @@ const HomeMain = () => {
   const [checked, setChecked] = useState(
     homeViewCookie === "true" ? true : false
   );
+  const [pendingTestPrompt, setPendingTestPrompt] = useState<boolean>(false);
+
+  const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector(appData);
   const photo = user?.photo;
@@ -36,13 +41,26 @@ const HomeMain = () => {
 
   return (
     <div className="home-main-body">
+      <DialogBox
+        show={pendingTestPrompt}
+        handleReject={() => setPendingTestPrompt(false)}
+        handleAccept={() => router.push("/pending-test")}
+        title="Upload Pending Test"
+        content1="WARNING: Upload pending test before taking new test."
+        rejectText="Cancel"
+        acceptText="Ok"
+      />
       <div className="home-switch-wrap">
         <Switch onToggle={handleSwitch} checked={checked} showLabel />
       </div>
       {checked ? (
         <div className="home-sub-wrap-grid">
           {hasPermission("Test", permissions) && (
-            <Link href="/test-collection" className="">
+            <Link
+              href={!pendingTest ? "/test-collection" : ""}
+              className=""
+              onClick={() => pendingTest && setPendingTestPrompt(true)}
+            >
               <HomeGridView
                 imgUrl="/icons/un-select-test-collection-colored.svg"
                 title={"Test/Collection"}

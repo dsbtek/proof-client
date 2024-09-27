@@ -111,7 +111,7 @@
 }
 
 .mobile-only {
-    display: none!important;
+    display: none !important;
 }
 
 .title-sub-container {
@@ -134,29 +134,36 @@
         align-items: center;
         padding: 0 24px;
     }
+
     .account-settings-container {
         display: none;
     }
+
     .settings-title-subtext {
         display: none;
     }
+
     .dex-only {
-        display: none!important;
+        display: none !important;
     }
+
     .mobile-only {
-        display: flex!important;
+        display: flex !important;
     }
+
     .user-avi {
         justify-content: center;
         align-items: center;
     }
+
     .app-toggles {
         flex-direction: column;
     }
+
     .privacy-policy-content {
-        width: 100%!important;
-        justify-content: flex-start!important;
-        padding: 0 24px!important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+        padding: 0 24px !important;
     }
 }
 
@@ -188,9 +195,9 @@
 /* privacy settings */
 
 .privacy-container {
-    width: 100%!important;
-    justify-content: flex-start!important;
-    padding: 0!important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    padding: 0 !important;
 }
 
 .privacy-header-dex {
@@ -207,7 +214,73 @@
 
 @media (min-width: 700px) {
     .privacy-headers {
-        font-size: 20px!important;
-        font-weight: 600!important;
+        font-size: 20px !important;
+        font-weight: 600 !important;
+    }
+}
+
+/* AI config */
+.config-content {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 18px;
+}
+
+.config {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 25rem;
+    padding: 10px 20px;
+    background: #24527b;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgb(0, 156, 249);
+    border: 1px solid #009CF9;
+}
+
+.config-text {
+    /* font-size: x-large; */
+    color: #ffffff;
+}
+
+.config-val {
+    font-size: xx-large;
+    color: #009CF9;
+    margin-left: 0.5rem;
+}
+
+.score-item {
+    margin: 24px 0px;
+}
+
+.score-item>h2 {
+    color: #24527b;
+    margin-bottom: 16px;
+}
+
+.score {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px
+}
+
+
+.score>input {
+    width: 3rem;
+    color: #009CF9;
+    font-weight: 600;
+}
+
+@media (min-width: 500px) {
+    .config-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1000px) {
+    .config-content {
+        grid-template-columns: repeat(3, 1fr);
     }
 }

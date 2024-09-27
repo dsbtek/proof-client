@@ -33,8 +33,10 @@ const ImagePreviewModal = ({ images, currentIndex, onClose }: ImagePreviewModalP
                 <Image
                     src={images[currentImageIndex]}
                     alt={`Image ${currentImageIndex + 1}`}
-                    width={500}
-                    height={500}
+                    style={{ width: '30rem', height: '30rem' }}
+                    width={5000}
+                    height={5000}
+                    loading='lazy'
                 />
                 <button className="next-button" onClick={handleNext}>›</button>
             </div>

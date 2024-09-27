@@ -1,21 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import { GoHome } from "react-icons/go";
-import { BsMortarboardFill } from "react-icons/bs";
-import { IoSettingsOutline } from "react-icons/io5";
-import { BsFillPersonCheckFill } from "react-icons/bs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { appData, appDataDump } from "@/redux/slices/appConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 
+import {
+  appData,
+  appDataDump,
+  setReDirectToBac,
+} from "@/redux/slices/appConfig";
 import "./menu.css";
 import Button from "../button";
 import { clearTestData } from "@/redux/slices/drugTest";
 import { logout } from "@/redux/slices/auth";
 import { useEffect, useState } from "react";
+import { hasPermission } from "@/utils/utils";
+import DialogBox from "../dialog-box";
 
 const DextopMenu = () => {
   const { first_name, last_name } = useSelector(appData);
@@ -24,8 +26,9 @@ const DextopMenu = () => {
   const photo = user?.photo;
   const dispatch = useDispatch();
   const router = useRouter();
-  // const pendingTest = localStorage.getItem("pendingTest");
+  const permissions = user?.permissions;
   const [pendingTest, setPendingTest] = useState<string | null>(null);
+  const [pendingTestPrompt, setPendingTestPrompt] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -34,8 +37,21 @@ const DextopMenu = () => {
     }
   }, []);
 
+  const updateRedirection = async () => {
+    dispatch(setReDirectToBac(true));
+  };
+
   return (
-    <nav className="menu">
+    <nav className="menu scroller">
+      <DialogBox
+        show={pendingTestPrompt}
+        handleReject={() => setPendingTestPrompt(false)}
+        handleAccept={() => router.push("/pending-test")}
+        title="Upload Pending Test"
+        content1="WARNING: Upload pending test before taking new test."
+        rejectText="Cancel"
+        acceptText="Ok"
+      />
       <Link
         href="#"
         className="sub-menu"
@@ -43,7 +59,7 @@ const DextopMenu = () => {
           display: "block",
           textAlign: "left",
           borderBottom: "none",
-          height: "80px",
+          height: "fit-content",
         }}
       >
         <p className="greet-text">{"Hello,"}</p>
@@ -52,13 +68,14 @@ const DextopMenu = () => {
       <br />
       <div className="menu-items">
         <Link
-          href="/test-collection"
+          href={!pendingTest ? "/test-collection" : ""}
           className="sub-menu"
           style={
             pathname === "/test-collection"
               ? { backgroundColor: "#E5F5FF" }
               : {}
           }
+          onClick={() => pendingTest && setPendingTestPrompt(true)}
         >
           {/* <GoHome size={30} color={pathname === '/home' ? '#009CF9' : '#ADADAD'} /> */}
           {pathname === "/test-collection" ? (
@@ -130,44 +147,49 @@ const DextopMenu = () => {
             </p>
           </Link>
         )}
-
-        <Link
-          href={
-            photo
-              ? "/identity-profile/sample-facial-capture"
-              : "/identity-profile/id-detection/step-1"
-          }
-          className="sub-menu"
-          style={pathname === "/bac" ? { backgroundColor: "#E5F5FF" } : {}}
-        >
-          {pathname === "/bac" ? (
-            <Image
-              className=""
-              src="/icons/bac-icon.svg"
-              alt="BAC Icon"
-              width={5000}
-              height={5000}
-              loading="lazy"
-            />
-          ) : (
-            <Image
-              className=""
-              src="/icons/bac-unselected.svg"
-              alt="BAC Icon"
-              width={5000}
-              height={5000}
-              loading="lazy"
-            />
-          )}
-          <p
-            className="menu-text"
-            style={
-              pathname === "/bac" ? { color: "#009CF9" } : { color: "#0C1617" }
+        {hasPermission("Test", permissions) && (
+          <Link
+            href={
+              photo
+                ? // ? "/identity-profile/sample-facial-capture"
+                "/bac"
+                : "/identity-profile/id-detection/step-1"
             }
+            className="sub-menu"
+            style={pathname === "/bac" ? { backgroundColor: "#E5F5FF" } : {}}
+            onClick={updateRedirection}
           >
-            Bac Test
-          </p>
-        </Link>
+            {pathname === "/bac" ? (
+              <Image
+                className=""
+                src="/icons/bac-icon.svg"
+                alt="BAC Icon"
+                width={5000}
+                height={5000}
+                loading="lazy"
+              />
+            ) : (
+              <Image
+                className=""
+                src="/icons/bac-unselected.svg"
+                alt="BAC Icon"
+                width={5000}
+                height={5000}
+                loading="lazy"
+              />
+            )}
+            <p
+              className="menu-text"
+              style={
+                pathname === "/bac"
+                  ? { color: "#009CF9" }
+                  : { color: "#0C1617" }
+              }
+            >
+              Bac Test
+            </p>
+          </Link>
+        )}
 
         <Link
           href="/tutorial"

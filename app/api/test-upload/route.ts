@@ -12,6 +12,16 @@ export async function POST(request: NextRequest) {
         const start_time = requestHeaders.get("start_time");
         const end_time = requestHeaders.get("end_time");
         const submitted = requestHeaders.get("submitted");
+        const barcode_string = requestHeaders.get("barcode");
+        const internet_connection = requestHeaders.get("internet_connection");
+        const app_version = requestHeaders.get("app_version");
+        const os_version = requestHeaders.get("os_version");
+        const phone_model = requestHeaders.get("phone_model");
+        const device_name = requestHeaders.get("device_name");
+        const device_storage = requestHeaders.get("device_storage");
+        const look_away_time = requestHeaders.get("look_away_time");
+        const hand_out_of_frame = requestHeaders.get("hand_out_of_frame");
+        const drugkitname = requestHeaders.get("drugkitname");
 
         const res = await axios.post("/selfdrugtest", {}, { headers: { participant_id, url, photo_url, start_time, end_time, submitted, }, });
 

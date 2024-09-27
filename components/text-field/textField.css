@@ -1,50 +1,56 @@
 .input-container {
-  position: relative;
-  margin-bottom: 20px;
-  width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
 .placeholder {
-  position: absolute;
-  top: 50%;
-  left: 1.5rem;
-  transform: translateY(-50%);
-  transition: top 0.3s, font-size 0.3s;
-  font-size: 16px;
-  color: #888;
+    position: absolute;
+    top: 50%;
+    left: 1.5rem;
+    transform: translateY(-50%);
+    transition: top 0.3s, font-size 0.3s;
+    font-size: 16px;
+    color: #888;
 }
 
 .input-container.focused .placeholder {
-  top: 0;
-  font-size: 14px;
+    top: 0;
+    font-size: 14px;
 }
 
 .icon {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .start-icon {
-  left: 5px;
+    left: 5px;
 }
 
 .end-icon {
-  cursor: pointer;
-  right: 10px;
+    cursor: pointer;
+    right: 10px;
 }
 
 .app-input {
-  background-color: #fafafa;
-  height: 50px;
-  width: 100%;
-  border: none;
-  border-bottom: 2px solid rgba(234, 238, 245, 1);
-  box-sizing: border-box;
-  outline: none;
+    background-color: #fafafa;
+    height: 50px;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid rgba(234, 238, 245, 1);
+    box-sizing: border-box;
+    outline: none;
 }
 
 .app-input:focus {
-  background-color: #fafafa;
-  border-bottom: 2px solid rgb(0, 156, 249);
+    background-color: #fafafa;
+    border-bottom: 2px solid rgb(0, 156, 249);
+}
+
+@media (min-width: 700px) {
+    .app-input {
+        background-color: transparent;
+    }
 }

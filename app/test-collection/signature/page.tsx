@@ -16,6 +16,8 @@ import { setSig } from "@/redux/slices/drugTest";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import useResponsive from "@/hooks/useResponsive";
+import { authToken } from "@/redux/slices/auth";
+import { uploadFileToS3 } from "@/app/identity-profile/id-detection/step-1/action";
 
 interface PreTestScreen {
   Screen_1_Title: string;
@@ -28,10 +30,12 @@ const SignaturePage = () => {
   const [sigCanvas, setSigCanvas] = useState<ReactSignatureCanvas | null>();
   const [sigCheck, setSigCheck] = useState(false);
   const [sigCanvasH, setSigCanvasH] = useState(0);
+
   const router = useRouter();
   const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
   const isDesktop = useResponsive();
   const dispatch = useDispatch();
+  const { participant_id } = useSelector(authToken);
 
   const handleClearSignature = () => {
     setShowClearPrompt(true);
@@ -60,7 +64,11 @@ const SignaturePage = () => {
         return;
       }
       const sigData = sigCanvas.toDataURL();
-      dispatch(setSig(sigData));
+      const sigCapture = `${participant_id}-SignatureCapture-${Date.now()}.png`
+      dispatch(setSig(sigCapture));
+      uploadFileToS3(sigData, sigCapture).catch((error) => {
+        console.error('Signature IMage Upload Error:', error);
+      });
       setSigCheck(true);
       const linkPath = pathLink();
       router.push(linkPath);
@@ -166,11 +174,11 @@ const SignaturePage = () => {
           btnLeftText={"Clear"}
           btnRightText={"Next"}
           onClickBtnLeftAction={handleClearSignature}
-          onClickBtnRightAction={!sigCheck ? saveSignature : () => {}}
+          onClickBtnRightAction={!sigCheck ? saveSignature : () => { }}
         />
       ) : (
         <AgreementFooter
-            currentNumber={2}
+          currentNumber={2}
           outOf={5}
           onPagination={true}
           onLeftButton={true}
@@ -180,7 +188,7 @@ const SignaturePage = () => {
           btnLeftText={"Clear"}
           btnRightText={"Next"}
           onClickBtnLeftAction={handleClearSignature}
-          onClickBtnRightAction={!sigCheck ? saveSignature : () => {}}
+          onClickBtnRightAction={!sigCheck ? saveSignature : () => { }}
         />
       )}
     </div>

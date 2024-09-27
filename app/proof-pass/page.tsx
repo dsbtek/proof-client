@@ -16,6 +16,8 @@ import { authToken } from "@/redux/slices/auth";
 import { toast } from "react-toastify";
 import { hasPermission } from "@/utils/utils";
 import { proofPassFilter } from "@/utils/appData";
+import { useRouter } from "next/navigation";
+import useResponsive from "@/hooks/useResponsive";
 
 interface Option {
   id: number;
@@ -44,6 +46,8 @@ const ProofPass = () => {
   const history = useSelector(historyData);
   const user = useSelector(appData);
   const photo = user?.photo;
+  const isDesktop = useResponsive();
+  const router = useRouter();
 
   const updateRedirection = async () => {
     dispatch(setReDirectToProofPass(true));
@@ -88,6 +92,15 @@ const ProofPass = () => {
       console.error(error);
     },
   });
+
+  useEffect(() => {
+    const routeBasedOnScreenSize = () => {
+      if (isDesktop) {
+        router.push("/history");
+      }
+    };
+    routeBasedOnScreenSize();
+  }, [router, isDesktop]);
 
   useEffect(() => {
     if (history.app_history === undefined) {

@@ -96,6 +96,11 @@
     height: 60vh;
     overflow: scroll;
     box-sizing: border-box;
+    scrollbar-width: 0;
+}
+
+.tests-grid-container::-webkit-scrollbar {
+    display: none
 }
 
 .history-card {

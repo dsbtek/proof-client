@@ -21,7 +21,6 @@ const SessionModal = ({ show, onClick, handleEnd }: SessionModalProps) => {
 
     useEffect(() => {
         if (show) {
-
             timerId.current = setInterval(() => {
                 setCountdown(countdown - 1);
             }, 1000)

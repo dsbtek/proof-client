@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -20,7 +20,12 @@ import {
   Badge,
 } from "@/components";
 import { authToken } from "@/redux/slices/auth";
-import { setHistoryData, historyData, appData } from "@/redux/slices/appConfig";
+import {
+  setHistoryData,
+  historyData,
+  appData,
+  setReDirectToProofPass,
+} from "@/redux/slices/appConfig";
 import { hasPermission } from "@/utils/utils";
 
 interface Record {
@@ -94,17 +99,30 @@ const DesktopHistory = () => {
   const user = useSelector(appData);
   const photo = user?.photo;
 
-  const [selectedFilter, setSelectedFilter] = useState<String | null>(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [modalData, setModdalData] = useState<any>();
-  const handleFilterChange = (selectedOption: String) => {
+  const handleFilterChange = (selectedOption: string) => {
     setSelectedFilter(selectedOption);
   };
 
-  const filteredTestRecord = selectedFilter
-    ? history?.dtests?.filter(
-        (item: any) => item?.ServiceType === selectedFilter
-      )
-    : history?.dtests;
+  const filteredTestRecord = useMemo(
+    () =>
+      selectedFilter
+        ? history?.dtests?.filter(
+            (item: any) => item?.ServiceType === selectedFilter
+          )
+        : searchValue
+        ? history?.dtests?.filter(
+            (i: any) =>
+              i?.ServiceType ||
+              i?.serviceDate ||
+              i?.DrugTestResultStatus ||
+              i?.ParticipantID === searchValue
+          )
+        : history?.dtests,
+    [searchValue, selectedFilter, history?.dtests]
+  );
 
   const bacRecords = history?.bactests;
 
@@ -159,11 +177,14 @@ const DesktopHistory = () => {
     }
   }, [history, refetch]);
 
-  const [value, setValue] = useState("");
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     console.log(e);
-    setValue(e.target?.value);
+    setSearchValue(e.target?.value);
+  };
+
+  const updateRedirection = async () => {
+    dispatch(setReDirectToProofPass(true));
   };
 
   return (
@@ -190,18 +211,20 @@ const DesktopHistory = () => {
               <div>
                 <div className="flex-row search-filter-upload">
                   <SearchInput
-                    value={value}
+                    value={searchValue}
                     placeholder="Search by Name, ID, Date..."
                     onChange={onChange}
                     className="history-search"
                   />
                   <div className="flex-row">
                     <FilterDropDown
-                      title="Filter"
+                      title={selectedFilter || "Filter"}
                       options={options}
-                      onOptionSelect={(option) =>
-                        console.log("Selected option:", option)
-                      }
+                      onOptionSelect={(option) => {
+                        console.log("Selected option:", option);
+                        setSelectedFilter(option?.label);
+                      }}
+                      onClearFilter={() => setSelectedFilter("")}
                       className="my-custom-dropdown"
                       dropdownClassName="custom-dropdown-menu"
                       optionClassName="custom-dropdown-option"
@@ -224,10 +247,10 @@ const DesktopHistory = () => {
                             height: "48px",
                             fontSize: "1rem",
                           }}
-                          onClick={() => null}
+                          onClick={updateRedirection}
                           // link="/proof-pass"
                         >
-                          <WiCloudUp size={24} /> Upload New
+                          <WiCloudUp size={24} /> PROOFPass
                         </Button>
                       </Link>
                     )}
@@ -241,7 +264,7 @@ const DesktopHistory = () => {
                           <h4>{item?.ServiceType}</h4>
                           <FiArrowUpRight
                             onClick={() => {
-                              setModdalData(item);
+                              setModdalData({ ...item, id: index });
                               setShowModal(!showModal);
                             }}
                             size={20}

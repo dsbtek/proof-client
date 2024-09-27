@@ -4,10 +4,12 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
-import { AppHeader, DinamicMenuLayout, Switch } from "@/components";
+import { AppHeader, Button, DinamicMenuLayout, Switch } from "@/components";
 import { setCookie } from "@/utils/utils";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import { appData } from "@/redux/slices/appConfig";
 
 function ApplicationSettings() {
   const welcomeCookie = Cookies.get("welView");
@@ -15,6 +17,9 @@ function ApplicationSettings() {
     welcomeCookie === "true" ? true : false
   );
   const router = useRouter();
+  const { permissions } = useSelector(appData);
+  const appPermissions = permissions ? permissions.split(";") : undefined;
+
   const handleSwitch = () => {
     if (welcomeCookie === "false") {
       setCookie("welView", "true", 2000);
@@ -24,6 +29,7 @@ function ApplicationSettings() {
       setChecked(false);
     }
   };
+
   const device = useGetDeviceInfo();
 
   return (
@@ -62,6 +68,9 @@ function ApplicationSettings() {
             <Switch onToggle={handleSwitch} checked={checked} />
           </div> */}
         </div>
+        {appPermissions && appPermissions.includes("Admin") && <Button blue onClick={() => router.push('/config')} style={{ marginTop: '50px', width: '10rem', height: '3rem' }}>
+          Configure AI
+        </Button>}
       </div>
     </DinamicMenuLayout>
   );

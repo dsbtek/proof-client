@@ -10,12 +10,12 @@ import * as SDCBarcode from 'scandit-web-datacapture-barcode';
 
 import '../modals/modal.css';
 import Button from '../button';
-import MiniLoader from '../loaders/miniLoader';
 import Loader from '../loaders/loader';
-import { saveBarcode } from '@/redux/slices/drugTest';
+import { saveBarcode, setBarcodeKit, setDetectKit, setIdDetails, setTrackingNumber } from '@/redux/slices/drugTest';
 import { toast } from 'react-toastify';
 import { parseAamvaData } from '@/utils/utils';
 import { Loader_ } from '..';
+import useResponsive from '@/hooks/useResponsive';
 
 const licenseKey = process.env.NEXT_PUBLIC_SCANDIT_KEY;
 
@@ -36,18 +36,26 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
     const [barcode, setBarcode] = useState<string | Record<string, any>>('');
 
     const dispatch = useDispatch();
+    const isDesktop = useResponsive();
 
     const handleSaveBarcode = () => {
         if (enterBarcode) {
             setEnterBarcode(false);
         }
+        scanType === 'test' && dispatch(saveBarcode(barcode as string));
+        scanType === 'fedex' && dispatch(setTrackingNumber(barcode as string));
+        scanType === 'kit' && dispatch(setBarcodeKit(barcode as string));
+        scanType === 'detect' && dispatch(setDetectKit(barcode as string));
         closeModal();
     };
 
     const barcodeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const barcode = e.target.value;
-        setBarcodeValue(barcode);
-        dispatch(saveBarcode(barcode));
+        const barcodeInput = e.target.value;
+        setBarcodeValue(barcodeInput);
+        scanType === 'test' && dispatch(saveBarcode(barcodeInput));
+        scanType === 'fedex' && dispatch(setTrackingNumber(barcodeInput));
+        scanType === 'kit' && dispatch(setBarcodeKit(barcodeInput));
+        scanType === 'detect' && dispatch(setDetectKit(barcodeInput));
     };
 
     const runScanner = useCallback(async () => {
@@ -118,7 +126,17 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
                 if (scanType === 'id' && symbology.readableName === 'PDF417') {
                     console.log(barcode.data)
                     const idData: any = parseAamvaData(barcode.data);
-                    setBarcode(idData["Last Name"] + '-' + idData["Driver's License Number"])
+                    const idDetails = {
+                        first_name: idData["First Name"],
+                        last_name: idData["Last Name"],
+                        date_of_birth: idData["Date of Birth"],
+                        address: idData["Street Address"],
+                        city: idData["City"],
+                        state: idData["State"],
+                        zipcode: idData["Postal Code"],
+                    }
+                    dispatch(setIdDetails(idDetails));
+                    setBarcode(idData["First Name"] + '-' + idData["Last Name"] + '-' + idData["Driver's License Number"])
                 } else {
                     setBarcode(barcode.data!)
                 };
@@ -151,7 +169,7 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
         await barcodeCapture.setEnabled(true);
 
         setScannerLoad(false);
-    }, [scanType])
+    }, [dispatch, scanType])
 
     useEffect(() => {
         runScanner().catch((error) => {
@@ -162,9 +180,9 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
 
     return (
         show && <div className='barcode-cap-modal'>
-            {barcodeUploaded && !enterBarcode && barcode === '' &&
+            {barcodeUploaded && !enterBarcode && barcode === '' && !isDesktop &&
                 <div className='bc-content'>
-                    {scanType === 'id' && <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>}
+                    {scanType === 'id' && step && totalSteps && <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>}
                     {scanType !== 'id' && <div className='bc-upload-stats'>
                         <h2 style={{ color: '#24527b' }}></h2>
                         <Button classname='man-btn' onClick={recapture}>Hide Scanner</Button>
@@ -193,12 +211,18 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
                 </div >
             </div>
             {!enterBarcode && <div className='barcode-btns' style={{ flexDirection: 'column', alignItems: 'center' }}>
-                {!scannerLoad && <Button classname='cap-btn' onClick={() => {
+                {/* {!scannerLoad && <Button classname='cap-btn' onClick={() => {
                     runScanner().catch((error) => {
                         console.error('Scandit Error:', error);
                         toast.error(error);
                     })
-                }}><TbCapture /> Re-Scan</Button>}
+                }}><TbCapture /> Re-Scan</Button>} */}
+                <Button classname='cap-btn' onClick={() => {
+                    runScanner().catch((error) => {
+                        console.error('Scandit Error:', error);
+                        toast.error(error);
+                    })
+                }}><TbCapture /> Restart</Button>
                 {scanType !== 'id' && <Button classname='man-btn' onClick={() => setEnterBarcode(true)}><FiEdit /> Enter Manually</Button>}
             </div>}
         </div>

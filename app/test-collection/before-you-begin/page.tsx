@@ -30,7 +30,7 @@ const BeforeYouBegin = () => {
       <div className="container-test-collection">
         <AgreementHeader title="Confirmation" />
         {!isDesktop ?
-          <div className="agreement-items-wrap what-new-scroller">
+          <div className="agreement-items-wrap ">
             <Image className="get-started-img" src="/images/before-you-begin.svg" alt="image" width={3000} height={3000} />
             <p className="get-started-title">Before You Begin</p>
             <p className="get-started-title">Please confirm the following.</p>

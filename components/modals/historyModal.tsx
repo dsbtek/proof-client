@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { Modal, Button } from "@/components";
+import { Modal, Button, ImageModal } from "@/components";
 import Badge from "../badge";
 import { SlClose } from "react-icons/sl";
+import { useSelector } from "react-redux";
+import { historyData } from "@/redux/slices/appConfig";
+import Crypto from "crypto-js";
 
 interface SessionModalProps {
   show: boolean;
@@ -13,8 +16,15 @@ interface SessionModalProps {
 }
 
 const HistoryModal = ({ show, onClose, data }: SessionModalProps) => {
-  const [countdown, setCountdown] = useState<number>(30);
-  const timerId = useRef<NodeJS.Timeout | undefined>();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const history = useSelector(historyData);
+  const id = data?.id || 0;
+  const proofpass = history?.dtests?.find(
+    (item: any, index: number) => index === parseInt(id as string)
+  );
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageNames, setImageNames] = useState<string[]>([]);
+  const [isLoadingImages, setIsLoadingImages] = useState(false);
 
   const getNumberOfDays = (startDate: string | undefined) => {
     if (!startDate) return NaN;
@@ -24,7 +34,69 @@ const HistoryModal = ({ show, onClose, data }: SessionModalProps) => {
     const daysDifference = difference / (1000 * 60 * 60 * 24);
     return Math.floor(daysDifference);
   };
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
 
+  useEffect(() => {
+    const participant_id = localStorage.getItem("participant_id");
+    const pin = localStorage.getItem("pin");
+
+    // Decrypt Function
+    const decryptData = (encryptedData: any, secretKey: string | undefined) => {
+      const bytes = Crypto.AES.decrypt(encryptedData, secretKey);
+      const decryptedData = bytes.toString(Crypto.enc.Utf8);
+      return decryptedData;
+    };
+
+    if (participant_id && pin && proofpass?.Images) {
+      const decryptedId = decryptData(
+        participant_id,
+        process.env.NEXT_PUBLIC_SECRET_KEY
+      );
+      const decryptedPin = decryptData(pin, process.env.NEXT_PUBLIC_SECRET_KEY);
+
+      const fetchImage = async (imageId: string | unknown) => {
+        try {
+          const response = await fetch("/api/fetch-image", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              photo_id: imageId,
+              participant_id: decryptedId,
+              pin: decryptedPin,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          // imageData.push(data?.data?.Imagebase64)
+          return data?.data?.Imagebase64;
+        } catch (error) {
+          console.error("Error fetching image:", error);
+          return null;
+        }
+      };
+
+      const handleSubmit = async () => {
+        const images = proofpass.Images;
+        const imagePromises = Object.values(images).map((imageId) =>
+          fetchImage(imageId)
+        );
+        const imgNames = Object.keys(images);
+        const imageResponses = await Promise.all(imagePromises);
+        setImageUrls(imageResponses.filter(Boolean));
+        setImageNames(imgNames);
+        setIsLoadingImages(true);
+      };
+
+      handleSubmit();
+    }
+  }, [proofpass]);
   return (
     <Modal show={show} onClose={onClose}>
       <div className="history-modal">
@@ -71,14 +143,21 @@ const HistoryModal = ({ show, onClose, data }: SessionModalProps) => {
             <p>{data?.CollectionDesignation || "Not Applicable"}</p>
           </div>
         </div>
-        <Button
-          blue
-          onClick={() => null}
-          style={{ height: "51px", marginBottom: "32px" }}
-        >
-          Document Images
-        </Button>
-
+        {proofpass?.Images && (
+          <Button
+            blue
+            onClick={openModal}
+            style={{ height: "51px", marginBottom: "32px" }}
+          >
+            Document Images
+          </Button>
+        )}
+        <ImageModal
+          isOpen={modalIsOpen}
+          onClose={closeModal}
+          imageUrls={imageUrls}
+          imageNames={imageNames}
+        />
         <h4 className="history-modal-title">PROOFpass</h4>
         <p className="history-modal-subtext">proof@recoverytrek.com</p>
       </div>

@@ -21,7 +21,7 @@ const GridView = ({ imgUrl, title, onClick }: GridViewrProps) => {
         height={3000}
         loading="lazy"
       />
-      <p>{title}</p>
+      <p style={{ fontSize: ".85rem" }}>{title}</p>
     </div>
   );
 };

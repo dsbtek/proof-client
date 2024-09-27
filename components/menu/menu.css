@@ -16,7 +16,7 @@
 }
 
 .menu {
-    position: absolute;
+    position: fixed;
     display: flex;
     width: 100%;
     padding: 12px;
@@ -59,12 +59,11 @@
     .menu {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
         width: 20%;
         height: 100%;
         padding: 0px;
-        overflow-y: auto;
     }
     .menu-user-name-wrap {
         display: flex;
@@ -114,18 +113,18 @@
         font-size: 1rem;
     }
     .greet-text {
-        font-size: 1rem !important;
+        font-size: 1.25rem !important;
         font-weight: 400;
         line-height: 24.2px;
         letter-spacing: -0.01em;
         text-align: left;
-        color: #adadad;
+        color: #4D5B6B;
     }
     .user-name {
-        font-size: 1rem !important;
+        font-size: 1.5rem !important;
         font-weight: 600;
         line-height: 43.57px;
         text-align: left;
-        color: #24527b;
+        color: #0C1617;
     }
 }

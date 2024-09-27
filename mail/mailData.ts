@@ -6,6 +6,8 @@ export interface UndetectedItem {
 interface TestReviewItem {
     note: string;
     score: number;
+    max_score: number;
+    value?: string;
     time_spent: string;
     last_time_val: string;
     first_time_val: string;
@@ -19,227 +21,296 @@ interface SpeakerSegment {
     segments: number[][][];
 }
 
-interface Result {
+interface AIResponseObject {
     score_ratios: {
         current: number;
         total: number;
     };
     test_review: {
-        [key: string]: TestReviewItem;
+        [key: string]: {
+            detections: { [key: string]: TestReviewItem };
+            total_current_score: number;
+            total_max_score: number;
+        };
     };
     undetected_hands: string | UndetectedItem[];
     undetected_faces: UndetectedItem[];
     speaker_segments: SpeakerSegment[];
 }
 
-interface AIResponseObject {
-    status: string;
-    result: Result;
-}
-
 
 export const detections: AIResponseObject = {
-    "status": "complete",
-    "result": {
-        "score_ratios": {
-            "current": 12.333333333333334,
-            "total": 175
+    "score_ratios": {
+        "current": 12.333333333333334,
+        "total": 175
+    },
+    "test_review": {
+        "2188": {
+            "detections": {
+                "Proper Lighting": {
+                    "label": "Proper Lighting",
+                    "score": 0,
+                    "value": "proper-lightening",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Acceptable Camera View": {
+                    "label": "Acceptable Camera View",
+                    "score": 0,
+                    "value": "acceptable-camera-view",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Participant in Frame": {
+                    "label": "Participant in Frame",
+                    "score": 0,
+                    "value": "participant-in-frame",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Closed Pack": {
+                    "label": "Closed Pack",
+                    "score": 0.13333333333333333,
+                    "value": "fedex-package",
+                    "max_score": 10,
+                    "note": "Item partially detected",
+                    "time_spent": "12300.0",
+                    "last_time_val": "1727041483",
+                    "first_time_val": "1727041457",
+                    "detection_hotspot_first": "00:00:01:366",
+                    "detection_hotspot_last": "00:00:13:666"
+                }
+            },
+            "total_current_score": 0.13333333333333333,
+            "total_max_score": 40
         },
-        "test_review": {
-            "fedex-package": {
-                "note": "Item successfully detected",
-                "score": 10,
-                "time_spent": "14466.666666666668",
-                "last_time_val": "1724711931",
-                "first_time_val": "1724711906",
-                "detection_hotspot_first": "00:00:15:066",
-                "detection_hotspot_last": "00:00:29:533",
-                "label": "Unopened Sealed Testing Materials Packet"
+        "2190": {
+            "detections": {
+                "Proper Lighting": {
+                    "label": "Proper Lighting",
+                    "score": 0,
+                    "value": "proper-lightening",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Mouth Check": {
+                    "score": 0,
+                    "max_score": 0,
+                    "label": "Mouth Check",
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Person In Frame": {
+                    "label": "Person In Frame",
+                    "score": 0,
+                    "value": "mouth-open",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Acceptable Camera View": {
+                    "label": "Acceptable Camera View",
+                    "score": 0,
+                    "value": "acceptable-camera-view",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                }
             },
-            "mouth-open": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Clear Mouth Check"
-            },
-            "intercept-package": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Intercept Material Package"
-            },
-            "sealed-saliva-swab": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Sealed Collection Device (Saliva Swab)"
-            },
-            "open-saliva-swab": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Open Collection Device (Saliva Swab)"
-            },
-            "saliva-swab": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Collection Device (Saliva Swab)"
-            },
-            "mouth-open-with-swab": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Proper Use of Collection Device / Device in mouth"
-            },
-            "intercept-swab-in-container": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Properly Placed Device in Specimen Vial"
-            },
-            "saliva-container": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Specimen Vial"
-            },
-            "sealed-saliva-container": {
-                "note": "Item partially detected",
-                "score": 2.3333333333333335,
-                "time_spent": "200.00000000000182",
-                "last_time_val": "1724711900",
-                "first_time_val": "1724711900",
-                "detection_hotspot_first": "00:00:11:466",
-                "detection_hotspot_last": "00:00:11:666",
-                "label": "Sealed and Signed / Dated Specimen Vial Seal"
-            },
-            "swab-container-barcode": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Specimen Vial with Barcode"
-            },
-            "sample-bag-empty": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Empty Specimen Bag"
-            },
-            "sample-bag-filled": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Filled and Sealed Specimen Bag"
-            },
-            "fedex-barcode": {
-                "note": "Item not detected",
-                "score": 0,
-                "time_spent": "0",
-                "last_time_val": "0",
-                "first_time_val": "0",
-                "detection_hotspot_first": "00:00:00:000",
-                "detection_hotspot_last": "00:00:00:000",
-                "label": "Shipping barcode scanned during recording"
-            }
+            "total_current_score": 0,
+            "total_max_score": 30
         },
-        "undetected_hands": [{
-            "last": 10000,
-            "current": 50000,
+        "2191": {
+            "detections": {
+                "Proper Lighting": {
+                    "label": "Proper Lighting",
+                    "score": 0,
+                    "value": "proper-lightening",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Acceptable Camera View": {
+                    "label": "Acceptable Camera View",
+                    "score": 0,
+                    "value": "acceptable-camera-view",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Participant in Frame": {
+                    "label": "Participant in Frame",
+                    "score": 0,
+                    "value": "participant-in-frame",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Swab Visible": {
+                    "label": "Swab Visible",
+                    "score": 0,
+                    "value": "saliva-swab",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                }
+            },
+            "total_current_score": 0,
+            "total_max_score": 40
         },
+        "2192": {
+            "detections": {
+                "Proper Lighting": {
+                    "label": "Proper Lighting",
+                    "score": 0,
+                    "value": "proper-lightening",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Acceptable Camera View": {
+                    "label": "Acceptable Camera View",
+                    "score": 0,
+                    "value": "acceptable-camera-view",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Participant in Frame": {
+                    "label": "Participant in Frame",
+                    "score": 0,
+                    "value": "participant-in-frame",
+                    "max_score": 10,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                },
+                "Swab in Mouth": {
+                    "label": "Swab in Mouth",
+                    "score": 0,
+                    "value": "mouth-open-with-swab",
+                    "max_score": 50,
+                    "note": "Item not detected",
+                    "time_spent": "0",
+                    "last_time_val": "0",
+                    "first_time_val": "0",
+                    "detection_hotspot_first": "00:00:00:000",
+                    "detection_hotspot_last": "00:00:00:000"
+                }
+            },
+            "total_current_score": 0,
+            "total_max_score": 80
+        }
+    },
+    "undetected_hands": [{
+        "last": 10000,
+        "current": 50000,
+    },
+    {
+        "last": 65000,
+        "current": 78000,
+    },
+    {
+        "last": 100000,
+        "current": 550000,
+    }],
+    "undetected_faces": [{
+        "last": 10000,
+        "current": 50000,
+    },
+    {
+        "last": 65000,
+        "current": 78000,
+    },
+    {
+        "last": 100000,
+        "current": 550000,
+    }],
+    "speaker_segments": [
         {
-            "last": 65000,
-            "current": 78000,
-        },
-        {
-            "last": 100000,
-            "current": 550000,
-        }],
-        "undetected_faces": [{
-            "last": 10000,
-            "current": 50000,
-        },
-        {
-            "last": 65000,
-            "current": 78000,
-        },
-        {
-            "last": 100000,
-            "current": 550000,
-        }],
-        "speaker_segments": [
-            {
-                "speaker": "SPEAKER_00",
-                "segments": [
+            "speaker": "SPEAKER_00",
+            "segments": [
+                [
                     [
-                        [
-                            8.532423208191126,
-                            25.59726962457338
-                        ],
-                        [
-                            3762.798634812287,
-                            7005.119453924915
-                        ]
+                        8.532423208191126,
+                        25.59726962457338
+                    ],
+                    [
+                        3762.798634812287,
+                        7005.119453924915
                     ]
                 ]
-            },
-            {
-                "speaker": "SPEAKER_01",
-                "segments": [
+            ]
+        },
+        {
+            "speaker": "SPEAKER_01",
+            "segments": [
+                [
                     [
-                        [
-                            7005.119453924915,
-                            10213.310580204778
-                        ]
+                        7005.119453924915,
+                        10213.310580204778
                     ]
                 ]
-            }
-        ]
-    }
+            ]
+        }
+    ]
 };
-
-// export const detections = Object.entries(result);

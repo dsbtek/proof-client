@@ -11,7 +11,7 @@ const Toastify = () => {
             draggable
             pauseOnHover
             closeOnClick
-            theme='light'
+            theme='dark'
             style={{ zIndex: '10001' }}
         />
     )

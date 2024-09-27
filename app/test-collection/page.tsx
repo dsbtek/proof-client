@@ -6,9 +6,11 @@ import Link from "next/link";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+
 import {
   AppHeader,
   DesktopSwitch,
+  DialogBox,
   DinamicMenuLayout,
   Switch,
 } from "@/components";
@@ -20,13 +22,18 @@ import useResponsive from "@/hooks/useResponsive";
 
 const TestCollection = () => {
   const testViewCookie = Cookies.get("testView");
-  const [checked, setChecked] = useState(testViewCookie === "true");
+  const [checked, setChecked] = useState(
+    testViewCookie === "true" ? true : false
+  );
   const router = useRouter();
   const dispatch = useDispatch();
   const [isGridView, setIsGridView] = useState(false);
-  const [isListView, setIsListView] = useState(true);
+  const [isListView, setIsListView] = useState(false);
   const [toggleSwitch, setToggleSwitch] = useState(checked);
   const isDesktop = useResponsive();
+
+  const [pendingTest, setPendingTest] = useState<string | null>(null);
+  const [pendingTestPrompt, setPendingTestPrompt] = useState<boolean>(false);
 
   const handleToggleGridView = (isActive: boolean) => {
     setIsGridView(true);
@@ -64,9 +71,29 @@ const TestCollection = () => {
     routeBasedOnScreenSize();
   }, [checked, isListView, isDesktop]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedPendingTest = localStorage.getItem("pendingTest");
+      setPendingTest(storedPendingTest);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (pendingTest) setPendingTestPrompt(true);
+  }, [pendingTest]);
+
   return (
     <DinamicMenuLayout>
-      <div className="container-test-collection">
+      <DialogBox
+        show={pendingTestPrompt}
+        handleReject={() => router.push("/tutorial")}
+        handleAccept={() => router.push("/pending-test")}
+        title="Upload Pending Test"
+        content1="WARNING: Upload pending test before taking new test."
+        rejectText="Cancel"
+        acceptText="Ok"
+      />
+      <div className="container-test-collection dex-container">
         <AppHeader className="no-herder" title="Test/Collections" />
         <div className="views-container">
           {!isDesktop ? (

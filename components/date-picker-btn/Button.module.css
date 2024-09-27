@@ -7,10 +7,7 @@
     color: #b0b0b0;
     background-color: #fafafa;
     border: none;
-    border-bottom: 2px solid rgba(234,
-            238,
-            245,
-            1);
+    border-bottom: 2px solid rgba(234, 238, 245, 1);
     border-radius: 5px 5px 0 0;
     cursor: pointer;
     transition: background-color 0.3s;
