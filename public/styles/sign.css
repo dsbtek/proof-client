@@ -55,20 +55,25 @@
 
 .overLay {
   display: flex;
-  align-items: flex-end;
-  position: absolute;
-  height: 100vh;
-  width: 100%;
-  bottom: 0%;
-  background-color: rgba(12, 22, 24, 0.9);
-  z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    height: 100vh;
+    width: 100%;
+    /* bottom: 0%; */
+    z-index: 1000;
 }
 
 .prompt {
-  width: 100%;
-  height: 240px;
-  border-radius: 24px 24px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 90%;
+  height: 200px;
+  border-radius: 24px;
   opacity: 1;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
   background: #FFFFFF;
 }
 

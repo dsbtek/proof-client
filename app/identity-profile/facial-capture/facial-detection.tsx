@@ -72,6 +72,7 @@ const FacialCapture = () => {
     window.addEventListener("resize", routeBasedOnScreenSize);
     return () => window.removeEventListener("resize", routeBasedOnScreenSize);
   }, []);
+
   useEffect(() => {
     const checkPermissions = async () => {
       try {
@@ -155,6 +156,17 @@ const FacialCapture = () => {
     },
     [router]
   );
+  const compareCapturedImage = useCallback(async (img1Base64: string, img2Base64: string) => {
+    try {
+      const correctedBase64 = correctBase64Image(img2Base64 as any);
+      console.log(img2Base64, 'img 2:', img1Base64)
+      const similarityScore = await compareFaces(correctedBase64.replace(/^data:image\/\w+;base64,/, ''), img1Base64.replace(/^data:image\/\w+;base64,/, ''));
+      dispatch(setIdCardFacialPercentageScore(similarityScore));
+    } catch (error) {
+      console.error('Compare Faces Error:', error);
+      toast.error('Error Comparing Faces');
+    }
+  }, [compareFaces, dispatch]);
 
   const captureFrame = useCallback(async () => {
     try {
@@ -167,35 +179,16 @@ const FacialCapture = () => {
       uploadFileToS3(imageSrc!, facialCapture).catch((error) => {
         console.error("Facial Capture Upload Error:", error);
       });
+
+      console.log('face img: ', faceImage, userID);
+
+      const imageToCompare = userID !== undefined ? userID : faceImage;
+      compareCapturedImage(imageSrc!, imageToCompare as string);
+
     } catch (error) {
       toast.error("Error capturing image. Please try again.");
     }
-  }, [dispatch, participant_id]);
-
-  useEffect(() => {
-    const compareCapturedImage = async () => {
-      if (!faceCapture || !faceImage) return; // Ensure both images are available
-
-      try {
-        const imageToCompare = faceImage ?? userID;
-        const correctedBase64 = correctBase64Image(imageToCompare as any);
-
-        const similarityScore = await compareFaces(
-          correctedBase64.replace(/^data:image\/\w+;base64,/, ''),
-          faceCapture.replace(/^data:image\/\w+;base64,/, '')
-        );
-        dispatch(setIdCardFacialPercentageScore(similarityScore));
-      } catch (error) {
-        console.error('Compare Faces Error:', error);
-        toast.error('Error Comparing Faces');
-      }
-    };
-
-    if (capturedImage && faceCapture) {
-      compareCapturedImage();
-    }
-  }, [capturedImage, faceCapture, faceImage, userID, compareFaces, dispatch]);
-
+  }, [compareCapturedImage, dispatch, faceImage, participant_id, userID]);
 
   const pathLink = (): string => {
     try {

@@ -26,3 +26,14 @@ export const setPinSchema = Yup.object().shape({
 export const mfaSchema = Yup.object().shape({
   otp: Yup.string().required("OTP is required"),
 });
+
+//Validation schema for ID card details
+export const IDSchema = Yup.object().shape({
+  first_name: Yup.string().required("First Name is required"),
+  last_name: Yup.string().required("Last NAme is required"),
+  date_of_birth: Yup.string().required("Date of Birth is required"),
+  address: Yup.string().required("address is required"),
+  city: Yup.string().required("City is required"),
+  state: Yup.string().required("State is required"),
+  zipcode: Yup.string().required("Zipcode is required"),
+});

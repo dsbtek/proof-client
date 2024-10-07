@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import UAParser from "ua-parser-js";
+import platform from "platform";
 
 interface DeviceInfo {
   screenWidth: number;
@@ -17,8 +18,8 @@ interface DeviceInfo {
 
 const useGetDeviceInfo = (): DeviceInfo => {
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
-    screenWidth: typeof window !== "undefined" ? window.screen.width : 0,
-    screenHeight: typeof window !== "undefined" ? window.screen.height : 0,
+    screenWidth: typeof window !== "undefined" ? window.innerWidth : 0,
+    screenHeight: typeof window !== "undefined" ? window.innerHeight : 0,
     devicePixelRatio:
       typeof window !== "undefined" ? window.devicePixelRatio : 1,
   });
@@ -33,13 +34,22 @@ const useGetDeviceInfo = (): DeviceInfo => {
       screenWidth: window.screen.width ?? "",
       screenHeight: window.screen.height ?? "",
       devicePixelRatio: window.devicePixelRatio ?? "",
-      browserName: browser.name ?? "",
-      browserVersion: browser.version ?? "",
-      osName: os.name ?? "",
-      osVersion: os.version ?? "",
-      deviceModel: device.model ?? "",
-      deviceType: device.type ?? "",
-      deviceVendor: device.vendor ?? "",
+      browserName:
+        browser?.name || platform.parse(navigator.userAgent).name || "",
+      browserVersion:
+        browser?.version || platform.parse(navigator.userAgent).version || "",
+      osName:
+        os?.name || platform.parse(navigator.userAgent).os?.toString() || "",
+      osVersion:
+        os?.version || platform.parse(navigator.userAgent).os?.version || "",
+      deviceModel:
+        device?.model ||
+        platform.parse(navigator.userAgent).os?.architecture?.toString() ||
+        "",
+      deviceType:
+        device?.vendor || platform.parse(navigator.userAgent).product || "",
+      deviceVendor:
+        device?.vendor || platform.parse(navigator.userAgent).os?.family || "",
     });
 
     const handleResize = () => {

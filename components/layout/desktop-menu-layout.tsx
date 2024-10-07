@@ -12,7 +12,7 @@ const DinamicMenuLayout = ({
         <DextopMenu />
       </div>
       <div className="menu-page-wrap">
-        {children}
+        <div className="page-wrap">{children}</div>
         <div className="mobile-menu">
           <Menu />
         </div>

@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { AgreementHeader, DesktopFooter } from "@/components";
-import { appData } from "@/redux/slices/appConfig";
+import { appData, userIdString } from "@/redux/slices/appConfig";
 
 const Desktop = () => {
-  const { permissions, proof_id_value } = useSelector(appData);
-  const user = useSelector(appData);
-  const photo = user?.photo
+  const { permissions } = useSelector(appData);
+  const userID = useSelector(userIdString);
   const appPermissions = permissions ? permissions.split(";") : undefined;
   const [identityPermission, setIdentityPermission] = useState('');
 
@@ -40,8 +39,8 @@ const Desktop = () => {
         <Image className="get-started-img" src="/images/cview.svg" alt="image" width={3000} height={3000} />
       </div>
       {/* <DesktopFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={"/test-collection/a0q2J00000BM9IDQA1"} btnLeftText={"Decline"} btnRightText={"Next"} /> */}
-      <DesktopFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={"/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} />
-      {/* <DesktopFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={photo ? "/identity-profile/sample-facial-capture" : "/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} /> */}
+      {/* <DesktopFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={"/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} /> */}
+      <DesktopFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={userID ? "/identity-profile/sample-facial-capture" : "/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} />
     </div>
   );
 };

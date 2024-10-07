@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type IdDetails = {
+export type IDDetails = {
     first_name: string;
     last_name: string;
     date_of_birth: string;
@@ -46,7 +46,7 @@ export interface TestState {
     imageCaptures: string[];
     passport: string;
     governmentID: string;
-    idDetails: IdDetails;
+    idDetails: IDDetails;
     AIConfig: AIConfig;
 }
 
@@ -87,7 +87,7 @@ const initialState: TestState = {
     },
     AIConfig: {
         test_review_threshold: 0.5,
-        test_review_time: 5,
+        test_review_time: 10,
         hands_tracking_confidence: 0.5,
         hands_detection_confidence: 0.5,
         face_model_selection: 0,
@@ -176,7 +176,7 @@ const appSlice = createSlice({
         setGovernmentID: (state, action: PayloadAction<string>) => {
             state.governmentID = action.payload
         },
-        setIdDetails: (state, action: PayloadAction<IdDetails>) => {
+        setIdDetails: (state, action: PayloadAction<IDDetails>) => {
             state.idDetails = action.payload
         },
         setAIConfig: (state, action: PayloadAction<AIConfig>) => {

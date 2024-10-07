@@ -18,7 +18,9 @@
 }
 
 .camera {
-    height: 500px;
+    height: 100%;
+    width: 100%;
+    /* object-fit: contain; */
 }
 
 .vid-items-wrap {
@@ -120,8 +122,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(100% - 10%);
-    height: calc(100% - 60%);
+    width: calc(100% - 40%);
+    height: calc(100% - 70%);
     border-radius: 12px;
     position: absolute;
 }
@@ -168,7 +170,12 @@
     right: 50%;
     background: transparent;
 }
-
+.canvas_ {
+    width: 100%;
+    height: 100%;
+    display: block; 
+    border-radius: 12px;
+}
 @media screen and (min-width: 700px) {
     .id-detection-container> :nth-child(4) {
         position: relative;
@@ -197,9 +204,15 @@
         height: 100%;
     }
     .id-card-frame-guide {
-        width: calc(100% - 20%);
-        height: calc(100% - 40%);
+        width: calc(100% - 50%);
+        height: calc(100% - 70%);
     }
+
+    .canvas_ {
+        width: 100%;
+        height: 100%;
+}
+
     .id-image-2 {
         width: 90%;
         height: 300px;
@@ -214,10 +227,19 @@
         align-items: center;
         justify-content: center;
     }
+    .camera-container-2 {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        /* position: relative; */
+        background-color: #009cf9;
+        align-items: center;
+        justify-content: center;
+    }
     .camera {
         height: 100%;
         width: 100%;
-        object-fit: cover;
+        object-fit: fill;
         position: absolute;
         left: 0px;
     }

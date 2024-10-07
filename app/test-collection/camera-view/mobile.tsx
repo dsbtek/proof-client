@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { AgreementHeader, AgreementFooter } from "@/components";
-import { appData } from "@/redux/slices/appConfig";
+import { appData, userIdString } from "@/redux/slices/appConfig";
 
 const Mobile = () => {
-  const { permissions, proof_id_value } = useSelector(appData);
-  const user = useSelector(appData);
-  const photo = user?.photo
+  const { permissions } = useSelector(appData);
+  const userID = useSelector(userIdString);
   const appPermissions = permissions ? permissions.split(";") : undefined;
   const [identityPermission, setIdentityPermission] = useState('');
 
@@ -37,7 +36,7 @@ const Mobile = () => {
         </p>
       </div>
       {/* <AgreementFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={"/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} /> */}
-      <AgreementFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={photo ? "/identity-profile/sample-facial-capture" : "/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} />
+      <AgreementFooter currentNumber={5} outOf={5} onPagination={true} onLeftButton={false} onRightButton={true} btnLeftLink={""} btnRightLink={userID ? "/identity-profile/sample-facial-capture" : "/identity-profile"} btnLeftText={"Decline"} btnRightText={"Next"} />
     </div>
   );
 };

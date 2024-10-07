@@ -1,0 +1,63 @@
+  
+  .baseTimer {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    z-index: 5000;
+  }
+  
+  .baseTimerSvg {
+    transform: scaleX(-1);
+  }
+  
+  .baseTimerCircle {
+    fill: none;
+    stroke: none;
+  }
+  
+  .baseTimerPathElapsed {
+    stroke-width: 7px;
+    stroke: grey;
+  }
+  
+  .baseTimerPathRemaining {
+    stroke-width: 7px;
+    stroke-linecap: round;
+    transform: rotate(90deg);
+    transform-origin: center;
+    transition: 1s linear all;
+    fill-rule: nonzero;
+    stroke: currentColor;
+  }
+  
+  .green {
+    color: rgb(65, 184, 131);
+  }
+  
+  .orange {
+    color: orange;
+  }
+  
+  .red {
+    color: red;
+  }
+  
+  .baseTimerLabel {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+  }
+  @media screen and (min-width: 700px) {
+  .baseTimer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    z-index: 2000;
+  }
+  }

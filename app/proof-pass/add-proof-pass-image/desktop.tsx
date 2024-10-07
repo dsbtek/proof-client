@@ -132,16 +132,19 @@ const DesktopScanLabReport = () => {
     return bytes.toString(Crypto.enc.Utf8);
   };
 
-  const compressImage = async (imageDataUrl: string, maxSizeMB = 2, maxWidthOrHeight = 1080) => {
-    const imageFile = dataURLtoFile(imageDataUrl, "image.png");
-    const options = {
-      maxSizeMB,
-      maxWidthOrHeight,
-      useWebWorker: true,
-    };
-    const compressedFile = await imageCompression(imageFile, options);
-    return fileToDataUrl(compressedFile);
-  };
+  const compressImage = useCallback(
+    async (imageDataUrl: string, maxSizeMB = 2, maxWidthOrHeight = 1080) => {
+      const imageFile = dataURLtoFile(imageDataUrl, "image.png");
+      const options = {
+        maxSizeMB,
+        maxWidthOrHeight,
+        useWebWorker: true,
+      };
+      const compressedFile = await imageCompression(imageFile, options);
+      return fileToDataUrl(compressedFile);
+    },
+    [] // Add any dependencies here if needed
+  );
 
   const dataURLtoFile = (dataurl: string, filename: string) => {
     const arr = dataurl.split(",");

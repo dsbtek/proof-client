@@ -118,18 +118,18 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
             didScan: async (barcodeCapture, session) => {
 
                 await barcodeCapture.setEnabled(false);
-                const barcode = session.newlyRecognizedBarcodes[0];
-                const symbology = new SDCBarcode.SymbologyDescription(barcode.symbology);
+                const barcode = session.newlyRecognizedBarcode;
+                const symbology = new SDCBarcode.SymbologyDescription(barcode!.symbology);
 
-                console.log('bars', session.newlyRecognizedBarcodes, barcode, symbology.readableName)
+                console.log('bars: ', session.newlyRecognizedBarcode, barcode, symbology.readableName)
 
                 if (scanType === 'id' && symbology.readableName === 'PDF417') {
-                    console.log(barcode.data)
-                    const idData: any = parseAamvaData(barcode.data);
+                    console.log(barcode!.data)
+                    const idData: any = parseAamvaData(barcode!.data);
                     const idDetails = {
                         first_name: idData["First Name"],
                         last_name: idData["Last Name"],
-                        date_of_birth: idData["Date of Birth"],
+                        date_of_birth: typeof idData["Date of Birth"] === 'number' ? new Date(idData["Date of Birth"]) : idData["Date of Birth"],
                         address: idData["Street Address"],
                         city: idData["City"],
                         state: idData["State"],
@@ -138,7 +138,7 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
                     dispatch(setIdDetails(idDetails));
                     setBarcode(idData["First Name"] + '-' + idData["Last Name"] + '-' + idData["Driver's License Number"])
                 } else {
-                    setBarcode(barcode.data!)
+                    setBarcode(barcode!.data!)
                 };
 
                 await barcodeCapture.setEnabled(false);
@@ -158,7 +158,7 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
             );
 
         const viewfinder = new SDCCore.RectangularViewfinder(
-            SDCCore.RectangularViewfinderStyle.Square,
+            SDCCore.RectangularViewfinderStyle.Rounded,
             SDCCore.RectangularViewfinderLineStyle.Light
         );
 
@@ -176,17 +176,17 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
             console.error('Scandit Error:', error);
             toast.error(error);
         })
-    }, [runScanner])
+    }, [runScanner, show])
 
     return (
         show && <div className='barcode-cap-modal'>
             {barcodeUploaded && !enterBarcode && barcode === '' && !isDesktop &&
                 <div className='bc-content'>
                     {scanType === 'id' && step && totalSteps && <p className='test-steps'>{`Step ${step} of ${totalSteps}`}</p>}
-                    {scanType !== 'id' && <div className='bc-upload-stats'>
+                    {/* {scanType !== 'id' && <div className='bc-upload-stats'>
                         <h2 style={{ color: '#24527b' }}></h2>
                         <Button classname='man-btn' onClick={recapture}>Hide Scanner</Button>
-                    </div>}
+                    </div>} */}
                 </div>}
 
             {barcodeUploaded && !enterBarcode && barcode !== '' && <div className='bc-content'>
@@ -207,16 +207,9 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
             </div>}
             <div className='barcode-cap' style={{ background: '#000000' }}>
                 {scannerLoad && <Loader_ />}
-                <div id="data-capture-view">
-                </div >
+                <div id="data-capture-view"></div >
             </div>
             {!enterBarcode && <div className='barcode-btns' style={{ flexDirection: 'column', alignItems: 'center' }}>
-                {/* {!scannerLoad && <Button classname='cap-btn' onClick={() => {
-                    runScanner().catch((error) => {
-                        console.error('Scandit Error:', error);
-                        toast.error(error);
-                    })
-                }}><TbCapture /> Re-Scan</Button>} */}
                 <Button classname='cap-btn' onClick={() => {
                     runScanner().catch((error) => {
                         console.error('Scandit Error:', error);

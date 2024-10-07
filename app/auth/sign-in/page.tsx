@@ -19,7 +19,6 @@ import { detections } from "@/mail/mailData";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import MfaModal from "@/components/modals/mfaModal";
 
-
 interface SignInType {
   participant_id: number | string;
   pin: number | string;
@@ -37,16 +36,32 @@ function LoginForm() {
   const [loginRedirect, setLoginRedirect] = useState(false);
   const [loginData, setLoginData] = useState<any>();
 
-  const { osName, osVersion, deviceModel, deviceType, deviceVendor } =
-    useGetDeviceInfo();
-
-  console.log(
-    "device info: ",
+  const {
     osName,
     osVersion,
     deviceModel,
     deviceType,
-    deviceVendor
+    deviceVendor,
+    screenWidth,
+    screenHeight,
+  } = useGetDeviceInfo();
+
+  console.log(
+    "device info: ",
+    "osName:",
+    osName,
+    "osVersion:",
+    osVersion,
+    "deviceModel:",
+    deviceModel,
+    "deviceType:",
+    deviceType,
+    "deviceVendor:",
+    deviceVendor,
+    "screenWidth:",
+    screenWidth,
+    "screenHeight:",
+    screenHeight
   );
 
   const initialValues: SignInType = {
@@ -163,7 +178,16 @@ function LoginForm() {
         ? router.push("/")
         : router.push("/home");
     }
-  }, [appDispatch, dispatch, landingCookie, localId, localPin, loginData, loginRedirect, router]);
+  }, [
+    appDispatch,
+    dispatch,
+    landingCookie,
+    localId,
+    localPin,
+    loginData,
+    loginRedirect,
+    router,
+  ]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -287,7 +311,10 @@ function LoginForm() {
           </Formik>
         </div>
         <br />
-        <Link href="https://proofapp.my.salesforce-sites.com/New2Proof" className="links">
+        <Link
+          href="https://proofapp.my.salesforce-sites.com/New2Proof"
+          className="links"
+        >
           <Button classname="custom-button-1">{"New to Proof?"}</Button>
         </Link>
         {/* <Button classname="custom-button-1" onClick={sendMail}>{"New to Proof?"}</Button> */}

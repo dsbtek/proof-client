@@ -64,3 +64,5 @@ export { default as Badge } from "./badge";
 export { default as CustomTable } from "./custom-table";
 export { default as TabBar } from "./tab";
 export { default as ChangePinModal } from './modals/changePinModal';
+export { default as IDCardForm } from './id-card-form/index';
+export { default as IdTimer } from './id-timer/index';

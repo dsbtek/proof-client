@@ -3,27 +3,34 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import Image from "next/image";
 import Webcam from "react-webcam";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 import useResponsive from "@/hooks/useResponsive";
-import { AgreementFooter, AgreementHeader, DesktopFooter, Scanner } from '@/components';
+import { AgreementFooter, AgreementHeader, Button, DesktopFooter, IDCardForm, Scanner } from '@/components';
+import { uploadFileToS3 } from '../step-1/action';
+import { authToken } from '@/redux/slices/auth';
+import { TbCapture } from 'react-icons/tb';
 
 const CameraIDCardDetection = () => {
+    const router = useRouter();
     const isDesktop = useResponsive();
+    const dispatch = useDispatch();
+    const { participant_id } = useSelector(authToken);
 
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [showBCModal, setShowBCModal] = useState<boolean>(false);
     const [barcodeUploaded, setBarcodeUploaded] = useState<boolean>(false);
-    const [faceDetected, setFaceDetected] = useState<boolean>(false);
-    const [brightness, setBrightness] = useState<number>(0);
-    const [sigCanvasH, setSigCanvasH] = useState(0);
+    const [showBCModalDesktop, setShowBCModalDesktop] = useState<boolean>(true);
+    const [barcodeUploadedDesktop, setBarcodeUploadedDesktop] = useState<boolean>(true);
+    const [showFormButton, setShowFormButton] = useState<boolean>(false);
+    const [showForm, setShowForm] = useState<boolean>(false);
+
 
     const cameraRef = useRef<Webcam | null>(null);
+    const timerId = useRef<NodeJS.Timeout | undefined>()
 
-    const dispatch = useDispatch();
-    const router = useRouter();
 
     const closeBCModal = () => {
         setShowBCModal(false);
@@ -41,19 +48,26 @@ const CameraIDCardDetection = () => {
         }
     }, []);
 
+    const handleOffScanner = () => {
+        setShowBCModalDesktop(!showBCModalDesktop)
+        setBarcodeUploadedDesktop(!barcodeUploadedDesktop)
+    };
+
+    const captureFrame = useCallback(async () => {
+        try {
+            const imageSrc = cameraRef?.current?.getScreenshot();
+            const idCapture = `${participant_id}-IDCapture-Rear-${Date.now()}.png`
+            setCapturedImage(imageSrc as any);
+            await uploadFileToS3(imageSrc!, idCapture);
+        } catch (error) {
+            console.error('ID Rear capture Error: ', error)
+        }
+    }, [participant_id])
+
     useEffect(() => {
-        const routeBasedOnScreenSize = () => {
-            const screenWidth = window.innerWidth;
-            if (screenWidth <= 700) {
-                setSigCanvasH(250);
-            } else {
-                setSigCanvasH(700);
-            }
-        };
-        routeBasedOnScreenSize();
-        window.addEventListener('resize', routeBasedOnScreenSize);
-        return () => window.removeEventListener('resize', routeBasedOnScreenSize);
-    }, []);
+        timerId.current = setTimeout(() => { setShowFormButton(true) }, 30000);
+        return () => clearInterval(timerId.current);
+    }, [showBCModalDesktop]);
 
     return (
         <>
@@ -113,13 +127,62 @@ const CameraIDCardDetection = () => {
                                     <Image className='id-image-2' src='/images/proof-identity-profile.svg' alt="captured Image" width={5000} height={5000} loading='lazy' />
                                     <br />
                                     <p className="vid-text m-5">
-                                        Please ensure the barcode is withiin the guide frame.
+                                        Please ensure the barcode covers &gt; 70% of the screen.
                                     </p>
+                                    {showFormButton && <>
+                                        <br />
+                                        <p style={{ color: '#009cf9' }}>{showBCModalDesktop === false ? 'Too Tired to fill a form?' : "Can't Scan ID Barcode?"}</p>
+                                        <br />
+                                        <Button blue style={{ width: '12rem', height: '3rem' }} onClick={() => handleOffScanner()}>{showBCModalDesktop === false ? 'Automatic Capture' : 'Manual Capture'}</Button>
+                                    </>}
                                 </div>
                             </div>
+                            {/* Facilitates Automatic Capture */}
                             <div style={{ position: 'absolute', right: '0', top: "0", width: '50%', height: '100%', zIndex: '1000' }}>
                                 <Scanner show={true} scanType='id' barcodeUploaded={true} step={2} totalSteps={3} recapture={() => setShowBCModal(false)} closeModal={closeBCModal} />
                             </div>
+                            {/* Facilitates Manual Capture */}
+                            {!showForm && !showBCModalDesktop && <div style={{ background: '#000', position: 'absolute', right: '0', top: "0", width: '50%', height: '100%', zIndex: '10001' }}>
+                                {!capturedImage && !showBCModalDesktop ? (
+                                    <>
+                                        <div className="camera-container-2">
+                                            <Webcam
+                                                className="camera"
+                                                ref={cameraRef}
+                                                audio={false}
+                                                screenshotFormat="image/png"
+                                                imageSmoothing={true}
+                                            />
+                                            <div className={`id-card-frame-guide face-detected`}></div>
+                                        </div>
+                                        <div className='barcode-btns'>
+                                            <Button blue style={{ width: '12rem', height: '3rem' }} onClick={captureFrame}><TbCapture /> Capture</Button>
+                                        </div>
+                                    </>
+                                ) : (<>
+                                    {capturedImage && !showBCModalDesktop && (
+                                        <div className="test-items-wrap-desktop_">
+                                            <div className="id-image">
+                                                <Image
+                                                    className="img-border"
+                                                    src={capturedImage}
+                                                    alt="Captured Image"
+                                                    layout="responsive"
+                                                    width={500}
+                                                    height={500}
+                                                />
+                                            </div>
+                                            <div className='barcode-btns'>
+                                                <Button white style={{ width: '12rem', height: '3rem' }} onClick={() => { setCapturedImage(null) }}><TbCapture /> Recapture</Button>
+                                                <Button blue style={{ width: '12rem', height: '3rem' }} onClick={() => { setShowForm(true) }}>Next</Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>)}
+                            </div>}
+                            {showForm && !showBCModalDesktop && <div style={{ position: 'absolute', right: '0', top: "0", width: '50%', height: '100%', zIndex: '10002' }}>
+                                <IDCardForm />
+                            </div>}
                         </div>
                     </>
                     {/* <DesktopFooter
