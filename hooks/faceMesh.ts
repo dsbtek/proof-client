@@ -10,7 +10,6 @@ const useFaceMesh = () => {
       try {
         const model = await ml5.facemesh();
         setFaceMesh(model);
-        console.log("Face mesh model loaded Successfully");
       } catch (error) {
         console.error("Error loading face mesh model:", error);
         toast.error("Error loading face mesh model.");

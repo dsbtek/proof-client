@@ -14,14 +14,9 @@ import {
   Loader,
   Loader_,
 } from "@/components";
-import {
-  setIDFront,
-  setExtractedFaceImage,
-  FacialCaptureString,
-  setFacialCapture,
-} from "@/redux/slices/appConfig";
+import { setIDFront, setExtractedFaceImage } from "@/redux/slices/appConfig";
 import { uploadFileToS3 } from "./action";
-// import useFaceMesh from "@/hooks/faceMesh";
+import useFaceMesh from "@/hooks/faceMesh";
 import { extractFaceImage } from "@/utils/utils";
 import { authToken } from "@/redux/slices/auth";
 import {
@@ -29,10 +24,6 @@ import {
   setPassport,
   setProofID,
 } from "@/redux/slices/drugTest";
-import sharp from "sharp";
-import path from "path";
-import { compareFacesAI } from "@/utils/queries";
-import { useRouter } from "next/navigation";
 
 // const usePermissions = () => {
 
@@ -42,7 +33,6 @@ import { useRouter } from "next/navigation";
 const CameraIDCardDetection = () => {
   const [sigCanvasH, setSigCanvasH] = useState(0);
   const { participant_id } = useSelector(authToken);
-  const router = useRouter();
 
   useEffect(() => {
     const routeBasedOnScreenSize = () => {
@@ -60,9 +50,8 @@ const CameraIDCardDetection = () => {
 
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [faceImage, setFaceImage] = useState<string | null>(null);
-  const [similarity, setSimilarity] = useState<boolean>(false);
   const [faces, setFaces] = useState<any[]>([]);
-  // const [faceDetected, setFaceDetected] = useState<boolean>(false);
+  const [faceDetected, setFaceDetected] = useState<boolean>(false);
   const [isExtractingFace, setIsExtractingFace] = useState<boolean>(false);
   const [brightness, setBrightness] = useState<number>(0);
   const cameraRef = useRef<Webcam | null>(null);
@@ -70,11 +59,10 @@ const CameraIDCardDetection = () => {
   const dispatch = useDispatch();
   const [permissionsGranted, setPermissionsGranted] = useState(false);
   const [webcamKey, setWebcamKey] = useState(0);
-  const facialCapture = useSelector(FacialCaptureString);
 
   const isDesktop = useResponsive();
   // const permissionsGranted = usePermissions();
-  // const faceMesh = useFaceMesh();
+  const faceMesh = useFaceMesh();
 
   const calculateBrightness = useCallback((imageData: { data: any }) => {
     const data = imageData.data;
@@ -89,94 +77,41 @@ const CameraIDCardDetection = () => {
     setBrightness(averageBrightness);
   }, []);
 
-  // const checkForFace = useCallback(async () => {
-  //   if (cameraRef.current) {
-  //     const screenshot = cameraRef.current.getScreenshot();
+  const checkForFace = useCallback(async () => {
+    if (cameraRef.current && faceMesh) {
+      const screenshot = cameraRef.current.getScreenshot();
+      if (screenshot) {
+        const img = new window.Image();
+        img.src = screenshot;
+        img.onload = async () => {
+          const predictions = await faceMesh.predict(img);
+          setFaces(predictions);
+          setFaceDetected(predictions.length > 0);
 
-  //     if (screenshot) {
-  //       const img = new window.Image();
-  //       img.src = screenshot;
-  //       img.onload = async () => {
-  //         const predictions = await faceMesh.predict(img);
-  //         setFaces(predictions);
-  //         setFaceDetected(predictions.length > 0);
-
-  //         if (canvasRef.current) {
-  //           const context = canvasRef.current.getContext("2d");
-  //           if (context) {
-  //             canvasRef.current.width = img.width;
-  //             canvasRef.current.height = img.height;
-  //             context.drawImage(img, 0, 0, img.width, img.height);
-  //             const imageData = context.getImageData(
-  //               0,
-  //               0,
-  //               img.width,
-  //               img.height
-  //             );
-  //             calculateBrightness(imageData);
-  //           }
-  //         }
-  //       };
-  //     }
-  //   }
-  // }, [faceMesh, calculateBrightness]);
-
-  // useEffect(() => {
-  //   const interval = setInterval(checkForFace, 1000);
-  //   return () => clearInterval(interval);
-  // }, [checkForFace]);
-
-  const compareFaces = useCallback(
-    async (img1Base64: string, img2Base64: string) => {
-      try {
-        const similarity = await compareFacesAI(img1Base64, img2Base64);
-        if (similarity.status === "complete") {
-          setSimilarity(true);
-          toast.success("compare faces passed");
-          return `${similarity.result.percentage}%`;
-        }
-        if (
-          similarity.message === "An error occurred while processing the images"
-        ) {
-          setCapturedImage("");
-          toast.error(`${similarity.message}`);
-          setTimeout(() => {
-            router.push("/identity-profile/id-detection/step-1");
-          }, 3000);
-        } else if (
-          similarity.message === "An error occurred while processing the image"
-        ) {
-          setCapturedImage("");
-          toast.error(`${similarity.message}`);
-        } else if (
-          similarity.message ===
-          "An error occurred while loading the image for face recognition"
-        ) {
-          toast.error(`${similarity.message}`);
-          setTimeout(() => {
-            router.push("/identity-profile/id-detection/step-1");
-          }, 3000);
-        } else if (
-          similarity.message === "No faces found in the second image"
-        ) {
-          toast.error(`${similarity.message}`);
-          setCapturedImage(null);
-          // setTimeout(() => {
-          //   router.push("/identity-profile/id-detection/step-1");
-          // }, 3000);
-        } else if (similarity.message === "No faces found in the first image") {
-          setCapturedImage("");
-          toast.error(`${similarity.message}`);
-          setTimeout(() => {
-            router.push("/identity-profile/sample-facial-capture");
-          }, 3000);
-        }
-      } catch (error) {
-        toast.error("Unable to  perform facial scan");
+          if (canvasRef.current) {
+            const context = canvasRef.current.getContext("2d");
+            if (context) {
+              canvasRef.current.width = img.width;
+              canvasRef.current.height = img.height;
+              context.drawImage(img, 0, 0, img.width, img.height);
+              const imageData = context.getImageData(
+                0,
+                0,
+                img.width,
+                img.height
+              );
+              calculateBrightness(imageData);
+            }
+          }
+        };
       }
-    },
-    [router]
-  );
+    }
+  }, [faceMesh, calculateBrightness]);
+
+  useEffect(() => {
+    const interval = setInterval(checkForFace, 1000);
+    return () => clearInterval(interval);
+  }, [checkForFace]);
 
   const captureFrame = useCallback(async () => {
     try {
@@ -186,46 +121,41 @@ const CameraIDCardDetection = () => {
       setIsExtractingFace(true);
       dispatch(setGovernmentID(idCapture));
       dispatch(setIDFront(imageSrc!));
-      uploadFileToS3(imageSrc!, idCapture);
+      await uploadFileToS3(imageSrc!, idCapture);
 
-      await compareFaces(
-        imageSrc!.replace(/^data:image\/\w+;base64,/, ""),
-        facialCapture.replace(/^data:image\/\w+;base64,/, "")
-      );
-      setIsExtractingFace(false);
-      // if (imageSrc && faceMesh) {
-      //   const img = new window.Image();
-      //   img.src = imageSrc;
-      //   img.onload = async () => {
-      //     const predictions = await faceMesh.predict(img);
-      //     const face = predictions[0];
-      //     if (face) {
-      //       const faceBase64 = extractFaceImage(img, face);
-      //       if (faceBase64) {
-      //         setFaceImage(faceBase64);
-      //         dispatch(setIDFront(faceBase64));
-      //         setIsExtractingFace(false);
-      //         dispatch(setExtractedFaceImage(faceBase64));
-      //         const passportCapture = `${participant_id}-PassportCapture-${Date.now()}.png`;
-      //         const proofId = passportCapture.split(".")[0];
-      //         dispatch(setPassport(passportCapture));
-      //         dispatch(setProofID(proofId));
-      //         await uploadFileToS3(faceBase64, passportCapture);
-      //       } else {
-      //         toast.error("Error extracting face image.");
-      //         setIsExtractingFace(false);
-      //       }
-      //     } else {
-      //       toast.error("No face detected. Please try again.");
-      //       setIsExtractingFace(false);
-      //     }
-      //   };
-      // }
+      if (imageSrc && faceMesh) {
+        const img = new window.Image();
+        img.src = imageSrc;
+        img.onload = async () => {
+          const predictions = await faceMesh.predict(img);
+          const face = predictions[0];
+          if (face) {
+            const faceBase64 = extractFaceImage(img, face);
+            if (faceBase64) {
+              setFaceImage(faceBase64);
+              dispatch(setIDFront(faceBase64));
+              setIsExtractingFace(false);
+              dispatch(setExtractedFaceImage(faceBase64));
+              const passportCapture = `${participant_id}-PassportCapture-${Date.now()}.png`;
+              const proofId = passportCapture.split(".")[0];
+              dispatch(setPassport(passportCapture));
+              dispatch(setProofID(proofId));
+              await uploadFileToS3(faceBase64, passportCapture);
+            } else {
+              toast.error("Error extracting face image.");
+              setIsExtractingFace(false);
+            }
+          } else {
+            toast.error("No face detected. Please try again.");
+            setIsExtractingFace(false);
+          }
+        };
+      }
     } catch (error) {
       toast.error("Error capturing image. Please try again.");
       setIsExtractingFace(false);
     }
-  }, [dispatch, participant_id]);
+  }, [dispatch, faceMesh, participant_id]);
 
   const recaptureImage = () => {
     setCapturedImage(null);
@@ -272,8 +202,7 @@ const CameraIDCardDetection = () => {
           className="id-detection-container"
           style={{ position: "relative" }}
         >
-          {/* <AgreementHeader title="PIP - Step 1 " /> */}
-          <AgreementHeader title="PIP - Step 2 " />
+          <AgreementHeader title="PIP - Step 1 " />
           <br />
           <div className="test-items-wrap-desktop_">
             <div className="sub-item">
@@ -299,12 +228,16 @@ const CameraIDCardDetection = () => {
                     mirrored
                   />
 
-                  <div className={`id-card-frame-guide ${"face-detected"}`}>
-                    {/* {brightness < 120 && (
+                  <div
+                    className={`id-card-frame-guide ${
+                      faceDetected ? "face-detected" : "no-face-detected"
+                    }`}
+                  >
+                    {brightness < 120 && (
                       <div className="brightness-detection">
                         <p>Insufficient light detected.</p>
                       </div>
-                    )} */}
+                    )}
                   </div>
                 </div>
               ) : (
@@ -361,7 +294,7 @@ const CameraIDCardDetection = () => {
           {capturedImage && (
             <div>
               <p className="vid-text">
-                Please tap the `Next` button to move to step 3 <br /> where you
+                Please tap the `Next` button to move to step 2 <br /> where you
                 will position the rear side of your ID.
               </p>
             </div>
@@ -369,17 +302,13 @@ const CameraIDCardDetection = () => {
           <canvas ref={canvasRef} style={{ display: "none" }} />
           <AgreementFooter
             onPagination={false}
-            // onLeftButton={faceImage ? true : false}
-            onLeftButton={similarity ? true : false}
+            onLeftButton={faceImage ? true : false}
             onRightButton={true}
             btnLeftText={"Recapture"}
             onClickBtnLeftAction={recaptureImage}
-            // btnRightText={faceImage ? "Next" : "Capture"}
-            btnRightText={similarity ? "Next" : "Capture"}
-            // onClickBtnRightAction={faceImage ? undefined : captureFrame}
-            onClickBtnRightAction={similarity ? undefined : captureFrame}
-            // rightdisabled={!faceDetected}
-            rightdisabled={false}
+            btnRightText={faceImage ? "Next" : "Capture"}
+            onClickBtnRightAction={faceImage ? undefined : captureFrame}
+            rightdisabled={!faceDetected}
             btnRightLink={
               capturedImage
                 ? "/identity-profile/id-detection/step-2"
@@ -396,7 +325,7 @@ const CameraIDCardDetection = () => {
           {/* <br /> */}
           <div className="camera-items-wrap-desktop_">
             <div className="sub-item">
-              <h3 className="">PIP - Step 2</h3>
+              <h3 className="">PIP - Step 1</h3>
               <br />
               {!capturedImage && (
                 <p className="">
@@ -407,7 +336,7 @@ const CameraIDCardDetection = () => {
               {faceImage && (
                 <p className="">
                   {" "}
-                  Please tap the `Next` button to move to step 3 where you will{" "}
+                  Please tap the `Next` button to move to step 2 where you will{" "}
                   <br /> position the rear side of your ID. in the camera frame
                   below.
                 </p>
@@ -423,10 +352,13 @@ const CameraIDCardDetection = () => {
                     audio={false}
                     screenshotFormat="image/png"
                     imageSmoothing={true}
-                    mirrored
                   />
 
-                  <div className={`id-card-frame-guide ${"face-detected"}`}>
+                  <div
+                    className={`id-card-frame-guide ${
+                      faceDetected ? "face-detected" : "no-face-detected"
+                    }`}
+                  >
                     {brightness < 120 && (
                       <div className="brightness-detection">
                         <p>Insufficient light detected.</p>
@@ -503,14 +435,13 @@ const CameraIDCardDetection = () => {
           <canvas ref={canvasRef} style={{ display: "none" }} />
           <DesktopFooter
             onPagination={false}
-            onLeftButton={similarity ? true : false}
+            onLeftButton={faceImage ? true : false}
             onRightButton={true}
             btnLeftText={"Recapture"}
             onClickBtnLeftAction={recaptureImage}
-            btnRightText={similarity ? "Next" : "Capture"}
-            onClickBtnRightAction={similarity ? undefined : captureFrame}
-            // rightdisabled={!faceDetected}
-            rightdisabled={false}
+            btnRightText={faceImage ? "Next" : "Capture"}
+            onClickBtnRightAction={faceImage ? undefined : captureFrame}
+            rightdisabled={!faceDetected}
             btnRightLink={
               capturedImage
                 ? "/identity-profile/id-detection/step-2"

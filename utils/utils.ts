@@ -71,7 +71,7 @@ export function getConnectionType(): string {
   } else if (nav.connection && nav.connection.type) {
     return nav.connection.type; // older API: wifi, cellular, etc.
   } else {
-    return 'unknown'; // API not supported or cannot detect
+    return "unknown"; // API not supported or cannot detect
   }
 }
 
@@ -89,6 +89,8 @@ export async function generateSystemChecks(
       subTitle:
         battery > 50
           ? `${battery}%. Looks good!`
+          : battery === 0
+          ? `It is advisable to have 50% battery to take the test.`
           : `${battery}%. Please charge your device.`,
       status: battery > 50 ? "pass" : "fail",
     },
@@ -111,6 +113,8 @@ export async function generateSystemChecks(
       subTitle:
         effectiveBandwidth > 1
           ? `Bandwidth: ${effectiveBandwidth}MB. Looks good!`
+          : effectiveBandwidth === null
+          ? `Please ensure you have great network to have seamless experience`
           : `Bandwidth: ${effectiveBandwidth}MB. Please move to a better location.`,
       status: effectiveBandwidth > 1 ? "pass" : "fail",
     },
@@ -384,7 +388,9 @@ export const formatList = (input: string): string => {
   return input.replace(/-/g, "<br><br> <span>&#8226;</span>");
 };
 
-export function parseAamvaData(data: string | null): Record<string, any> | string {
+export function parseAamvaData(
+  data: string | null
+): Record<string, any> | string {
   /**
    * Parses AAMVA (American Association of Motor Vehicle Administrators) Driver License/Identification Card data.
    *
@@ -409,7 +415,11 @@ export function parseAamvaData(data: string | null): Record<string, any> | strin
      * @param {string} dateStr - The date string in MMDDYYYY format.
      * @returns {number} The Unix timestamp.
      */
-    const [month, day, year] = [dateStr.slice(0, 2), dateStr.slice(2, 4), dateStr.slice(4)];
+    const [month, day, year] = [
+      dateStr.slice(0, 2),
+      dateStr.slice(2, 4),
+      dateStr.slice(4),
+    ];
     const dateObj = new Date(`${year}-${month}-${day}`);
     return Math.floor(dateObj.getTime() / 1000);
   };
@@ -449,9 +459,7 @@ export function parseAamvaData(data: string | null): Record<string, any> | strin
   });
 
   return parsedData;
-};
-
-
+}
 
 export const extractFaceImage = (
   img: HTMLImageElement,
@@ -499,134 +507,14 @@ export const extractFaceImage = (
   return canvas.toDataURL("image/png");
 };
 
-export const extractFaceImage_ = (
-  imgSrc: string,
-  face: any,
-  paddingRatio = 0.5
-): Promise<string | null> => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.src = imgSrc;
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
-      if (!context) {
-        reject(null);
-        return;
-      }
-
-      const keypoints = face.scaledMesh;
-      const xCoords = keypoints.map((point: number[]) => point[0]);
-      const yCoords = keypoints.map((point: number[]) => point[1]);
-      const minX = Math.min(...xCoords);
-      const maxX = Math.max(...xCoords);
-      const minY = Math.min(...yCoords);
-      const maxY = Math.max(...yCoords);
-
-      const paddingX = (maxX - minX) * paddingRatio;
-      const paddingY = (maxY - minY) * paddingRatio;
-
-      const startX = Math.max(minX - paddingX, 0);
-      const startY = Math.max(minY - paddingY, 0);
-      const endX = Math.min(maxX + paddingX, img.width);
-      const endY = Math.min(maxY + paddingY, img.height);
-
-      canvas.width = endX - startX;
-      canvas.height = endY - startY;
-      context.drawImage(
-        img,
-        startX,
-        startY,
-        canvas.width,
-        canvas.height,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
-      // Optionally, apply sharpening filter or other post-processing
-      // context.filter = 'contrast(1.2) brightness(1.1)'; 
-
-      const faceImageDataUrl = canvas.toDataURL("image/png");
-      resolve(faceImageDataUrl);
-    };
-
-    img.onerror = () => {
-      reject("Image failed to load");
-    };
-  });
-};
-
-
 export function boldActionWords(text: string) {
   const doc = nlp(text);
-  const verbs = doc.verbs().out('array');
+  const verbs = doc.verbs().out("array");
 
   // Replace each verb with bolded version
   verbs.forEach((verb: string[]) => {
     const boldedVerb = `<strong class="bold-action-word">${verb}</strong>`;
-    text = text.replace(new RegExp(`\\b${verb}\\b`, 'gi'), boldedVerb);
+    text = text.replace(new RegExp(`\\b${verb}\\b`, "gi"), boldedVerb);
   });
   return text;
 }
-
-interface BoundingBox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export const drawBoundingBox = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  video: HTMLVideoElement | null,
-  { x, y, width, height }: BoundingBox,
-  drawBondingBox: boolean
-) => {
-
-  if (drawBondingBox) {
-    return
-  }
-  const canvas = canvasRef.current;
-  // const video = videoRef.current; // Get the video element
-
-  // Ensure the canvas element is available
-  if (!canvas) {
-    console.error("Canvas not found");
-    return;
-  }
-
-  // Ensure the video element is available
-  if (!video) {
-    console.error("Video not found");
-    return;
-  }
-
-  const context = canvas.getContext('2d');
-
-  // Ensure the canvas has a 2D context
-  if (!context) {
-    console.error("Unable to get 2D context for canvas");
-    return;
-  }
-
-  // Clear the previous drawing from the canvas
-  context.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Draw the webcam feed onto the canvas
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // Set up styles for the bounding box
-  context.strokeStyle = 'green';
-  context.lineWidth = 1;
-
-  // Draw the bounding box on the canvas
-  context.strokeRect(0, 0, canvas.width, canvas.height);
-  // context.strokeRect(x * canvas.width, y * canvas.height, width * canvas.width, height * canvas.height);
-
-
-  // Convert the canvas content to a data URL
-  return canvas.toDataURL("image/png");
-};

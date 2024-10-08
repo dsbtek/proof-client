@@ -836,6 +836,18 @@ function Test() {
     timerStep,
   ]);
 
+  useEffect(() => {
+    return () => {
+      if (cameraRef.current) {
+        const stream = cameraRef.current.stream;
+        if (stream) {
+          const tracks = stream.getTracks();
+          tracks.forEach((track) => track.stop());
+        }
+      }
+    };
+  }, []);
+
   return (
     <>
       {isSubmitting && <Loader />}
@@ -912,6 +924,7 @@ function Test() {
                   facingMode: "user",
                 }}
                 imageSmoothing={true}
+                mirrored
               />
               <div className="test-details">
                 {test.map((step: any, index: number) => {
@@ -1121,6 +1134,7 @@ function Test() {
               </div>
               <div className="camera-container">
                 <Webcam
+                  key={webcamKey}
                   className="test-camera-container"
                   ref={cameraRef}
                   audio={false}
@@ -1129,6 +1143,7 @@ function Test() {
                     facingMode: "user",
                   }}
                   imageSmoothing={true}
+                  mirrored
                 />
               </div>
             </div>
