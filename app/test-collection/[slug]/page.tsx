@@ -774,6 +774,7 @@ function Test() {
             }
 
             if (analysis_data.status === "success") {
+              console.log(endTime, "endtime for test");
               if (analysis_data.data) {
                 const sendMail = async () => {
                   const response = await fetch("/api/send-email", {
@@ -781,7 +782,7 @@ function Test() {
                     body: JSON.stringify({
                       config: AIConfig,
                       participant_id: participant_id,
-                      date: endTime,
+                      date: dateTimeInstance(), //endTime,
                       kit: testingKit.kit_name,
                       confirmation_no: confirmationNo,
                       videoLink: `https://proofdata.s3.amazonaws.com/${filename}`,
@@ -835,18 +836,6 @@ function Test() {
     time,
     timerStep,
   ]);
-
-  useEffect(() => {
-    return () => {
-      if (cameraRef.current) {
-        const stream = cameraRef.current.stream;
-        if (stream) {
-          const tracks = stream.getTracks();
-          tracks.forEach((track) => track.stop());
-        }
-      }
-    };
-  }, []);
 
   return (
     <>
@@ -915,7 +904,7 @@ function Test() {
                 closeModal={closeBCModal}
               />
               <Webcam
-                key={webcamKey}
+                // key={webcamKey}
                 className="test-camera-container"
                 ref={cameraRef}
                 audio={false}
@@ -1134,7 +1123,7 @@ function Test() {
               </div>
               <div className="camera-container">
                 <Webcam
-                  key={webcamKey}
+                  // key={webcamKey}
                   className="test-camera-container"
                   ref={cameraRef}
                   audio={false}

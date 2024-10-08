@@ -19,6 +19,7 @@ import {
   setExtractedFaceImage,
   FacialCaptureString,
   setFacialCapture,
+  setIdCardFacialPercentageScore,
 } from "@/redux/slices/appConfig";
 import { uploadFileToS3 } from "./action";
 // import useFaceMesh from "@/hooks/faceMesh";
@@ -133,6 +134,7 @@ const CameraIDCardDetection = () => {
         if (similarity.status === "complete") {
           setSimilarity(true);
           toast.success("compare faces passed");
+
           return `${similarity.result.percentage}%`;
         }
         if (
@@ -188,10 +190,11 @@ const CameraIDCardDetection = () => {
       dispatch(setIDFront(imageSrc!));
       uploadFileToS3(imageSrc!, idCapture);
 
-      await compareFaces(
+      const similarityScore = await compareFaces(
         imageSrc!.replace(/^data:image\/\w+;base64,/, ""),
         facialCapture.replace(/^data:image\/\w+;base64,/, "")
       );
+      dispatch(setIdCardFacialPercentageScore(similarityScore));
       setIsExtractingFace(false);
       // if (imageSrc && faceMesh) {
       //   const img = new window.Image();
@@ -427,11 +430,11 @@ const CameraIDCardDetection = () => {
                   />
 
                   <div className={`id-card-frame-guide ${"face-detected"}`}>
-                    {brightness < 120 && (
+                    {/* {brightness < 120 && (
                       <div className="brightness-detection">
                         <p>Insufficient light detected.</p>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               ) : (
