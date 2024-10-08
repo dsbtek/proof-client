@@ -775,6 +775,32 @@ function Test() {
 
             if (analysis_data.status === "success") {
               console.log(endTime, "endtime for test");
+              console.log(
+                {
+                  config: AIConfig,
+                  participant_id: participant_id,
+                  date: endTime,
+                  kit: testingKit.kit_name,
+                  confirmation_no: confirmationNo,
+                  videoLink: `https://proofdata.s3.amazonaws.com/${filename}`,
+                  face_scan_score: facialScanScore,
+                  detections: analysis_data.data,
+                },
+                "ordinary"
+              );
+              console.log(
+                JSON.stringify({
+                  config: AIConfig,
+                  participant_id: participant_id,
+                  date: endTime,
+                  kit: testingKit.kit_name,
+                  confirmation_no: confirmationNo,
+                  videoLink: `https://proofdata.s3.amazonaws.com/${filename}`,
+                  face_scan_score: facialScanScore,
+                  detections: analysis_data.data,
+                }),
+                "strigify body"
+              );
               if (analysis_data.data) {
                 const sendMail = async () => {
                   const response = await fetch("/api/send-email", {
