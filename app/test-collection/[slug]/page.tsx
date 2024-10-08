@@ -782,7 +782,7 @@ function Test() {
                     body: JSON.stringify({
                       config: AIConfig,
                       participant_id: participant_id,
-                      date: dateTimeInstance(), //endTime,
+                      date: endTime,
                       kit: testingKit.kit_name,
                       confirmation_no: confirmationNo,
                       videoLink: `https://proofdata.s3.amazonaws.com/${filename}`,
