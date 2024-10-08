@@ -116,15 +116,14 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
 
         barcodeCapture.addListener({
             didScan: async (barcodeCapture, session) => {
-
                 await barcodeCapture.setEnabled(false);
-                const barcode = session.newlyRecognizedBarcode;
+                const barcode = session.newlyRecognizedBarcodes[0];  // Access the first barcode
                 const symbology = new SDCBarcode.SymbologyDescription(barcode!.symbology);
 
-                console.log('bars: ', session.newlyRecognizedBarcode, barcode, symbology.readableName)
+                console.log('bars: ', session.newlyRecognizedBarcodes, barcode, symbology.readableName);
 
                 if (scanType === 'id' && symbology.readableName === 'PDF417') {
-                    console.log(barcode!.data)
+                    console.log(barcode!.data);
                     const idData: any = parseAamvaData(barcode!.data);
                     const idDetails = {
                         first_name: idData["First Name"],
@@ -134,17 +133,18 @@ function ScanditScannner({ show, barcodeUploaded, step, totalSteps, scanType, re
                         city: idData["City"],
                         state: idData["State"],
                         zipcode: idData["Postal Code"],
-                    }
+                    };
                     dispatch(setIdDetails(idDetails));
-                    setBarcode(idData["First Name"] + '-' + idData["Last Name"] + '-' + idData["Driver's License Number"])
+                    setBarcode(idData["First Name"] + '-' + idData["Last Name"] + '-' + idData["Driver's License Number"]);
                 } else {
-                    setBarcode(barcode!.data!)
-                };
+                    setBarcode(barcode!.data!);
+                }
 
                 await barcodeCapture.setEnabled(false);
                 await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
             },
         });
+
 
         const view = await SDCCore.DataCaptureView.forContext(context);
         view.connectToElement(document?.getElementById("data-capture-view") as HTMLElement);
