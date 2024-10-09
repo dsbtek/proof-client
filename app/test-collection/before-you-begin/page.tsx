@@ -100,8 +100,7 @@ const BeforeYouBegin = () => {
           onLeftButton={false}
           onRightButton={allChecked}
           btnLeftLink={""}
-          // btnRightLink={"/test-collection/camera-view"}
-          btnRightLink={"/identity-profile/sample-facial-capture"}
+          btnRightLink={"/test-collection/camera-view"}
           btnLeftText={"Decline"}
           btnRightText={"Next"}
         />
@@ -113,8 +112,7 @@ const BeforeYouBegin = () => {
           onLeftButton={false}
           onRightButton={allChecked}
           btnLeftLink={""}
-          // btnRightLink={"/test-collection/camera-view"}
-          btnRightLink={"/identity-profile/sample-facial-capture"}
+          btnRightLink={"/test-collection/camera-view"}
           btnLeftText={"Decline"}
           btnRightText={"Next"}
         />

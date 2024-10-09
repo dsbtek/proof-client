@@ -146,14 +146,14 @@ const FacialCapture = () => {
           setTimeout(() => {
             router.push("/identity-profile/id-detection/step-1");
           }, 3000);
-        } else if (
-          similarity.message === "No faces found in the second image"
-        ) {
+        } else if (similarity.message === "No faces found in the first image") {
           toast.error(`${similarity.message}`);
           setTimeout(() => {
             router.push("/identity-profile/id-detection/step-1");
           }, 3000);
-        } else if (similarity.message === "No faces found in the first image") {
+        } else if (
+          similarity.message === "No faces found in the second image"
+        ) {
           setCapturedImage("");
           toast.error(`${similarity.message}`);
         }
@@ -167,7 +167,7 @@ const FacialCapture = () => {
     async (img1Base64: string, img2Base64: string) => {
       try {
         const correctedBase64 = correctBase64Image(img2Base64 as any);
-        console.log(img2Base64, "img 2:", img1Base64);
+
         const similarityScore = await compareFaces(
           correctedBase64.replace(/^data:image\/\w+;base64,/, ""),
           img1Base64.replace(/^data:image\/\w+;base64,/, "")
@@ -196,7 +196,7 @@ const FacialCapture = () => {
       console.log("face img: ", faceImage, userID);
 
       const imageToCompare = userID !== undefined ? userID : faceImage;
-      // compareCapturedImage(imageSrc!, imageToCompare as string);
+      compareCapturedImage(imageSrc!, imageToCompare as string);
     } catch (error) {
       toast.error("Error capturing image. Please try again.");
     }
@@ -212,8 +212,7 @@ const FacialCapture = () => {
         return "/test-collection/scan-package-barcode";
       } else if (preTestQuestionnaire && preTestQuestionnaire?.length > 0) {
         return "/pre-test-questions";
-        // } else return `/test-collection/${kit_id}`;
-      } else return `/identity-profile/`;
+      } else return `/test-collection/${kit_id}`;
     } catch (error) {
       toast.error(`Error: ${error}`);
       return `Error: ${error}`;
@@ -252,7 +251,7 @@ const FacialCapture = () => {
     <>
       {sigCanvasH !== 700 ? (
         <div className="container">
-          <AgreementHeader title="PIP - Step 1" />
+          <AgreementHeader title="PIP - Step 3" />
           <br />
           {!capturedImage && (
             <p className="vid-text">
@@ -306,23 +305,16 @@ const FacialCapture = () => {
                   loading="lazy"
                 />
               </div>
-              {/* {similarity ? ( */}
-              {true ? (
+              {similarity ? (
                 // {percentageScoreString ? (
                 <div className="image-container">
                   <div className="scan-complete">
                     <GrStatusGood color="#32de84" size={30} />
                     <p>Scan Complete!</p>
                   </div>
-                  {/* <p style={{ textAlign: "center" }}>
+                  <p style={{ textAlign: "center" }}>
                     Your PROOF Identity Profile has been successfully
                     established.
-                    <br />
-                    <br />
-                    Click `Next` to Continue
-                  </p> */}
-                  <p style={{ textAlign: "center" }}>
-                    Face Captured.
                     <br />
                     <br />
                     Click `Next` to Continue
@@ -344,8 +336,7 @@ const FacialCapture = () => {
               btnRightLink={pathLink()}
               btnLeftText={capturedImage ? "Recapture" : ""}
               btnRightText={"Next"}
-              // rightdisabled={!similarity}
-              rightdisabled={false}
+              rightdisabled={!similarity}
               onClickBtnLeftAction={capturedImage ? recapture : () => {}}
             />
           ) : (
@@ -370,7 +361,7 @@ const FacialCapture = () => {
           <div className="test-items-wrap-desktop_">
             {!capturedImage && (
               <div className="sub-item">
-                <h3 className="">PIP - Step 1</h3>
+                <h3 className="">PIP - Step 3</h3>
                 <br />
                 <p className="">
                   Please position your head and body in the silhouette you see
@@ -389,7 +380,6 @@ const FacialCapture = () => {
                   screenshotFormat="image/png"
                   videoConstraints={{ facingMode: "user" }}
                   imageSmoothing={true}
-                  mirrored
                 />
                 <div style={frameStyle as any}>
                   {faceDetected ? (
@@ -413,8 +403,7 @@ const FacialCapture = () => {
               </div>
             ) : (
               <div className="scan-complete-wrap">
-                {/* {similarity && ( */}
-                {capturedImage && (
+                {similarity && (
                   <div className="scan-complete">
                     <GrStatusGood color="#32de84" size={30} />
                     <p>Scan Complete!</p>
@@ -430,19 +419,12 @@ const FacialCapture = () => {
                     loading="lazy"
                   />
                 </div>
-                {/* {similarity ? ( */}
-                {true ? (
+                {similarity ? (
                   // {percentageScoreString ? (
                   <div className="image-container">
-                    {/* <p style={{ textAlign: "center" }}>
+                    <p style={{ textAlign: "center" }}>
                       Your PROOF Identity Profile has been successfully
                       established.
-                      <br />
-                      <br />
-                      Click `Next` to Continue
-                    </p> */}
-                    <p style={{ textAlign: "center" }}>
-                      Face Captured.
                       <br />
                       <br />
                       Click `Next` to Continue
@@ -465,8 +447,7 @@ const FacialCapture = () => {
               btnRightLink={pathLink()}
               btnLeftText={capturedImage ? "Recapture" : ""}
               btnRightText={"Next"}
-              // rightdisabled={!similarity}
-              rightdisabled={false}
+              rightdisabled={!similarity}
               onClickBtnLeftAction={capturedImage ? recapture : () => {}}
             />
           ) : (

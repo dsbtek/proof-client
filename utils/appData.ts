@@ -1,7 +1,7 @@
 //Data shown at the landing page
 export const welcomeData = [
   {
-    imgUri: "/images/caution.png",
+    imgUri: "/icons/pr-kit-icons.svg",
     title: "Caution",
     texts: [
       "DO NOT open any PROOF supplies until you are specifically instructed to do so by the application.",
@@ -10,12 +10,12 @@ export const welcomeData = [
     ],
   },
   {
-    imgUri: "/images/use-phone.png",
+    imgUri: "/icons/laptop-icon.svg",
     title: "Upload Important Data",
     texts: ["Vaccine records.", "Test results (conducted outside PROOF)."],
   },
   {
-    imgUri: "/images/use-phone.png",
+    imgUri: "/icons/specime-icons.svg",
     title: "Specimen Collections",
     texts: [
       "Drug and Alcohol Testing (Saliva, Nail, Blood, Urine, Breath).",

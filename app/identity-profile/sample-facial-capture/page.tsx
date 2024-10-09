@@ -23,7 +23,7 @@ const SampleFacialCapture = () => {
   }, []);
   return (
     <div className="container-test-collection">
-      <AgreementHeader title="PIP - Step 1" />
+      <AgreementHeader title="PIP - Step 3" />
       {sigCanvasH !== 700 ? (
         <div className="agreement-items-wrap">
           <Image

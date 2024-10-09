@@ -5,9 +5,11 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import "./carousel.css";
 import { welcomeData } from "@/utils/appData";
 import CarouselCard from "@/components/carousel-card";
+import useResponsive from "@/hooks/useResponsive";
 
 function Carousel() {
   const [idx, setIndex] = useState(0);
+  const isDesktop = useResponsive();
 
   const handleLeftClick = () => {
     if (idx === 0) {
@@ -30,7 +32,7 @@ function Carousel() {
           index === idx && (
             <CarouselCard
               key={index}
-              image={data.imgUri}
+              image={!isDesktop && idx === 1 ? "/icons/phone-icon.svg" : data.imgUri}
               title={data.title}
               texts={data.texts}
             />

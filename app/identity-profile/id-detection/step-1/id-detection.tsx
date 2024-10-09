@@ -32,7 +32,7 @@ import {
 } from "@/redux/slices/drugTest";
 import sharp from "sharp";
 import path from "path";
-import { compareFacesAI } from "@/utils/queries";
+import { compareFacesAI, extractFaceAI } from "@/utils/queries";
 import { useRouter } from "next/navigation";
 
 // const usePermissions = () => {
@@ -90,6 +90,16 @@ const CameraIDCardDetection = () => {
     setBrightness(averageBrightness);
   }, []);
 
+  const extractFace = useCallback(async (imgBase64: string) => {
+    const extractedFaces = await extractFaceAI(imgBase64);
+
+    if (extractedFaces.status === "complete") {
+      return extractedFaces?.result;
+    } else {
+      toast.error("An error occurred extracting face");
+    }
+  }, []);
+
   // const checkForFace = useCallback(async () => {
   //   if (cameraRef.current) {
   //     const screenshot = cameraRef.current.getScreenshot();
@@ -127,75 +137,33 @@ const CameraIDCardDetection = () => {
   //   return () => clearInterval(interval);
   // }, [checkForFace]);
 
-  const compareFaces = useCallback(
-    async (img1Base64: string, img2Base64: string) => {
-      try {
-        const similarity = await compareFacesAI(img1Base64, img2Base64);
-        if (similarity.status === "complete") {
-          setSimilarity(true);
-          toast.success("compare faces passed");
-
-          return `${similarity.result.percentage}%`;
-        }
-        if (
-          similarity.message === "An error occurred while processing the images"
-        ) {
-          setCapturedImage("");
-          toast.error(`${similarity.message}`);
-          setTimeout(() => {
-            router.push("/identity-profile/id-detection/step-1");
-          }, 3000);
-        } else if (
-          similarity.message === "An error occurred while processing the image"
-        ) {
-          setCapturedImage("");
-          toast.error(`${similarity.message}`);
-        } else if (
-          similarity.message ===
-          "An error occurred while loading the image for face recognition"
-        ) {
-          toast.error(`${similarity.message}`);
-          setTimeout(() => {
-            router.push("/identity-profile/id-detection/step-1");
-          }, 3000);
-        } else if (
-          similarity.message === "No faces found in the second image"
-        ) {
-          toast.error(`${similarity.message}`);
-          setCapturedImage(null);
-          // setTimeout(() => {
-          //   router.push("/identity-profile/id-detection/step-1");
-          // }, 3000);
-        } else if (similarity.message === "No faces found in the first image") {
-          setCapturedImage("");
-          toast.error(`${similarity.message}`);
-          setTimeout(() => {
-            router.push("/identity-profile/sample-facial-capture");
-          }, 3000);
-        }
-      } catch (error) {
-        toast.error("Unable to  perform facial scan");
-      }
-    },
-    [router]
-  );
-
   const captureFrame = useCallback(async () => {
     try {
+      const dateNow = Date.now();
       const imageSrc = cameraRef?.current?.getScreenshot();
-      const idCapture = `${participant_id}-IDCapture-${Date.now()}.png`;
+      const idCapture = `${participant_id}-IDCapture-${dateNow}.png`;
       setCapturedImage(imageSrc as any);
       setIsExtractingFace(true);
       dispatch(setGovernmentID(idCapture));
       dispatch(setIDFront(imageSrc!));
       uploadFileToS3(imageSrc!, idCapture);
 
-      const similarityScore = await compareFaces(
-        imageSrc!.replace(/^data:image\/\w+;base64,/, ""),
-        facialCapture.replace(/^data:image\/\w+;base64,/, "")
+      const face = await extractFace(
+        imageSrc!.replace(/^data:image\/\w+;base64,/, "")
       );
-      dispatch(setIdCardFacialPercentageScore(similarityScore));
-      setIsExtractingFace(false);
+
+      if (face) {
+        const faceBase64 = `data:image/png;base64,${face[0]}`;
+        setFaceImage(faceBase64);
+        setIsExtractingFace(false);
+        dispatch(setExtractedFaceImage(faceBase64));
+        const passportCapture = `${participant_id}-PassportCapture-${dateNow}.png`;
+        const proofId = idCapture.split(".")[0];
+        dispatch(setPassport(passportCapture));
+        dispatch(setProofID(proofId));
+        uploadFileToS3(faceBase64, passportCapture);
+      }
+
       // if (imageSrc && faceMesh) {
       //   const img = new window.Image();
       //   img.src = imageSrc;
@@ -275,8 +243,8 @@ const CameraIDCardDetection = () => {
           className="id-detection-container"
           style={{ position: "relative" }}
         >
-          {/* <AgreementHeader title="PIP - Step 1 " /> */}
-          <AgreementHeader title="PIP - Step 2 " />
+          <AgreementHeader title="PIP - Step 1 " />
+
           <br />
           <div className="test-items-wrap-desktop_">
             <div className="sub-item">
@@ -373,14 +341,14 @@ const CameraIDCardDetection = () => {
           <AgreementFooter
             onPagination={false}
             // onLeftButton={faceImage ? true : false}
-            onLeftButton={similarity ? true : false}
+            onLeftButton={capturedImage ? true : false}
             onRightButton={true}
             btnLeftText={"Recapture"}
             onClickBtnLeftAction={recaptureImage}
             // btnRightText={faceImage ? "Next" : "Capture"}
-            btnRightText={similarity ? "Next" : "Capture"}
+            btnRightText={capturedImage ? "Next" : "Capture"}
             // onClickBtnRightAction={faceImage ? undefined : captureFrame}
-            onClickBtnRightAction={similarity ? undefined : captureFrame}
+            onClickBtnRightAction={capturedImage ? undefined : captureFrame}
             // rightdisabled={!faceDetected}
             rightdisabled={false}
             btnRightLink={
@@ -399,7 +367,7 @@ const CameraIDCardDetection = () => {
           {/* <br /> */}
           <div className="camera-items-wrap-desktop_">
             <div className="sub-item">
-              <h3 className="">PIP - Step 2</h3>
+              <h3 className="">PIP - 1</h3>
               <br />
               {!capturedImage && (
                 <p className="">
@@ -498,7 +466,7 @@ const CameraIDCardDetection = () => {
           {capturedImage && (
             <div>
               <p className="vid-text">
-                Please tap the `Next` button to move to step 2 <br /> where you
+                Please tap the `Next` button to move to step 1 <br /> where you
                 will position the rear side of your ID.
               </p>
             </div>
@@ -506,12 +474,12 @@ const CameraIDCardDetection = () => {
           <canvas ref={canvasRef} style={{ display: "none" }} />
           <DesktopFooter
             onPagination={false}
-            onLeftButton={similarity ? true : false}
+            onLeftButton={capturedImage ? true : false}
             onRightButton={true}
             btnLeftText={"Recapture"}
             onClickBtnLeftAction={recaptureImage}
-            btnRightText={similarity ? "Next" : "Capture"}
-            onClickBtnRightAction={similarity ? undefined : captureFrame}
+            btnRightText={capturedImage ? "Next" : "Capture"}
+            onClickBtnRightAction={capturedImage ? undefined : captureFrame}
             // rightdisabled={!faceDetected}
             rightdisabled={false}
             btnRightLink={

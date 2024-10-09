@@ -46,8 +46,9 @@ export const fetchS3Image = createAsyncThunk(
   "app/fetchS3Image",
   async (proofIdValue: string, { rejectWithValue }) => {
     try {
+      // const response = await retrieveS3image(`${proofIdValue}.png`);
       const response = await retrieveS3image(`${proofIdValue}.png`);
-      // const response = await retrieveS3image(proofIdValue);
+
       return response as string;
     } catch (error: any) {
       return rejectWithValue(error.message);
