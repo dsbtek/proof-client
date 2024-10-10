@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
-import { AgreementHeader, DesktopFooter } from "@/components";
+import { AgreementHeader, DesktopFooter, PipStepLoader } from "@/components";
 import { appData, userIdString } from "@/redux/slices/appConfig";
 
 const Desktop = () => {
@@ -11,9 +11,14 @@ const Desktop = () => {
   const userID = useSelector(userIdString);
   const appPermissions = permissions ? permissions.split(";") : undefined;
   const [identityPermission, setIdentityPermission] = useState('');
+  const [isLoaderVisible, setLoaderVisible] = useState(false);
+
 
 
   useEffect(() => {
+    if (userID) {
+      setLoaderVisible(true)
+    }
     if (appPermissions && appPermissions.includes("PROOF_ID")) {
       setIdentityPermission("PROOF_ID");
     }
@@ -22,8 +27,14 @@ const Desktop = () => {
     }
   }, [appPermissions]);
 
+  const handleLoaderClose = () => {
+    setLoaderVisible(false);
+  };
+
   return (
     <div className="container-test-collection">
+      <PipStepLoader pipStep={2} isVisible={isLoaderVisible} onClose={handleLoaderClose} />
+
       <AgreementHeader title=" Camera View" />
       <div className="test-items-wrap-desktop_">
         <div className="sub-item">
