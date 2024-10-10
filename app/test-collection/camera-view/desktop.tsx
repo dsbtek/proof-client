@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 import { AgreementHeader, DesktopFooter, PipStepLoader } from "@/components";
 import { appData, userIdString } from "@/redux/slices/appConfig";
+import { useRouter } from "next/navigation";
 
 const Desktop = () => {
   const { permissions } = useSelector(appData);
@@ -12,6 +13,7 @@ const Desktop = () => {
   const appPermissions = permissions ? permissions.split(";") : undefined;
   const [identityPermission, setIdentityPermission] = useState('');
   const [isLoaderVisible, setLoaderVisible] = useState(false);
+  const router = useRouter();
 
 
 
@@ -29,6 +31,7 @@ const Desktop = () => {
 
   const handleLoaderClose = () => {
     setLoaderVisible(false);
+    router.push("/identity-profile/sample-facial-capture");
   };
 
   return (
