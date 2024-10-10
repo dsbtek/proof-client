@@ -37,7 +37,7 @@ const PipStepLoader = ({ pipStep, isVisible, onClose }: IPipLoader) => {
     return (
         <div className="pip-step-loader-bg">
             <div className="pip-step-loader">
-                <h2 style={{ textAlign: "left" }}>Good Job!</h2>
+                <p style={{ textAlign: "left" }}>Good Job!</p>
                 <p>{completedStepsMessage}</p>
                 <div className="progress-bar-container">
                     <div className="progress-bar">

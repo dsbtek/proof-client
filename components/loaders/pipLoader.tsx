@@ -12,6 +12,7 @@ interface IPipLoader {
 
 const PipLoader = ({ pipStep, isVisible, onClose }: IPipLoader) => {
     const [progress, setProgress] = useState(0);
+    const [currentLoaderIndex, setCurrentLoaderIndex] = useState(0); // State to control the currently displayed item
     const [loaderData] = useState([
         { id: 1, desc: "Face Extraction, please wait...", img: "/icons/face-extraction-loader.svg" },
         { id: 2, desc: "Face Comparison, please wait....", img: "/icons/facial-comparison-loader.svg" },
@@ -20,8 +21,9 @@ const PipLoader = ({ pipStep, isVisible, onClose }: IPipLoader) => {
 
     useEffect(() => {
         if (isVisible) {
-            // Reset progress when the loader becomes visible
+            // Reset progress and loader index when the loader becomes visible
             setProgress(0);
+            setCurrentLoaderIndex(pipStep === 2 ? 0 : pipStep - 1); // Set initial index based on pipStep
 
             // Start the progress bar animation
             const interval = setInterval(() => {
@@ -30,11 +32,25 @@ const PipLoader = ({ pipStep, isVisible, onClose }: IPipLoader) => {
                     return newProgress <= 100 ? newProgress : 100;
                 });
             }, 100); // Increase progress by 1% every 100ms (10 seconds total)
+            if (pipStep === 2) {
+                setCurrentLoaderIndex(2)
+            }
+            // If pipStep is 2, handle the time-based switching
+            if (pipStep === 2) {
+                const switchToSecondItem = setTimeout(() => {
+                    setCurrentLoaderIndex(1); // Switch to the second item (index 1) after 5 seconds
+                }, 5000); // Switch at 5 seconds
 
-            // Cleanup interval on component unmount or when isVisible changes
+                return () => {
+                    clearInterval(interval);
+                    clearTimeout(switchToSecondItem);
+                };
+            }
+
+            // Cleanup interval if pipStep is not 2 (no switching logic)
             return () => clearInterval(interval);
         }
-    }, [isVisible]);
+    }, [isVisible, pipStep]);
 
     useEffect(() => {
         if (isVisible) {
@@ -52,14 +68,14 @@ const PipLoader = ({ pipStep, isVisible, onClose }: IPipLoader) => {
 
     if (!isVisible) return null;
 
-    // Get the current loader data based on pipStep
-    const currentLoaderData = loaderData.find(data => data.id === pipStep) || loaderData[0];
+    // Get the current loader data based on the index
+    const currentLoaderData = loaderData[currentLoaderIndex];
 
     return (
         <div className="pip-loader-bg">
             <div className="pip-loader">
                 <Image
-                    src={currentLoaderData.img} // Dynamically display the image based on pipStep
+                    src={currentLoaderData.img} // Dynamically display the image based on the current index
                     alt="Loader Icon"
                     className="pip-loader-icon"
                     width={5000}
