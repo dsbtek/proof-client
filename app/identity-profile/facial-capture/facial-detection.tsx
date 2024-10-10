@@ -22,6 +22,7 @@ import {
   DesktopFooter,
   Loader_,
   PipLoader,
+  PipStepLoader,
 } from "@/components";
 import {
   appData,
@@ -54,7 +55,6 @@ const FacialCapture = () => {
     (state: any) => state.preTest.preTestQuestionnaire
   );
   const { participant_id } = useSelector(authToken);
-
   const cameraRef = useRef<Webcam | null>(null);
   const [faceDetector, setFaceDetector] = useState<any>(null);
   const [faceCapture, setFaceCapture] = useState<any>(null);
@@ -64,7 +64,7 @@ const FacialCapture = () => {
   const [similarity, setSimilarity] = useState(false);
   const [sigCanvasH, setSigCanvasH] = useState(0);
   const [webcamKey, setWebcamKey] = useState(0);
-
+  const [isLoaderVisible, setLoaderVisible] = useState(false);
   const { faceDetected } = useFaceDetector(cameraRef);
 
   useEffect(() => {
@@ -175,6 +175,7 @@ const FacialCapture = () => {
         );
         console.log(similarityScore)
         setIsVisible(false)
+        setLoaderVisible(true)
         dispatch(setIdCardFacialPercentageScore(similarityScore));
       } catch (error) {
         console.error("Compare Faces Error:", error);
@@ -251,9 +252,14 @@ const FacialCapture = () => {
     setWebcamKey(1);
   }, []);
 
+  const handleLoaderClose = () => {
+    setLoaderVisible(false);
+  };
+
   return (
     <>
       <PipLoader pipStep={2} isVisible={isVisible} />
+      <PipStepLoader pipStep={3} isVisible={isLoaderVisible} onClose={handleLoaderClose} />
 
       {sigCanvasH !== 700 ? (
         <div className="container">

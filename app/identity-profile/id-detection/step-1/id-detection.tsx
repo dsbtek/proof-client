@@ -14,6 +14,7 @@ import {
   Loader,
   Loader_,
   PipLoader,
+  PipStepLoader,
 } from "@/components";
 import {
   setIDFront,
@@ -74,6 +75,7 @@ const CameraIDCardDetection = () => {
   const [webcamKey, setWebcamKey] = useState(0);
   const facialCapture = useSelector(FacialCaptureString);
   const [isVisible, setIsVisible] = useState(false);
+  const [isLoaderVisible, setLoaderVisible] = useState(false);
   const isDesktop = useResponsive();
   // const permissionsGranted = usePermissions();
   // const faceMesh = useFaceMesh();
@@ -97,6 +99,7 @@ const CameraIDCardDetection = () => {
 
     if (extractedFaces.status === "complete") {
       setIsVisible(false)
+      setLoaderVisible(true)
       return extractedFaces?.result;
     } else {
       toast.error("An error occurred extracting face");
@@ -239,9 +242,15 @@ const CameraIDCardDetection = () => {
   useEffect(() => {
     setWebcamKey(1);
   }, []);
+
+  const handleLoaderClose = () => {
+    setLoaderVisible(false);
+  };
+
   return (
     <>
       <PipLoader pipStep={1} isVisible={isVisible} />
+      <PipStepLoader pipStep={1} isVisible={isLoaderVisible} onClose={handleLoaderClose} />
 
       {!isDesktop ? (
         <div

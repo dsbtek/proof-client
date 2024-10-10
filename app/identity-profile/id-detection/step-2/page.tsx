@@ -12,6 +12,7 @@ import {
   AgreementFooter,
   AgreementHeader,
   DesktopFooter,
+  PipStepLoader,
   Scanner,
 } from "@/components";
 import { extractFaceAI } from "@/utils/queries";
@@ -25,7 +26,7 @@ const CameraIDCardDetection = () => {
   const [faceDetected, setFaceDetected] = useState<boolean>(false);
   const [brightness, setBrightness] = useState<number>(0);
   const [sigCanvasH, setSigCanvasH] = useState(0);
-
+  const [isLoaderVisible, setLoaderVisible] = useState(false);
   const cameraRef = useRef<Webcam | null>(null);
 
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const CameraIDCardDetection = () => {
   const closeBCModal = () => {
     setShowBCModal(false);
     setBarcodeUploaded(false);
-    router.push("/identity-profile/sample-facial-capture");
+    setLoaderVisible(true)
   };
 
   const barcodeCapture = useCallback(async () => {
@@ -61,8 +62,17 @@ const CameraIDCardDetection = () => {
     return () => window.removeEventListener("resize", routeBasedOnScreenSize);
   }, []);
 
+
+  const handleLoaderClose = () => {
+    router.push("/identity-profile/sample-facial-capture");
+    setLoaderVisible(false);
+  };
+
+
   return (
     <>
+      <PipStepLoader pipStep={2} isVisible={isLoaderVisible} onClose={handleLoaderClose} />
+
       {!isDesktop ? (
         <div
           className="id-detection-container"
