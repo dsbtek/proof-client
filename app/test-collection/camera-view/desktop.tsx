@@ -25,7 +25,7 @@ const Desktop = () => {
     if (appPermissions && appPermissions.includes("NO_ID")) {
       setIdentityPermission("NO_ID");
     }
-  }, [appPermissions]);
+  }, [appPermissions, userID]);
 
   const handleLoaderClose = () => {
     setLoaderVisible(false);
