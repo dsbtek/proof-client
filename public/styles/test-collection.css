@@ -4,7 +4,7 @@
     width: 100% !important;
     background: #FAFAFA;
     height: fit-content;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     /* height: 100vh; */
 }
 

@@ -13,6 +13,7 @@ import {
   DesktopFooter,
   Loader,
   Loader_,
+  PipLoader,
 } from "@/components";
 import {
   setIDFront,
@@ -72,28 +73,30 @@ const CameraIDCardDetection = () => {
   const [permissionsGranted, setPermissionsGranted] = useState(false);
   const [webcamKey, setWebcamKey] = useState(0);
   const facialCapture = useSelector(FacialCaptureString);
-
+  const [isVisible, setIsVisible] = useState(false);
   const isDesktop = useResponsive();
   // const permissionsGranted = usePermissions();
   // const faceMesh = useFaceMesh();
 
-  const calculateBrightness = useCallback((imageData: { data: any }) => {
-    const data = imageData.data;
-    let totalBrightness = 0;
+  // const calculateBrightness = useCallback((imageData: { data: any }) => {
+  //   const data = imageData.data;
+  //   let totalBrightness = 0;
 
-    for (let i = 0; i < data.length; i += 4) {
-      const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
-      totalBrightness += brightness;
-    }
+  //   for (let i = 0; i < data.length; i += 4) {
+  //     const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+  //     totalBrightness += brightness;
+  //   }
 
-    const averageBrightness = totalBrightness / (data.length / 4);
-    setBrightness(averageBrightness);
-  }, []);
+  //   const averageBrightness = totalBrightness / (data.length / 4);
+  //   setBrightness(averageBrightness);
+  // }, []);
 
   const extractFace = useCallback(async (imgBase64: string) => {
+    setIsVisible(true)
     const extractedFaces = await extractFaceAI(imgBase64);
 
     if (extractedFaces.status === "complete") {
+      setIsVisible(false)
       return extractedFaces?.result;
     } else {
       toast.error("An error occurred extracting face");
@@ -238,6 +241,8 @@ const CameraIDCardDetection = () => {
   }, []);
   return (
     <>
+      <PipLoader pipStep={1} isVisible={isVisible} />
+
       {!isDesktop ? (
         <div
           className="id-detection-container"

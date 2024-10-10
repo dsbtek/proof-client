@@ -117,7 +117,7 @@ function Support() {
           </section> */}
         </div>
         {FAQs.length > 0 ? (
-          <div className="" style={{ marginTop: "24px", width: "100%" }}>
+          <div className="" style={{ marginTop: "24px", width: "100%", overflow: "hidden" }}>
             <h3 className="set-text">
               FAQs{" "}
               <span className="set-label">

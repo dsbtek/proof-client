@@ -21,6 +21,7 @@ import {
   AgreementHeader,
   DesktopFooter,
   Loader_,
+  PipLoader,
 } from "@/components";
 import {
   appData,
@@ -42,7 +43,7 @@ import { authToken } from "@/redux/slices/auth";
 const FacialCapture = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-
+  const [isVisible, setIsVisible] = useState(false);
   const faceImage = useSelector(idFrontString);
   const userID = useSelector(userIdString);
   const percentageScoreString = useSelector(IdCardFacialPercentageScoreString);
@@ -167,11 +168,13 @@ const FacialCapture = () => {
     async (img1Base64: string, img2Base64: string) => {
       try {
         const correctedBase64 = correctBase64Image(img2Base64 as any);
-
+        setIsVisible(true)
         const similarityScore = await compareFaces(
           correctedBase64.replace(/^data:image\/\w+;base64,/, ""),
           img1Base64.replace(/^data:image\/\w+;base64,/, "")
         );
+        console.log(similarityScore)
+        setIsVisible(false)
         dispatch(setIdCardFacialPercentageScore(similarityScore));
       } catch (error) {
         console.error("Compare Faces Error:", error);
@@ -195,7 +198,8 @@ const FacialCapture = () => {
 
       console.log("face img: ", faceImage, userID);
 
-      const imageToCompare = userID !== undefined ? userID : faceImage;
+      // const imageToCompare = userID !== undefined ? userID : faceImage;
+      const imageToCompare = faceImage ? faceImage : userID;
       compareCapturedImage(imageSrc!, imageToCompare as string);
     } catch (error) {
       toast.error("Error capturing image. Please try again.");
@@ -249,6 +253,8 @@ const FacialCapture = () => {
 
   return (
     <>
+      <PipLoader pipStep={2} isVisible={isVisible} />
+
       {sigCanvasH !== 700 ? (
         <div className="container">
           <AgreementHeader title="PIP - Step 3" />
