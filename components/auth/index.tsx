@@ -36,7 +36,7 @@ function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
 
     useEffect(() => {
         // Checks if the user is logged in and the token is valid
-        if (pathname !== "/" && pathname !== "/auth/forgot-pin" && pathname !== "/auth/enter-otp" && pathname !== "/auth/set-new-pin" && pathname !== "/auth/sign-in" && pathname !== "/new-to-proof" && tokenCookie === undefined && token === false) {
+        if (pathname !== "/sentry-example-page" && pathname !== "/" && pathname !== "/auth/forgot-pin" && pathname !== "/auth/enter-otp" && pathname !== "/auth/set-new-pin" && pathname !== "/auth/sign-in" && pathname !== "/new-to-proof" && tokenCookie === undefined && token === false) {
             !loggedOut ? toast.warning("Invalid Session! Please login again") : null;
             router.push("/auth/sign-in");
         } else if (pathname === "/auth/sign-in" && token === true && tokenCookie === "true") {
