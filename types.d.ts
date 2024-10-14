@@ -178,3 +178,14 @@ type PreTestScreensProps = {
   muteAudio: MuteAudio;
   audioRef: AudioRef;
 };
+
+// Extend the NodeJS ProcessEnv interface if you need to declare your environment variables
+declare namespace NodeJS {
+  interface ProcessEnv {
+    SENTRY_DSN: string;
+    // Add other environment variables if needed
+  }
+}
+
+// Declare the Sentry module
+declare module '@sentry/nextjs';

@@ -202,7 +202,7 @@ const CameraIDCardDetection = () => {
       toast.error("Error capturing image. Please try again.");
       setIsExtractingFace(false);
     }
-  }, [dispatch, participant_id]);
+  }, [dispatch, participant_id, extractFace]);
 
   const recaptureImage = () => {
     setCapturedImage(null);
@@ -306,7 +306,7 @@ const CameraIDCardDetection = () => {
                       />
                     </div>
                   )}
-                  {isExtractingFace && <Loader />}
+                    {/* {isExtractingFace && <Loader />} */}
                   {faceImage && (
                     <div className="face-image-wrap">
                       <p
@@ -437,7 +437,7 @@ const CameraIDCardDetection = () => {
                         />
                       </div>
                     )}
-                    {isExtractingFace && <Loader />}
+                        {/* {isExtractingFace && <Loader />} */}
                     {faceImage && (
                       // <div className="id-img_">
                       <div className="face-image-wrap">
