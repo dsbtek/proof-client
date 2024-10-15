@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-
+import * as Sentry from "@sentry/nextjs";
 import axios from "@/utils/axios";
 
 // Get Tutorials Route: facilitates fetching tutorials
@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: any) {
     console.error(error.response?.data?.msg);
+    Sentry.captureException(error.response?.data?.msg);
     return NextResponse.error();
   }
 }

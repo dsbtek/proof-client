@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-
+import * as Sentry from "@sentry/nextjs";
 import axios from "@/utils/axios";
 
 // Get Pre-Test Questionaire Route: facilitates fetching Questionaires
@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
       console.error(res.data.message);
     }
   } catch (error: any) {
+    Sentry.captureException(error.response?.data?.msg);
     console.error(error.response?.data?.msg);
     return NextResponse.error();
   }

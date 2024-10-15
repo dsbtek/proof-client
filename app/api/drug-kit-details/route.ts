@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-
+import * as Sentry from "@sentry/nextjs";
 import axios from "@/utils/axios";
 
 // Get Drug Kit Details: facilitates testing.
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
         }
     } catch (error: any) {
         console.error(error.message);
+        Sentry.captureException(error);
         return NextResponse.json({ error: error }, { status: 500 });
     }
 }

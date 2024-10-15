@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { emailTestResults } from "@/mail/email-templates";
 import sendEmail from "@/mail/mailer";
+import * as Sentry from "@sentry/nextjs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
     // return NextResponse.json({ data: [res, mail1, mail2, mail3] }, { status: 200 });
   } catch (error: any) {
     console.error("Send Mail Error:", error);
+    Sentry.captureException(error);
     return NextResponse.error();
   }
 }

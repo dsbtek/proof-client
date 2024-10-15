@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-
+import * as Sentry from "@sentry/nextjs";
 import axios from "@/utils/axios";
 
 // Login Route: facilitates login
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
         }
     } catch (error: any) {
         console.error('SP Server Error:', error);
+        Sentry.captureException(error);
         return NextResponse.json({ error: error }, { status: 500 });
     }
 };

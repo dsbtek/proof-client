@@ -67,12 +67,16 @@ const IdCaptureComponent = ({
   closeModal,
 }: Prop) => {
   const dataCaptureViewRef = useRef<HTMLDivElement | null>(null);
-  let context: DataCaptureContext;
-  let idCapture: IdCapture;
-  let view: DataCaptureView;
+  // let context: DataCaptureContext;
+  // let idCapture: IdCapture;
+  const idCapture = useRef<IdCapture | null>(null); // Use ref for idCapture
+  // let view: DataCaptureView;
   let overlay: IdCaptureOverlay;
-  let camera: Camera;
-  let currentMode: Mode;
+
+  let context = useRef<DataCaptureContext | null>(null); // Ref for context
+  const view = useRef<DataCaptureView | null>(null); // Ref for view
+  let camera = useRef<Camera | null>(null);
+  let currentMode = useRef<Mode | null>(null);
 
   const [enterBarcode, setEnterBarcode] = useState(false);
   const dispatch = useDispatch();
@@ -133,102 +137,108 @@ const IdCaptureComponent = ({
       setBarcode(capturedId);
     }
 
-    await idCapture.setEnabled(false);
-    await camera.switchToDesiredState(FrameSourceState.Off);
-  };
-
-  const supportedDocumentsByMode: { [key in Mode]: IdDocumentType[] } = {
-    barcode: [
-      IdDocumentType.AAMVABarcode,
-      IdDocumentType.ColombiaIdBarcode,
-      IdDocumentType.ColombiaDlBarcode,
-      IdDocumentType.USUSIdBarcode,
-      IdDocumentType.ArgentinaIdBarcode,
-      IdDocumentType.SouthAfricaDlBarcode,
-      IdDocumentType.SouthAfricaIdBarcode,
-      IdDocumentType.CommonAccessCardBarcode,
-    ],
-    mrz: [
-      IdDocumentType.VisaMRZ,
-      IdDocumentType.PassportMRZ,
-      IdDocumentType.SwissDLMRZ,
-      IdDocumentType.IdCardMRZ,
-      IdDocumentType.ChinaMainlandTravelPermitMRZ,
-      IdDocumentType.ChinaExitEntryPermitMRZ,
-      IdDocumentType.ChinaOneWayPermitFrontMRZ,
-      IdDocumentType.ChinaOneWayPermitBackMRZ,
-      IdDocumentType.ApecBusinessTravelCardMRZ,
-    ],
-    viz: [IdDocumentType.DLVIZ, IdDocumentType.IdCardVIZ],
+    await idCapture.current!.setEnabled(false);
+    await camera.current!.switchToDesiredState(FrameSourceState.Off);
   };
 
   // create Id capture
-  const createIdCapture = async (
-    settings: IdCaptureSettings
-  ): Promise<void> => {
-    idCapture = await IdCapture.forContext(context, settings);
+  const createIdCapture = useCallback(
+    async (settings: IdCaptureSettings): Promise<void> => {
+      idCapture.current = await IdCapture.forContext(context.current, settings);
 
-    idCapture.addListener({
-      didCaptureId: async (
-        idCaptureInstance: IdCapture,
-        session: IdCaptureSession
-      ) => {
-        await idCapture.setEnabled(false);
-        const capturedId = session.newlyCapturedId;
-        if (!capturedId) return;
+      idCapture.current.addListener({
+        didCaptureId: async (
+          idCaptureInstance: IdCapture,
+          session: IdCaptureSession
+        ) => {
+          await idCapture.current!.setEnabled(false);
+          const capturedId = session.newlyCapturedId;
+          if (!capturedId) return;
 
-        if (capturedId.vizResult?.isBackSideCaptureSupported) {
-          if (
-            capturedId.vizResult.capturedSides === SupportedSides.FrontAndBack
-          ) {
-            showResult(capturedId);
-            void idCapture.reset();
+          if (capturedId.vizResult?.isBackSideCaptureSupported) {
+            if (
+              capturedId.vizResult.capturedSides === SupportedSides.FrontAndBack
+            ) {
+              showResult(capturedId);
+              void idCapture.current!.reset();
+            } else {
+              confirmScanningBackside(capturedId);
+            }
           } else {
-            confirmScanningBackside(capturedId);
+            showResult(capturedId);
+            void idCapture.current!.reset();
           }
-        } else {
-          showResult(capturedId);
-          void idCapture.reset();
-        }
-      },
-      didRejectId: async () => {
-        await idCapture.setEnabled(false);
-        showWarning("Document type not supported.");
-        void idCapture.reset();
-      },
-      didFailWithError: (_: IdCapture, error: IdCaptureError) => {
-        if (error.type === IdCaptureErrorCode.RecoveredAfterFailure) {
-          showWarning(
-            "Oops, something went wrong. Please start over by scanning the front-side of your document."
-          );
-          void idCapture.reset();
-        }
-      },
-    });
+        },
+        didRejectId: async () => {
+          await idCapture.current!.setEnabled(false);
+          showWarning("Document type not supported.");
+          void idCapture.current!.reset();
+        },
+        didFailWithError: (_: IdCapture, error: IdCaptureError) => {
+          if (error.type === IdCaptureErrorCode.RecoveredAfterFailure) {
+            showWarning(
+              "Oops, something went wrong. Please start over by scanning the front-side of your document."
+            );
+            void idCapture.current!.reset();
+          }
+        },
+      });
 
-    await view.removeOverlay(overlay);
-    overlay = await IdCaptureOverlay.withIdCaptureForView(idCapture, view);
-  };
+      await view.current!.removeOverlay(overlay);
+      overlay = await IdCaptureOverlay.withIdCaptureForView(
+        idCapture.current!,
+        view.current!
+      );
+    },
+    []
+  );
 
   //create settings for the id capture
-  const createIdCaptureSettingsFor = (mode: Mode): IdCaptureSettings => {
-    const settings = new IdCaptureSettings();
-    settings.supportedDocuments = supportedDocumentsByMode[mode];
-    if (mode === "viz") {
-      settings.supportedSides = SupportedSides.FrontAndBack;
-      settings.setShouldPassImageTypeToResult(IdImageType.Face, true);
-    }
-    return settings;
-  };
+  const createIdCaptureSettingsFor = useCallback(
+    (mode: Mode): IdCaptureSettings => {
+      const supportedDocumentsByMode: { [key in Mode]: IdDocumentType[] } = {
+        barcode: [
+          IdDocumentType.AAMVABarcode,
+          IdDocumentType.ColombiaIdBarcode,
+          IdDocumentType.ColombiaDlBarcode,
+          IdDocumentType.USUSIdBarcode,
+          IdDocumentType.ArgentinaIdBarcode,
+          IdDocumentType.SouthAfricaDlBarcode,
+          IdDocumentType.SouthAfricaIdBarcode,
+          IdDocumentType.CommonAccessCardBarcode,
+        ],
+        mrz: [
+          IdDocumentType.VisaMRZ,
+          IdDocumentType.PassportMRZ,
+          IdDocumentType.SwissDLMRZ,
+          IdDocumentType.IdCardMRZ,
+          IdDocumentType.ChinaMainlandTravelPermitMRZ,
+          IdDocumentType.ChinaExitEntryPermitMRZ,
+          IdDocumentType.ChinaOneWayPermitFrontMRZ,
+          IdDocumentType.ChinaOneWayPermitBackMRZ,
+          IdDocumentType.ApecBusinessTravelCardMRZ,
+        ],
+        viz: [IdDocumentType.DLVIZ, IdDocumentType.IdCardVIZ],
+      };
+      const settings = new IdCaptureSettings();
+      settings.supportedDocuments = supportedDocumentsByMode[mode];
+      if (mode === "viz") {
+        settings.supportedSides = SupportedSides.FrontAndBack;
+        settings.setShouldPassImageTypeToResult(IdImageType.Face, true);
+      }
+      return settings;
+    },
+    []
+  );
 
   //run scanner function
   const run = useCallback(async () => {
-    view = new DataCaptureView();
+    view.current = new DataCaptureView();
     if (dataCaptureViewRef.current) {
-      view.connectToElement(dataCaptureViewRef.current);
+      view.current!.connectToElement(dataCaptureViewRef.current);
     }
 
-    view.showProgressBar();
+    view.current!.showProgressBar();
 
     await configure({
       licenseKey: process.env.NEXT_PUBLIC_SCANDIT_KEY!,
@@ -238,29 +248,30 @@ const IdCaptureComponent = ({
       moduleLoaders: [idCaptureLoader({ enableVIZDocuments: true })],
     });
 
-    view.hideProgressBar();
+    view.current!.hideProgressBar();
 
-    context = await DataCaptureContext.create();
-    await view.setContext(context);
+    context.current = await DataCaptureContext.create();
+    await view.current!.setContext(context.current);
 
-    camera = Camera.default;
+    camera.current = Camera.default;
     const settings: CameraSettings = IdCapture.recommendedCameraSettings;
-    await camera.applySettings(settings);
-    await context.setFrameSource(camera);
+    await camera.current!.applySettings(settings);
+    await context.current!.setFrameSource(camera.current!);
 
-    view.addControl(new CameraSwitchControl());
+    view.current!.addControl(new CameraSwitchControl());
 
-    currentMode = "mrz"; // Adjust as needed to get the selected mode
-    await createIdCapture(createIdCaptureSettingsFor(currentMode));
-    await idCapture.setEnabled(false);
+    currentMode.current = "mrz"; // Adjust as needed to get the selected mode
+    await createIdCapture(createIdCaptureSettingsFor(currentMode.current!));
+    await idCapture.current!.setEnabled(false);
 
-    await camera.switchToDesiredState(FrameSourceState.On);
-    await idCapture.setEnabled(true);
-  }, []);
+    await camera.current!.switchToDesiredState(FrameSourceState.On);
+    await idCapture.current!.setEnabled(true);
+  }, [createIdCapture, createIdCaptureSettingsFor]);
 
   //init scanner in useEffect
   useEffect(() => {
-    if (!idCapture) {
+    console.log(idCapture.current);
+    if (!idCapture.current!) {
       run().catch((error: unknown) => {
         console.error(error);
         alert((error as Error).toString());
@@ -269,27 +280,28 @@ const IdCaptureComponent = ({
 
     return () => {
       const cleanup = async () => {
-        if (idCapture) {
-          await idCapture.setEnabled(false); // Disable IDCapture
-          // await idCapture.reset(); // Release IDCapture resources
+        if (idCapture.current) {
+          await idCapture.current.setEnabled(false);
+          await idCapture.current.reset();
+          idCapture.current = null; // Clear the reference for future runs
         }
 
-        if (camera) {
-          await camera.switchToDesiredState(FrameSourceState.Off); // Turn off the camera
+        if (camera.current) {
+          await camera.current.switchToDesiredState(FrameSourceState.Off);
         }
 
-        if (context) {
-          await context.dispose(); // Dispose of the DataCaptureContext
+        if (context.current) {
+          await context.current.dispose();
+          context.current = null; // Clear the context reference
         }
 
-        if (view) {
-          view.detachFromElement(); // Disconnect the view from the element
+        if (view.current) {
+          view.current.detachFromElement();
+          view.current = null; // Clear the view reference
         }
       };
 
-      cleanup().catch((error: unknown) => {
-        console.error("Cleanup error:", error);
-      });
+      cleanup().catch(console.error);
     };
   }, [run]);
 

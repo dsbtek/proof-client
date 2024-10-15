@@ -9,8 +9,17 @@ Sentry.init({
 
     // Add optional integrations for additional features
     integrations: [
-        Sentry.replayIntegration(),
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration({
+            maskAllText: true,
+            blockAllMedia: true,
+        }),
+        // The following is all you need to enable canvas recording with Replay
+        Sentry.replayCanvasIntegration(),
     ],
+    // Set `tracePropagationTargets` to control for which URLs trace propagation should be enabled
+    tracePropagationTargets: ["localhost", /^https:\/\/proof-client-chi\.vercel\.app/],
+
 
     // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
     tracesSampleRate: 1,

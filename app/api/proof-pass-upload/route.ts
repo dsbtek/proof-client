@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import axios from "@/utils/axios";
+import * as Sentry from "@sentry/nextjs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error: any) {
+    Sentry.captureException(error);
     return NextResponse.json(
       { error: error.response?.data?.msg || error.message },
       { status: 500 }
