@@ -36,6 +36,7 @@ import sharp from "sharp";
 import path from "path";
 import { compareFacesAI, extractFaceAI } from "@/utils/queries";
 import { useRouter } from "next/navigation";
+import PipDocTypeSelect from "@/components/pipDocTypeSelect";
 
 // const usePermissions = () => {
 
@@ -76,6 +77,7 @@ const CameraIDCardDetection = () => {
   const facialCapture = useSelector(FacialCaptureString);
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaderVisible, setLoaderVisible] = useState(false);
+  const [isDocTypeVisible, setDocTypeVisible] = useState(false);
   const isDesktop = useResponsive();
   // const permissionsGranted = usePermissions();
   // const faceMesh = useFaceMesh();
@@ -94,12 +96,12 @@ const CameraIDCardDetection = () => {
   // }, []);
 
   const extractFace = useCallback(async (imgBase64: string) => {
-    setIsVisible(true)
+    setIsVisible(true);
     const extractedFaces = await extractFaceAI(imgBase64);
 
     if (extractedFaces.status === "complete") {
-      setIsVisible(false)
-      setLoaderVisible(true)
+      setIsVisible(false);
+      setLoaderVisible(true);
       return extractedFaces?.result;
     } else {
       toast.error("An error occurred extracting face");
@@ -240,17 +242,30 @@ const CameraIDCardDetection = () => {
   }, []);
 
   useEffect(() => {
-    setWebcamKey(1);
+    setDocTypeVisible(true);
   }, []);
 
   const handleLoaderClose = () => {
     setLoaderVisible(false);
   };
 
+  const handleDocClose = () => {
+    setDocTypeVisible(false);
+  };
+
   return (
     <>
+      <PipDocTypeSelect
+        pipStep={1}
+        isVisible={isDocTypeVisible}
+        onClose={handleDocClose}
+      />
       <PipLoader pipStep={1} isVisible={isVisible} />
-      <PipStepLoader pipStep={1} isVisible={isLoaderVisible} onClose={handleLoaderClose} />
+      <PipStepLoader
+        pipStep={1}
+        isVisible={isLoaderVisible}
+        onClose={handleLoaderClose}
+      />
 
       {!isDesktop ? (
         <div
@@ -306,7 +321,7 @@ const CameraIDCardDetection = () => {
                       />
                     </div>
                   )}
-                    {/* {isExtractingFace && <Loader />} */}
+                  {/* {isExtractingFace && <Loader />} */}
                   {faceImage && (
                     <div className="face-image-wrap">
                       <p
@@ -437,7 +452,7 @@ const CameraIDCardDetection = () => {
                         />
                       </div>
                     )}
-                        {/* {isExtractingFace && <Loader />} */}
+                    {/* {isExtractingFace && <Loader />} */}
                     {faceImage && (
                       // <div className="id-img_">
                       <div className="face-image-wrap">

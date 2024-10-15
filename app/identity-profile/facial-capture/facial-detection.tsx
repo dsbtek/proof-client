@@ -392,6 +392,7 @@ const FacialCapture = () => {
                   screenshotFormat="image/png"
                   videoConstraints={{ facingMode: "user" }}
                   imageSmoothing={true}
+                  mirrored
                 />
                 <div style={frameStyle as any}>
                   {faceDetected ? (

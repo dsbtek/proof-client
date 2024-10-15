@@ -3,6 +3,7 @@ import { retrieveS3image } from "@/app/identity-profile/action";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 export interface AppState {
+  idType: string;
   idFront: string | StaticImport;
   idBack: string;
   facialCapture: string;
@@ -23,6 +24,7 @@ export interface AppState {
 }
 
 const initialState: AppState = {
+  idType: "",
   idFront: "",
   idBack: "",
   facialCapture: "",
@@ -60,6 +62,9 @@ const appSlice = createSlice({
   name: "appConfig",
   initialState,
   reducers: {
+    setIDType: (state, action: PayloadAction<string>) => {
+      state.idType = action.payload;
+    },
     setIDFront: (state, action: PayloadAction<string>) => {
       state.idFront = action.payload;
     },
@@ -132,6 +137,8 @@ export const appData = (state: { appConfig: AppState }) =>
   state.appConfig.appData;
 export const tutorialData = (state: { appConfig: AppState }) =>
   state.appConfig.tutorialData;
+export const idType = (state: { appConfig: AppState }) =>
+  state.appConfig.idType;
 export const idFrontString = (state: { appConfig: AppState }) =>
   state.appConfig.idFront;
 export const idBackString = (state: { appConfig: AppState }) =>
@@ -179,6 +186,7 @@ export const {
   setExtractedFaceImage,
   removeScanReport,
   setReDirectToBac,
+  setIDType,
 } = appSlice.actions;
 
 export default appSlice.reducer;

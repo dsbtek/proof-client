@@ -30,7 +30,7 @@ const Mobile = () => {
   const handleLoaderClose = () => {
     setLoaderVisible(false);
     router.push("/identity-profile/sample-facial-capture");
-  };
+  };;
 
   return (
     <div className="container-test-collection">

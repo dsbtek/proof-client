@@ -87,7 +87,7 @@ const SystemCheck = () => {
         // toast.error("Error submitting data");
       }
     } catch (error) {
-      toast.warning(`Error: ${error}`);
+      // toast.warning(`Error: ${error}`);
     }
   }, [Pre_Test_Questionnaire_Name, dispatch]);
 
