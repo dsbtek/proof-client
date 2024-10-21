@@ -67,16 +67,13 @@ const IdCaptureComponent = ({
   closeModal,
 }: Prop) => {
   const dataCaptureViewRef = useRef<HTMLDivElement | null>(null);
-  // let context: DataCaptureContext;
-  // let idCapture: IdCapture;
   const idCapture = useRef<IdCapture | null>(null); // Use ref for idCapture
-  // let view: DataCaptureView;
-  let overlay: IdCaptureOverlay;
-
+  let overlay = useRef<IdCaptureOverlay | null>(null);
   let context = useRef<DataCaptureContext | null>(null); // Ref for context
   const view = useRef<DataCaptureView | null>(null); // Ref for view
   let camera = useRef<Camera | null>(null);
   let currentMode = useRef<Mode | null>(null);
+  const listener = useRef<any>(null);
 
   const [enterBarcode, setEnterBarcode] = useState(false);
   const dispatch = useDispatch();
@@ -105,48 +102,68 @@ const IdCaptureComponent = ({
     scanType === "detect" && dispatch(setDetectKit(barcodeInput));
   };
 
-  //result of scanning passport
-  const showResult = async (capturedId: CapturedId) => {
-    // Implement UI display logic for showing the captured ID result
-    console.log("Captured ID:", capturedId);
-    if (scanType === "id") {
-      // const idData: any = parseAamvaData(barcode!.data);
-      const idDetails = {
-        first_name: capturedId["firstName"] as string,
-        last_name: capturedId["lastName"] as string,
-        date_of_birth:
-          capturedId.dateOfBirth?.day +
-          "" +
-          capturedId.dateOfBirth?.month +
-          " " +
-          capturedId.dateOfBirth?.year,
-        address: capturedId.address as string,
-        city: capturedId.address as string,
-        state: capturedId.issuingCountryIso as string,
-        zipcode: capturedId.address as string,
-      };
-      dispatch(setIdDetails(idDetails));
-      setBarcode(
-        capturedId["firstName"] +
-          "-" +
-          capturedId["lastName"] +
-          "-" +
-          capturedId.documentNumber
-      );
-    } else {
-      setBarcode(capturedId);
+  const cleanupIdCapture = async () => {
+    if (idCapture.current) {
+      // Remove the listener if it exists
+      if (listener.current) {
+        idCapture.current.removeListener(listener.current);
+        listener.current = null;
+      }
+      // Disable and reset IdCapture
+      await idCapture.current.setEnabled(false);
+      await idCapture.current.reset();
+      idCapture.current = null; // Clear reference
     }
-
-    await idCapture.current!.setEnabled(false);
-    await camera.current!.switchToDesiredState(FrameSourceState.Off);
   };
 
   // create Id capture
   const createIdCapture = useCallback(
     async (settings: IdCaptureSettings): Promise<void> => {
-      idCapture.current = await IdCapture.forContext(context.current, settings);
+      //result of scanning passport
+      const showResult = async (capturedId: CapturedId) => {
+        // Implement UI display logic for showing the captured ID result
+        console.log("Captured ID:", capturedId);
+        if (scanType === "id") {
+          // const idData: any = parseAamvaData(barcode!.data);
+          const idDetails = {
+            first_name: capturedId["firstName"] as string,
+            last_name: capturedId["lastName"] as string,
+            date_of_birth:
+              capturedId.dateOfBirth?.day +
+              "" +
+              capturedId.dateOfBirth?.month +
+              " " +
+              capturedId.dateOfBirth?.year,
+            address: capturedId.address as string,
+            city: capturedId.address as string,
+            state: capturedId.issuingCountryIso as string,
+            zipcode: capturedId.address as string,
+          };
+          dispatch(setIdDetails(idDetails));
+          setBarcode(
+            capturedId["firstName"] +
+              "-" +
+              capturedId["lastName"] +
+              "-" +
+              capturedId.documentNumber
+          );
+        } else {
+          setBarcode(capturedId);
+        }
 
-      idCapture.current.addListener({
+        await idCapture.current!.setEnabled(false);
+        await camera.current!.switchToDesiredState(FrameSourceState.Off);
+        await idCapture.current!.removeListener(listener.current);
+        idCapture.current?.reset();
+      };
+
+      console.log(idCapture.current, "idcapture current");
+      await cleanupIdCapture();
+      idCapture.current = await IdCapture.forContext(context.current, settings);
+      console.log(idCapture.current, "idCapture current after imp");
+      console.log("before listening");
+
+      listener.current = {
         didCaptureId: async (
           idCaptureInstance: IdCapture,
           session: IdCaptureSession
@@ -159,14 +176,16 @@ const IdCaptureComponent = ({
             if (
               capturedId.vizResult.capturedSides === SupportedSides.FrontAndBack
             ) {
-              showResult(capturedId);
+              await showResult(capturedId);
               void idCapture.current!.reset();
+              void idCapture.current!.removeListener(listener.current!);
             } else {
               confirmScanningBackside(capturedId);
             }
           } else {
-            showResult(capturedId);
+            await showResult(capturedId);
             void idCapture.current!.reset();
+            void idCapture.current!.removeListener(listener.current!);
           }
         },
         didRejectId: async () => {
@@ -182,15 +201,18 @@ const IdCaptureComponent = ({
             void idCapture.current!.reset();
           }
         },
-      });
+      };
 
-      await view.current!.removeOverlay(overlay);
-      overlay = await IdCaptureOverlay.withIdCaptureForView(
+      idCapture.current.addListener(listener.current!);
+
+      console.log("after listening");
+      await view.current!.removeOverlay(overlay.current!);
+      overlay.current! = await IdCaptureOverlay.withIdCaptureForView(
         idCapture.current!,
         view.current!
       );
     },
-    []
+    [dispatch, scanType]
   );
 
   //create settings for the id capture
@@ -234,11 +256,15 @@ const IdCaptureComponent = ({
   //run scanner function
   const run = useCallback(async () => {
     view.current = new DataCaptureView();
+    console.log("here1");
     if (dataCaptureViewRef.current) {
+      console.log("here2");
       view.current!.connectToElement(dataCaptureViewRef.current);
     }
+    console.log("here3");
 
     view.current!.showProgressBar();
+    console.log("here4");
 
     await configure({
       licenseKey: process.env.NEXT_PUBLIC_SCANDIT_KEY!,
@@ -248,23 +274,43 @@ const IdCaptureComponent = ({
       moduleLoaders: [idCaptureLoader({ enableVIZDocuments: true })],
     });
 
+    console.log("here5");
     view.current!.hideProgressBar();
 
+    console.log("here6");
     context.current = await DataCaptureContext.create();
+    console.log("here7");
     await view.current!.setContext(context.current);
 
+    console.log("here8");
     camera.current = Camera.default;
+    console.log("here9");
     const settings: CameraSettings = IdCapture.recommendedCameraSettings;
+    console.log("herea");
     await camera.current!.applySettings(settings);
+    console.log("hereb");
     await context.current!.setFrameSource(camera.current!);
 
+    console.log("herec");
     view.current!.addControl(new CameraSwitchControl());
 
-    currentMode.current = "mrz"; // Adjust as needed to get the selected mode
-    await createIdCapture(createIdCaptureSettingsFor(currentMode.current!));
+    console.log("hered");
+    console.log(currentMode.current, "mode");
+    if (!currentMode.current) {
+      currentMode.current = "mrz"; // Adjust as needed to get the selected mode
+      console.log("heree");
+      const captureSettingFor = createIdCaptureSettingsFor(
+        currentMode.current!
+      );
+      console.log(captureSettingFor, "settingsFor");
+      await createIdCapture(captureSettingFor);
+    }
+    console.log("heref");
     await idCapture.current!.setEnabled(false);
 
+    console.log("hereg");
     await camera.current!.switchToDesiredState(FrameSourceState.On);
+    console.log("hereh");
     await idCapture.current!.setEnabled(true);
   }, [createIdCapture, createIdCaptureSettingsFor]);
 
@@ -280,6 +326,7 @@ const IdCaptureComponent = ({
 
     return () => {
       const cleanup = async () => {
+        await cleanupIdCapture();
         if (idCapture.current) {
           await idCapture.current.setEnabled(false);
           await idCapture.current.reset();

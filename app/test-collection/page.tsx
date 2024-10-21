@@ -108,7 +108,7 @@ const TestCollection = () => {
           )}
           <div className="grid-list">
             {toggleSwitch ? (
-              <Link href={"/test-collection/system-check"}>
+              <Link href={`/test-collection/${drug_kit[1].kit_id}`}>
                 <div className="grid-container scroller">
                   {drug_kit !== undefined &&
                     drug_kit.map((kit: any) => (

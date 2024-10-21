@@ -188,4 +188,4 @@ declare namespace NodeJS {
 }
 
 // Declare the Sentry module
-declare module '@sentry/nextjs';
+declare module "@sentry/nextjs";

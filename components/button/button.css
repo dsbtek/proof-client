@@ -42,7 +42,7 @@
 
 .accepted-btn {
     width: 93px;
-    height: 35px;
+    /* height: 35px; */
     padding: 8px 20px;
     border-radius: 8px;
     background: #009cf9;
@@ -53,7 +53,7 @@
 
 .decline-btn {
     width: 93px;
-    height: 35px;
+    /* height: 35px; */
     padding: 8px;
     border-radius: 8px;
     background: #ffffff;

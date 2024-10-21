@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { setIDType } from "@/redux/slices/appConfig";
 
 interface IPipLoader {
-  pipStep: number;
+  pipStep?: number;
   isVisible: boolean;
   onClose?: () => void;
 }
@@ -19,7 +19,7 @@ const PipDocTypeSelect = ({ pipStep, isVisible, onClose }: IPipLoader) => {
   useEffect(() => {
     console.log(docType, "docType changes");
     dispatch(setIDType(docType));
-  }, [docType]);
+  }, [dispatch, docType]);
 
   if (!isVisible) return null;
 
