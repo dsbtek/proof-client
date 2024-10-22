@@ -65,6 +65,7 @@ const FacialCapture = () => {
   const [sigCanvasH, setSigCanvasH] = useState(0);
   const [webcamKey, setWebcamKey] = useState(0);
   const [isLoaderVisible, setLoaderVisible] = useState(false);
+  const [mediaError, setMediaError] = useState<any>();
   const { faceDetected } = useFaceDetector(cameraRef);
 
   useEffect(() => {
@@ -96,7 +97,7 @@ const FacialCapture = () => {
     };
 
     checkPermissions();
-  }, [webcamKey]);
+  }, []);
 
   const calculateBrightness = useCallback((imageData: { data: any }) => {
     const data = imageData.data;
@@ -168,14 +169,14 @@ const FacialCapture = () => {
     async (img1Base64: string, img2Base64: string) => {
       try {
         const correctedBase64 = correctBase64Image(img2Base64 as any);
-        setIsVisible(true)
+        setIsVisible(true);
         const similarityScore = await compareFaces(
           correctedBase64.replace(/^data:image\/\w+;base64,/, ""),
           img1Base64.replace(/^data:image\/\w+;base64,/, "")
         );
-        console.log(similarityScore)
-        setIsVisible(false)
-        setLoaderVisible(true)
+        console.log(similarityScore);
+        setIsVisible(false);
+        setLoaderVisible(true);
         dispatch(setIdCardFacialPercentageScore(similarityScore));
       } catch (error) {
         console.error("Compare Faces Error:", error);
@@ -248,10 +249,6 @@ const FacialCapture = () => {
     };
   }, []);
 
-  useEffect(() => {
-    setWebcamKey(1);
-  }, []);
-
   const handleLoaderClose = () => {
     setLoaderVisible(false);
   };
@@ -259,7 +256,11 @@ const FacialCapture = () => {
   return (
     <>
       <PipLoader pipStep={2} isVisible={isVisible} />
-      <PipStepLoader pipStep={3} isVisible={isLoaderVisible} onClose={handleLoaderClose} />
+      <PipStepLoader
+        pipStep={3}
+        isVisible={isLoaderVisible}
+        onClose={handleLoaderClose}
+      />
 
       {sigCanvasH !== 700 ? (
         <div className="container">
@@ -276,7 +277,6 @@ const FacialCapture = () => {
           {!capturedImage ? (
             <div className="camera-container">
               <Webcam
-                key={webcamKey}
                 className="camera"
                 ref={cameraRef}
                 audio={false}

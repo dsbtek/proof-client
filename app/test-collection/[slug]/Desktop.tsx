@@ -160,7 +160,6 @@ const DesktopTestView = ({
           </div>
         </div>
       </div>
-      ;
       <DesktopFooter
         currentNumber={activeStep}
         outOf={test.length}

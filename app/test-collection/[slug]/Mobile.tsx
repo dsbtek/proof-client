@@ -3,7 +3,7 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { GoMute } from "react-icons/go";
 import { RxSpeakerLoud } from "react-icons/rx";
 import Image from "next/image";
-import React, { RefObject, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import IScannner from "@/components/scanditize/IOSScanner";
 type Props = {
   muteAudio: () => void;
@@ -86,7 +86,7 @@ const MobileTestView = ({
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ width: "100%", height: "100%" }}>
       <div
         style={{
           display: "flex",
@@ -109,18 +109,21 @@ const MobileTestView = ({
               onClick={muteAudio}
               color="#adadad"
               style={{ cursor: "pointer" }}
+              size={20}
             />
           ) : (
             <RxSpeakerLoud
               onClick={muteAudio}
               color="#009cf9"
               style={{ cursor: "pointer" }}
+              size={20}
             />
           )}
           <AiFillCloseCircle
             color="red"
             onClick={handleDialog}
             style={{ cursor: "pointer" }}
+            size={20}
           />
         </div>
       </div>

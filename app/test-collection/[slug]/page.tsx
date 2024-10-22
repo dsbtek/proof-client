@@ -75,8 +75,19 @@ function Test() {
   const [test, setTest] = useState<any>([]);
   const [time, setTime] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<Step | null>(null);
+  const [mediaError, setMediaError] = useState<string[]>([]);
 
   //use refs
+  const {
+    status,
+    capturedVideo,
+    record,
+    stop,
+    lastError,
+    //  liveVideo, ...rest
+  } = useMediaCapture({
+    watchVolume: true,
+  });
   const cameraRef = useRef<Webcam | null>(null);
   const isFinal = useRef(false);
   const blobCount = useRef(0);
@@ -99,19 +110,9 @@ function Test() {
     loading,
     mimeType,
   } = useMediaFunctions();
-  const {
-    status,
-    capturedVideo,
-    record,
-    stop,
-    pause,
-    resume,
-    //  liveVideo, ...rest
-  } = useMediaCapture({
-    watchVolume: true,
-  });
-  const { uploader, testUpload } = useTestupload();
 
+  const { uploader, testUpload } = useTestupload();
+  console.log("last error", lastError);
   //redux data
   const scoringData = useSelector(scoreMatrix);
   const { participant_id } = useSelector(authToken);
@@ -469,6 +470,7 @@ function Test() {
 
   //initializations
   useEffect(() => {
+    console.log(status, "status");
     switch (status) {
       case "previewing":
         dispatch(
@@ -502,13 +504,56 @@ function Test() {
               ai_options: finalTest[0].ai_options,
             });
         })(); //todo
+        return () => {
+          mediaRecorderRef.current?.stop();
+          // removeEventListener("dataavailable", beforeUnloadHandler);
+          // removeEventListener("beforeunload", beforeUnloadHandler);
+        };
+      case "denied":
+        const checkPermissions = async () => {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              video: true,
+            });
+            stream.getTracks().forEach((track) => track.stop());
+          } catch (error) {
+            setMediaError((prev) => [
+              ...prev,
+              "Error accessing camera. Please allow camera access to continue.",
+            ]);
+            toast.error(
+              "Error accessing camera. Please allow camera access to continue."
+            );
+          }
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+            });
+            stream.getTracks().forEach((track) => track.stop());
+          } catch (error) {
+            setMediaError((prev) => [
+              ...prev,
+              "Error accessing Microphone. Please allow microphone access to continue.",
+            ]);
+            console.error("Microphone Permissions Error:", error);
+            toast.error(
+              "Error accessing Microphone. Please allow microphone access to continue."
+            );
+          }
+        };
+        checkPermissions();
+
       default:
         console.log("status1-->", status);
+        (async () => {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          console.log(devices);
+        })();
     }
 
     addEventListener("beforeunload", beforeUnloadHandler);
     return () => {
-      mediaRecorderRef.current?.stop();
+      // mediaRecorderRef.current?.stop();
       removeEventListener("dataavailable", beforeUnloadHandler);
       removeEventListener("beforeunload", beforeUnloadHandler);
     };
@@ -592,6 +637,38 @@ function Test() {
     // activeStep === test.length,
     [showTimer, currentStep, isSubmitting, isPlaying, performLabelScan]
   );
+  if (mediaError.length) {
+    return (
+      <div
+        style={{
+          backgroundColor: "black",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "4rem",
+          height: "100vh",
+          width: "100vw",
+
+          padding: "2rem",
+        }}
+      >
+        {mediaError.map((item, i) => {
+          return (
+            <p
+              style={{
+                fontSize: "1.5rem",
+                color: "white",
+              }}
+              key={i}
+            >
+              {item}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
   return (
     <>
       {isSubmitting && <Loader />}
@@ -684,7 +761,7 @@ function Test() {
             )}
           </div>
         )}
-        <Webcam
+        {/* <Webcam
           ref={cameraRef}
           audio={false}
           className="test-camera-container"
@@ -696,7 +773,7 @@ function Test() {
             visibility: "hidden",
           }}
           mirrored
-        />
+        /> */}
       </div>
     </>
   );
