@@ -69,3 +69,6 @@ export { default as PipLoader } from './loaders/pipLoader';
 export { default as PipStepLoader } from './loaders/pipStepLoader';
 export { default as PipDocTypeSelect } from './pipDocTypeSelect/index';
 export { default as IdTimer } from './id-timer/index';
+export { default as GenerateQRCode } from './generateQrCode/index';
+export { default as PollingComponent } from './polling/index';
+export { default as IDCard } from './IDCard/index';

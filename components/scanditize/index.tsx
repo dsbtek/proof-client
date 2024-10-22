@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { FiEdit } from "react-icons/fi";
 import { TbCapture } from "react-icons/tb";
 import { useDispatch } from "react-redux";
 import * as SDCCore from "scandit-web-datacapture-core";
 import * as SDCBarcode from "scandit-web-datacapture-barcode";
+import Webcam from "react-webcam";
 
 import "../modals/modal.css";
 import Button from "../button";
@@ -33,6 +34,7 @@ interface BarcodeCaptureProps {
   scanType: string;
   recapture(): void;
   closeModal(): void;
+  onBarcodeScan?(data: string): void;
 }
 
 function ScanditScannner({
@@ -43,11 +45,13 @@ function ScanditScannner({
   scanType,
   recapture,
   closeModal,
+  onBarcodeScan
 }: BarcodeCaptureProps) {
   const [enterBarcode, setEnterBarcode] = useState(false);
   const [scannerLoad, setScannerLoad] = useState(false);
   const [barcodeValue, setBarcodeValue] = useState("");
   const [barcode, setBarcode] = useState<string | Record<string, any>>("");
+  const cameraRef = useRef<Webcam | null>(null);
 
   const dispatch = useDispatch();
   const isDesktop = useResponsive();
@@ -70,6 +74,7 @@ function ScanditScannner({
     scanType === "fedex" && dispatch(setTrackingNumber(barcodeInput));
     scanType === "kit" && dispatch(setBarcodeKit(barcodeInput));
     scanType === "detect" && dispatch(setDetectKit(barcodeInput));
+
   };
 
   const runScanner = useCallback(async () => {
@@ -84,7 +89,8 @@ function ScanditScannner({
 
     const context = await SDCCore.DataCaptureContext.create();
     const cameraSettings = SDCBarcode.BarcodeCapture.recommendedCameraSettings;
-    const camera = SDCCore.Camera.default;
+
+    const camera = SDCCore.Camera.default
     if (camera) {
       await camera.applySettings(cameraSettings);
     }
@@ -177,6 +183,11 @@ function ScanditScannner({
           setBarcode(barcode!.data!);
         }
 
+        // Check if onBarcodeScan function is provided
+        if (onBarcodeScan) {
+          onBarcodeScan(barcode!.data!);
+        }
+
         await barcodeCapture.setEnabled(false);
         await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
       },
@@ -207,7 +218,7 @@ function ScanditScannner({
     await barcodeCapture.setEnabled(true);
 
     setScannerLoad(false);
-  }, [dispatch, scanType]);
+  }, [dispatch, onBarcodeScan, scanType]);
 
   useEffect(() => {
     runScanner().catch((error) => {
@@ -219,6 +230,7 @@ function ScanditScannner({
   return (
     show && (
       <div className="barcode-cap-modal">
+
         {barcodeUploaded && !enterBarcode && barcode === "" && !isDesktop && (
           <div className="bc-content">
             {scanType === "id" && step && totalSteps && (

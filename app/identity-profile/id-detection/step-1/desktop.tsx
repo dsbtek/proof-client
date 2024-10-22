@@ -47,12 +47,6 @@ const CameraIDCardDetectionDesktop = ({
                 onClose={handleDocClose}
             />
             <PipLoader pipStep={1} isVisible={isVisible} />
-            <PipStepLoader
-                pipStep={1}
-                isVisible={isLoaderVisible}
-                onClose={handleLoaderClose}
-            />
-
             <AgreementHeader title="PROOF Identity Profile (PIP)" />
 
             <div className="camera-items-wrap-desktop_">

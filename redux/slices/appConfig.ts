@@ -21,6 +21,7 @@ export interface AppState {
   proofPassImageNames: Array<string>;
   extractedFaceImage: string;
   scanReports: Array<{}>;
+  userSessionId: string
 }
 
 const initialState: AppState = {
@@ -42,6 +43,7 @@ const initialState: AppState = {
   proofPassImageNames: [],
   extractedFaceImage: "",
   scanReports: [],
+  userSessionId: ""
 };
 
 export const fetchS3Image = createAsyncThunk(
@@ -118,6 +120,12 @@ const appSlice = createSlice({
     removeScanReport: (state, action: PayloadAction<number>) => {
       state.scanReports.splice(action.payload, 1);
     },
+
+    setUserSessionId: (state, action: PayloadAction<string>) => {
+      console.log("Updating userSessionId to: ", action.payload);
+
+      state.userSessionId = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -168,6 +176,8 @@ export const extractedFaceImageString = (state: { appConfig: AppState }) =>
   state.appConfig.extractedFaceImage;
 export const selectScanReports = (state: { appConfig: { scanReports: any } }) =>
   state.appConfig.scanReports;
+export const selectUserSessionId = (state: { appConfig: { userSessionId: string } }) =>
+  state.appConfig.userSessionId;
 
 export const {
   setIDFront,
@@ -187,6 +197,7 @@ export const {
   removeScanReport,
   setReDirectToBac,
   setIDType,
+  setUserSessionId
 } = appSlice.actions;
 
 export default appSlice.reducer;

@@ -13,6 +13,7 @@ import {
   AgreementHeader,
   Button,
   DesktopFooter,
+  GenerateQRCode,
   IDCardForm,
   Scanner,
 } from "@/components";
@@ -21,14 +22,15 @@ import { authToken } from "@/redux/slices/auth";
 import { TbCapture } from "react-icons/tb";
 import { idType } from "@/redux/slices/appConfig";
 import PassportCapture from "@/components/scanditize/IdCapture";
+import Link from "next/link";
 
-const CameraIDCardDetection = () => {
+const CameraBarcodeDetection = () => {
   const router = useRouter();
   const isDesktop = useResponsive();
   const dispatch = useDispatch();
   const { participant_id } = useSelector(authToken);
   const docType = useSelector(idType);
-
+  const [generateQr, setGenerateQr] = useState<boolean>(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [showBCModal, setShowBCModal] = useState<boolean>(false);
   const [barcodeUploaded, setBarcodeUploaded] = useState<boolean>(false);
@@ -82,6 +84,9 @@ const CameraIDCardDetection = () => {
 
   return (
     <>
+      {generateQr &&
+        <GenerateQRCode />
+      }
       {!isDesktop ? (
         <div
           className="id-detection-container"
@@ -197,6 +202,15 @@ const CameraIDCardDetection = () => {
                     loading="lazy"
                   />
                   <br />
+                    {showBCModalDesktop === false ?
+                      ""
+                      :
+                      <p style={{ color: "red" }}>Your camera resolution is limited click <span style={{ color: "green" }}>
+                        <Link href={"/identity-profile/scan-qr"}>
+                          here
+                        </Link>
+                      </span> to scan with smartphone</p>
+                    }
                   <p className="vid-text m-5">
                     Please ensure the barcode covers &gt; 70% of the screen.
                   </p>
@@ -240,7 +254,9 @@ const CameraIDCardDetection = () => {
                     barcodeUploaded={true}
                     step={2}
                     totalSteps={3}
-                    recapture={() => setShowBCModal(false)}
+                      recapture={() => {
+                        setShowBCModal(false)
+                      }}
                     closeModal={closeBCModal}
                   />
                 ) : (
@@ -355,10 +371,11 @@ const CameraIDCardDetection = () => {
                         btnRightText={"Next"}
                         onClickBtnRightAction={closeBCModal}
                     /> */}
+
         </div>
       )}
     </>
   );
 };
 
-export default CameraIDCardDetection;
+export default CameraBarcodeDetection;
