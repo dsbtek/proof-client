@@ -205,11 +205,8 @@ const CameraBarcodeDetection = () => {
                     {showBCModalDesktop === false ?
                       ""
                       :
-                      <p style={{ color: "red" }}>Your camera resolution is limited click <span style={{ color: "green" }}>
-                        <Link href={"/identity-profile/scan-qr"}>
-                          here
-                        </Link>
-                      </span> to scan with smartphone</p>
+                      <p style={{ color: "red" }}>To get the best scan quality, use your smartphone by clicking <span style={{ color: 'green' }}><Link href={'/identity-profile/scan-qr'}>here</Link></span>.</p>
+
                     }
                   <p className="vid-text m-5">
                     Please ensure the barcode covers &gt; 70% of the screen.
