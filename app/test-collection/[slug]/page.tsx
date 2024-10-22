@@ -196,7 +196,7 @@ function Test() {
         switch (analysis_data.status) {
           case "error":
             isFinal.current = true;
-            stopMediaRecorder();
+            // stopMediaRecorder();
             return;
           case "success":
             if (analysis_data.data) {
