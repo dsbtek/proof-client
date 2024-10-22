@@ -761,7 +761,7 @@ function Test() {
             )}
           </div>
         )}
-        {/* <Webcam
+        <Webcam
           ref={cameraRef}
           audio={false}
           className="test-camera-container"
@@ -773,7 +773,7 @@ function Test() {
             visibility: "hidden",
           }}
           mirrored
-        /> */}
+        />
       </div>
     </>
   );
