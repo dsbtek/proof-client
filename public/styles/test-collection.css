@@ -49,7 +49,7 @@
 .test-audio {
     width: 60px;
     display: flex;
-    align-content: center;
+    align-items: center;
     justify-content: center;
     height: 100%;
     gap: 24px;
@@ -62,9 +62,10 @@
 
 .test-camera-container {
     width: 100%;
-    height: 40vh;
+    height: 50vh;
     object-fit: cover;
     background: #009CFC;
+    margin-top: 10vh;
 }
 
 .test-details {
@@ -74,7 +75,7 @@
 
 .test-header {
     background: #ffffff;
-    padding: 8px 32px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -88,6 +89,7 @@
     justify-content: space-between;
     align-content: center;
     width: 100%;
+    gap: 4px;
 }
 
 .double-btns {

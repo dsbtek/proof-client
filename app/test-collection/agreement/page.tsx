@@ -136,7 +136,11 @@ const AgreementConsent = () => {
   const renderAgreementContent = () => (
     <div className="agreement-container">
       {!isDesktop ? (
-        <AgreementHeader title="Agreement & Consent " />
+        <AgreementHeader
+          title="Agreement & Consent "
+          onClickMute={toggleMute}
+          muted={muted}
+        />
       ) : (
         <Header
           title="Agreement & Consent"

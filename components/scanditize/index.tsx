@@ -45,7 +45,7 @@ function ScanditScannner({
   scanType,
   recapture,
   closeModal,
-  onBarcodeScan
+  onBarcodeScan,
 }: BarcodeCaptureProps) {
   const [enterBarcode, setEnterBarcode] = useState(false);
   const [scannerLoad, setScannerLoad] = useState(false);
@@ -74,7 +74,6 @@ function ScanditScannner({
     scanType === "fedex" && dispatch(setTrackingNumber(barcodeInput));
     scanType === "kit" && dispatch(setBarcodeKit(barcodeInput));
     scanType === "detect" && dispatch(setDetectKit(barcodeInput));
-
   };
 
   const runScanner = useCallback(async () => {
@@ -90,7 +89,7 @@ function ScanditScannner({
     const context = await SDCCore.DataCaptureContext.create();
     const cameraSettings = SDCBarcode.BarcodeCapture.recommendedCameraSettings;
 
-    const camera = SDCCore.Camera.default
+    const camera = SDCCore.Camera.default;
     if (camera) {
       await camera.applySettings(cameraSettings);
     }
@@ -230,7 +229,6 @@ function ScanditScannner({
   return (
     show && (
       <div className="barcode-cap-modal">
-
         {barcodeUploaded && !enterBarcode && barcode === "" && !isDesktop && (
           <div className="bc-content">
             {scanType === "id" && step && totalSteps && (
@@ -281,6 +279,24 @@ function ScanditScannner({
         )}
         <div className="barcode-cap" style={{ background: "#000000" }}>
           {scannerLoad && <Loader_ />}
+
+          <div
+            // className="id-card-frame-guide"
+            style={{
+              display: "flex",
+              // alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              // height: "100%",
+
+              position: "absolute",
+            }}
+          >
+            <div className="box">
+              <div className="content"></div>
+            </div>
+          </div>
+
           <div id="data-capture-view"></div>
         </div>
         {!enterBarcode && (

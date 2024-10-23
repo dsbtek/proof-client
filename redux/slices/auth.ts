@@ -52,7 +52,7 @@ const authSlice = createSlice({
         setCookie("welView", "true", 5000);
       }
 
-      toast.success("Login Successful");
+      // toast.success("Login Successful");
     },
     logout: (state) => {
       state.token = false;

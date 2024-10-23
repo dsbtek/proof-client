@@ -191,6 +191,33 @@
     width: 100%;
 }
 
+.scandit-paintboard canvas{
+    display: none!important;
+}
+
+.box{
+    position: relative;
+    width: 70%;     /* desired width */
+    /* left: 15%; */
+    top: 35px;
+}
+.box:before{
+    content: "";
+    display: block;
+    padding-top: 60%;  /*What you want the height to be in relation to the width*/
+
+}
+.content{
+    position:  absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 9999;
+    border: 1px solid #00f964;
+    border-radius: 12px
+
+}
 @media screen and (min-width: 700px) {
     .bc-content {
         padding: 8px;

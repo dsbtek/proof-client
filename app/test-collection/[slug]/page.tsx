@@ -545,10 +545,6 @@ function Test() {
 
       default:
         console.log("status1-->", status);
-        (async () => {
-          const devices = await navigator.mediaDevices.enumerateDevices();
-          console.log(devices);
-        })();
     }
 
     addEventListener("beforeunload", beforeUnloadHandler);
