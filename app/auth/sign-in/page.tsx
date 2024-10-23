@@ -16,9 +16,9 @@ import { setAppData, fetchS3Image } from "@/redux/slices/appConfig";
 import { signinSchema } from "@/utils/validations";
 import { AppDispatch } from "@/redux/store";
 import { detections } from "@/mail/mailData";
-import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import MfaModal from "@/components/modals/mfaModal";
-
+import useResponsive from "@/hooks/useResponsive";
+import styles from "./sigin.module.css"
 interface SignInType {
   participant_id: number | string;
   pin: number | string;
@@ -35,34 +35,7 @@ function LoginForm() {
   const [mfaModal, setMfaModal] = useState(false);
   const [loginRedirect, setLoginRedirect] = useState(false);
   const [loginData, setLoginData] = useState<any>();
-
-  const {
-    osName,
-    osVersion,
-    deviceModel,
-    deviceType,
-    deviceVendor,
-    screenWidth,
-    screenHeight,
-  } = useGetDeviceInfo();
-
-  console.log(
-    "device info: ",
-    "osName:",
-    osName,
-    "osVersion:",
-    osVersion,
-    "deviceModel:",
-    deviceModel,
-    "deviceType:",
-    deviceType,
-    "deviceVendor:",
-    deviceVendor,
-    "screenWidth:",
-    screenWidth,
-    "screenHeight:",
-    screenHeight
-  );
+  const isDesktop = useResponsive();
 
   const initialValues: SignInType = {
     participant_id: "",
@@ -214,48 +187,60 @@ function LoginForm() {
     }
   }, []);
 
-  const sendMail = async () => {
-    const AIConfig = {
-      test_review_threshold: 0.5,
-      test_review_time: 5,
-      hands_tracking_confidence: 0.5,
-      hands_detection_confidence: 0.5,
-      face_model_selection: 0,
-      face_detection_confidence: 0.5,
-      noise_filtering_aggressiveness: 1,
-    };
-    const response = await fetch("/api/send-email", {
-      method: "POST",
-      body: JSON.stringify({
-        config: AIConfig,
-        participant_id: "8554443303",
-        date: "1100hrs",
-        kit: "1200hrs",
-        confirmation_no: "111000",
-        videoLink: `https://proofdata.s3.amazonaws.com/bla`,
-        face_scan_score: "100%",
-        detections: detections,
-      }),
-    });
-    const data = await response.json();
-    console.log("sm data:", data);
-  };
+  // const sendMail = async () => {
+  //   const AIConfig = {
+  //     test_review_threshold: 0.5,
+  //     test_review_time: 5,
+  //     hands_tracking_confidence: 0.5,
+  //     hands_detection_confidence: 0.5,
+  //     face_model_selection: 0,
+  //     face_detection_confidence: 0.5,
+  //     noise_filtering_aggressiveness: 1,
+  //   };
+  //   const response = await fetch("/api/send-email", {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       config: AIConfig,
+  //       participant_id: "8554443303",
+  //       date: "1100hrs",
+  //       kit: "1200hrs",
+  //       confirmation_no: "111000",
+  //       videoLink: `https://proofdata.s3.amazonaws.com/bla`,
+  //       face_scan_score: "100%",
+  //       detections: detections,
+  //     }),
+  //   });
+  //   const data = await response.json();
+  //   console.log("sm data:", data);
+  // };
 
   return (
-    <div className="desktop-wrap">
+    // <>
+    //   {isDesktop ? "" : ""}
+    // </>
+    <div className="auth_container">
+
       <div className="container">
-        <div className="items-wrap">
-          <div className="sign-header">
-            <h1>Welcome,</h1>
-            <p>Sign in to continue</p>
-          </div>
+        <div className="items-wrap_auth">
+          <Image
+            className={styles.siginPrLogo}
+            src={"/icons/pr-logo.svg"}
+            alt="image"
+            width={3000}
+            height={3000}
+            priority
+          />
+          {/* <div className="sign-header"> */}
+          <h1>Welcome Back 👋</h1>
+          <p>Enter your user name and password to access your account</p>
+          {/* </div> */}
           <Formik
             initialValues={initialValues}
             validationSchema={localId === "" ? signinSchema : null}
             onSubmit={onSubmit}
           >
             {({ values, errors, touched, isSubmitting }) => (
-              <Form>
+              <Form className="gap-item-auth">
                 <TextField
                   type="text"
                   placeholder="Participant ID"
@@ -306,23 +291,28 @@ function LoginForm() {
                 <Button blue disabled={isSubmitting} type="submit">
                   {isSubmitting ? "signing in..." : "Sign in"}
                 </Button>
+                <br />
+                <Link
+                  href="https://proofapp.my.salesforce-sites.com/New2Proof"
+                  className="links"
+                >
+                  <Button classname="custom-button-1">{"New to Proof?"}</Button>
+                </Link>
               </Form>
             )}
           </Formik>
         </div>
-        <br />
-        <Link
-          href="https://proofapp.my.salesforce-sites.com/New2Proof"
-          className="links"
-        >
-          <Button classname="custom-button-1">{"New to Proof?"}</Button>
-        </Link>
+
         {/* <Button classname="custom-button-1" onClick={sendMail}>{"New to Proof?"}</Button> */}
       </div>
-      <div
-        className="auth-img"
-        style={{ backgroundImage: 'url("../images/dsk-login-img.svg")' }}
-      ></div>
+      <div className="wrap-login-img">
+        <div className="auth-img"
+          style={{ backgroundImage: 'url("../images/login-img.svg")' }}
+        >
+
+        </div>
+      </div>
+
       <MfaModal
         show={mfaModal}
         onClose={() => setMfaModal(false)}

@@ -35,13 +35,13 @@
 }
 
 .app-input {
-    background-color: #fafafa;
+    background-color: #ffffff;
     height: 50px;
     width: 100%;
-    border: none;
+    border: 1px solid #e3e6eb;
+    border-radius: 12px;
     border-bottom: 2px solid rgba(234, 238, 245, 1);
     box-sizing: border-box;
-    outline: none;
 }
 
 .app-input:focus {

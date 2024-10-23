@@ -104,7 +104,13 @@ function SetNewPin() {
                     </Formik>
                 </div>
             </div>
-            <div className="auth-img" style={{ backgroundImage: 'url("../images/dsk-login-img.svg")' }}></div>
+            <div className="wrap-login-img">
+                <div className="auth-img"
+                    style={{ backgroundImage: 'url("../images/login-img.svg")' }}
+                >
+
+                </div>
+            </div>
         </div >
     );
 };

@@ -40,11 +40,11 @@ function Carousel() {
       )}
       <div className="pagination">
         <button className="page-btn" onClick={handleLeftClick}>
-          <IoIosArrowBack size={16} />
+          <IoIosArrowBack size={16} color="#0c1617" />
         </button>
         {welcomeData.map((_, index) => (
           <div
-            className={idx === index ? "active-dot" : "dot"}
+            className={idx === index ? "active-dot_" : "dot"}
             key={index}
             onClick={() => setIndex(index)}
           >
@@ -52,7 +52,7 @@ function Carousel() {
           </div>
         ))}
         <button className="page-btn" onClick={handleRightClick}>
-          <IoIosArrowForward size={16} />
+          <IoIosArrowForward size={16} color="#0c1617" />
         </button>
       </div>
     </div>

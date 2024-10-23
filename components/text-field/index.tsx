@@ -47,9 +47,9 @@ const TextField = ({
   return (
     <div>
       <div className={`input-container ${isFocused ? "focused" : ""}`}>
-        <label className="placeholder" htmlFor={name}>
+        {/* <label className="placeholder" htmlFor={name}>
           {isFocused ? placeholder.toUpperCase() : ""}
-        </label>
+        </label> */}
         {startIcon && <div className="icon start-icon">{startIcon}</div>}
         <Field
           className="app-input"

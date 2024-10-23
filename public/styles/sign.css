@@ -5,7 +5,7 @@
 }
 
 .auth-img {
-  display: none;
+  display: flex;
 }
 
 .sign-container {
@@ -124,11 +124,22 @@
 
 
 @media screen and (min-width: 700px) {
-
+.wrap-login-img{
+  display: flex;
+    /* align-items: center; */
+    justify-content: center;
+  padding: 18px;
+    width: 50%;
+    height: 100vh;
+}
   .auth-img {
     display: flex;
-    width: 50%;
+    height: 100%;
+    width: 100%;
+    border-radius: 24px;
     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   
@@ -149,12 +160,6 @@
   .signBg-with {
     display: none;
     height: 180px;
-  }
-
-  .auth-img {
-    display: flex;
-    width: 50%;
-    background-size: cover;
   }
 
   .sign-items-wrap {

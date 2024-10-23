@@ -27,7 +27,7 @@ function Welcome() {
   };
 
   return (
-    <div className="welcome-sreen-container">
+    <>
       {isDesktop ?
         <WelcomeScreenDesktop
           handleSwitch={handleSwitch}
@@ -42,7 +42,7 @@ function Welcome() {
         />
       }
 
-    </div>
+    </>
   );
 }
 

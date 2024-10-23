@@ -101,7 +101,7 @@ button:disabled {
     min-height: 100vh;
     padding: 16px;
     overflow-x: hidden;
-    background: #f8f8f8;
+    /* background: #f8f8f8; */
 }
 
 .desktop-menu-layout {
@@ -115,6 +115,16 @@ button:disabled {
 .items-wrap {
     height: 80%;
     width: 100%;
+}
+
+.items-wrap_auth {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+    gap: 8px;
+    height: 100vh;
+    width: 60%;
 }
 
 .scroller {

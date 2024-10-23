@@ -21,9 +21,9 @@ export default function LayoutProvider({
       <Toastify />
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <div className="main-wrap">
-            <div className="layout">{children}</div>
-          </div>
+          <>
+            {children}
+          </>
           {environment === "development" ? (
             <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
           ) : null}

@@ -25,7 +25,7 @@ function CarouselCard({ image, title, texts }: CaroselCardProps) {
         <h3 className="cc-title">{title}</h3>
         {texts.map((text, index) => (
           <p key={index} className="cc-text">
-            {index + 1 + "."}
+            {/* {index + 1 + "."} */}
             {text}
           </p>
         ))}
