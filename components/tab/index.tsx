@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import "./TabBar.css"; // Import the CSS file
 

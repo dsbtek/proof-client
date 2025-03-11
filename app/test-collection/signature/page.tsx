@@ -11,13 +11,16 @@ import {
   Button,
   Header,
   DesktopFooter,
+  AppContainer,
+  AppHeader,
 } from "@/components";
 import { setSig } from "@/redux/slices/drugTest";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import useResponsive from "@/hooks/useResponsive";
 import { authToken } from "@/redux/slices/auth";
-import { uploadFileToS3 } from "@/app/identity-profile/id-detection/step-1/action";
+import { uploadImagesToS3 } from "@/app/identity-profile/id-detection/step-1/action";
+import { preTestTotalSteps_ } from "@/redux/slices/appConfig";
 
 interface PreTestScreen {
   Screen_1_Title: string;
@@ -30,6 +33,7 @@ const SignaturePage = () => {
   const [sigCanvas, setSigCanvas] = useState<ReactSignatureCanvas | null>();
   const [sigCheck, setSigCheck] = useState(false);
   const [sigCanvasH, setSigCanvasH] = useState(0);
+  const totalSteps = useSelector(preTestTotalSteps_);
 
   const router = useRouter();
   const preTestScreens = useSelector(preTestScreensData) as PreTestScreen[];
@@ -64,10 +68,11 @@ const SignaturePage = () => {
         return;
       }
       const sigData = sigCanvas.toDataURL();
-      const sigCapture = `${participant_id}-SignatureCapture-${Date.now()}.png`
+      const sigCapture = `${participant_id}-SignatureCapture-${Date.now()}.png`;
       dispatch(setSig(sigCapture));
-      uploadFileToS3(sigData, sigCapture).catch((error) => {
-        console.error('Signature IMage Upload Error:', error);
+      // uploadFileToS3(sigData, sigCapture).catch((error) => {
+      uploadImagesToS3(sigData, sigCapture).catch((error) => {
+        console.error("Signature IMage Upload Error:", error);
       });
       setSigCheck(true);
       const linkPath = pathLink();
@@ -120,77 +125,68 @@ const SignaturePage = () => {
           </div>
         </div>
       )}
-      <AgreementHeader title="Signature " />
 
-      {/* <Header title="Signature" /> */}
-      <div className="sign-items-wrap">
-        <div
-          className="signBg-with-img"
-          style={{
-            backgroundImage: !isDesktop ? 'url("../images/signBg.png")' : "",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          {isDesktop ? (
-            <p className="sign-text" style={{ textAlign: "left" }}>
-              Please Sign in the white box in acceptance of <br /> the Agreement
-              and Consent and press Next <br /> to continue.
-            </p>
-          ) : (
-            <p className="sign-text">
-              Please Sign in the white box in acceptance of the Agreement and
-              Consent and press Next to continue.
-            </p>
-          )}
-        </div>
-        <div className="wrap-signature">
-          <div style={{ width: "100%", height: "100%" }}>
-            <SignatureCanvas
-              ref={(data) => setSigCanvas(data)}
-              penColor="#24527B"
-              canvasProps={{
-                width: 600,
-                height: isDesktop ? "680px" : "250px",
-                className: "sigCanvas",
-              }}
-            />
+      <AppContainer
+        header={
+          // <AgreementHeader title="Signature " hasMute={false} />
+          <AppHeader title={"Signature"} hasMute={false} />
+        }
+        body={
+          <div className="sign-items-wrap">
+            <div className="signBg-with-img">
+              <h3 className="sign-note">Note that:</h3>
+              <br />
+              <p className="sign-desc">
+                Please Sign in the white box in acceptance of the Agreement and
+                Consent and press Next to continue.
+              </p>
+            </div>
+            <div className="wrap-signature">
+              <div style={{ width: "100%", height: "100%" }}>
+                <SignatureCanvas
+                  ref={(data) => setSigCanvas(data)}
+                  penColor="#24527B"
+                  canvasProps={{
+                    width: 1800,
+                    height: 1800,
+                  }}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="signBg-with"></div>
-      </div>
-      {isDesktop ? (
-        <DesktopFooter
-          currentNumber={2}
-          outOf={5}
-          onPagination={true}
-          onLeftButton={true}
-          onRightButton={true}
-          btnLeftLink={""}
-          btnRightLink={!sigCheck ? "" : pathLink()}
-          btnLeftText={"Clear"}
-          btnRightText={"Next"}
-          onClickBtnLeftAction={handleClearSignature}
-          onClickBtnRightAction={!sigCheck ? saveSignature : () => { }}
-        />
-      ) : (
-        <AgreementFooter
-          currentNumber={2}
-          outOf={5}
-          onPagination={true}
-          onLeftButton={true}
-          onRightButton={true}
-          btnLeftLink={""}
-          btnRightLink={!sigCheck ? "" : pathLink()}
-          btnLeftText={"Clear"}
-          btnRightText={"Next"}
-          onClickBtnLeftAction={handleClearSignature}
-          onClickBtnRightAction={!sigCheck ? saveSignature : () => { }}
-        />
-      )}
+        }
+        footer={
+          isDesktop ? (
+            <DesktopFooter
+              currentNumber={2}
+              outOf={preTestScreens.length > 0 ? totalSteps : 5}
+              onPagination={true}
+              onLeftButton={true}
+              onRightButton={true}
+              btnLeftLink={""}
+              btnRightLink={!sigCheck ? "" : pathLink()}
+              btnLeftText={"Clear"}
+              btnRightText={"Next"}
+              onClickBtnLeftAction={handleClearSignature}
+              onClickBtnRightAction={!sigCheck ? saveSignature : () => {}}
+            />
+          ) : (
+            <AgreementFooter
+              currentNumber={2}
+              outOf={preTestScreens.length > 0 ? totalSteps : 5}
+              onPagination={true}
+              onLeftButton={true}
+              onRightButton={true}
+              btnLeftLink={""}
+              btnRightLink={!sigCheck ? "" : pathLink()}
+              btnLeftText={"Clear"}
+              btnRightText={"Next"}
+              onClickBtnLeftAction={handleClearSignature}
+              onClickBtnRightAction={!sigCheck ? saveSignature : () => {}}
+            />
+          )
+        }
+      />
     </div>
   );
 };

@@ -22,6 +22,38 @@ export async function initializeAI() {
 }
 
 // Performs facial comparison using AI service
+export async function extractIdAndFace(str1: string) {
+  try {
+    const readIdAndFaceResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_BEAM_SERVICE_URL}/read-id`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Accept-Encoding": "gzip, deflate",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_BEAM_AUTH}`,
+          "Content-Type": "application/json",
+          Connection: "keep-alive",
+        },
+        body: JSON.stringify({
+          base64_image: str1,
+        }),
+      }
+    );
+    const res = await readIdAndFaceResponse.json();
+
+    if (
+      Array?.isArray(res?.result) &&
+      res?.result?.length > 0 &&
+      res?.data?.FIRST_NAME
+    ) {
+      return res;
+    }
+  } catch (error) {
+    console.error("AI, Extracting Faces Error:", error);
+  }
+}
+// Performs facial comparison using AI service
 export async function extractFaceAI(str1: string) {
   try {
     const similarityResponse = await fetch(
@@ -41,6 +73,7 @@ export async function extractFaceAI(str1: string) {
       }
     );
 
+    console.log(similarityResponse, "res");
     return similarityResponse.json();
   } catch (error) {
     console.error("AI, Extracting Faces Error:", error);

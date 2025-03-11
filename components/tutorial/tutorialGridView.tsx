@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FaRegCirclePlay } from "react-icons/fa6";
+import { FaPlayCircle } from "react-icons/fa";
 
 interface GridViewrProps {
   imgUrl: string;
@@ -11,7 +11,7 @@ const GridView = ({ imgUrl, title, onClick }: GridViewrProps) => {
   return (
     <div className="grid-card" onClick={onClick}>
       <div className="tut-overlay">
-        <FaRegCirclePlay color="#009CF9" size={40} />
+        <FaPlayCircle color="#009CF9" size={40} />
       </div>
       <Image
         className="tut-grid-img"

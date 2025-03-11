@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: center;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     z-index: 5000;
     background-color: #0C161780;
     position: absolute;

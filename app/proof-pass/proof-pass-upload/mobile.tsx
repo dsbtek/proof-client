@@ -113,7 +113,7 @@ const ProofPassUpload = () => {
 
   return (
     <div className="container">
-      <AppHeader title="PROOFpass Upload" />
+      <AppHeader title="PROOFpass Upload" hasMute={false} />
       <br />
       {!uploadFlag ? (
         <div className="items-wrap">

@@ -2,7 +2,11 @@
     display: flex;
     /* justify-content: space-between; */
     gap: 1rem;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
+    border: 1px solid #00000026;
+    border-radius: 16px;
+    background-color: #FFFFFF;
+    padding: 6px;
 }
 
 .tab-pill {
@@ -11,6 +15,7 @@
     padding: 10px 16px;
     cursor: pointer;
     border: 1px solid #C6CED6;
+    border: none;
 }
 
 .tab-pill--active {

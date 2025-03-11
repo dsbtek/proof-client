@@ -37,17 +37,20 @@ export async function POST(request: NextRequest) {
       first_name: body.first_name,
       last_name: body.last_name,
       middle_name: body.middle_name,
-      date_of_birth: body.birth_date,
-      address: body.Address_Line_1,
-      city: body.City,
-      state: body.State,
-      zipcode: body.Zip_Code,
+      date_of_birth: body.birth_date || "",
+      address: body.Address_Line_1 || "",
+      city: body.City || "",
+      state: body.State || "",
+      zipcode: body.Zip_Code || "",
       imagenames: body.imagenames,
+      "Content-Type":body.ContentType,
     };
 
     const res = await axios.post(
       "/proofupload",
-      { images: body?.scanReport },
+      {
+        "images": body?.scanReport
+      },
       { headers: requestHeaders }
     );
     if (res.status === 200) {

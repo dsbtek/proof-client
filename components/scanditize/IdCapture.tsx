@@ -158,7 +158,7 @@ const IdCaptureComponent = ({
       };
 
       console.log(idCapture.current, "idcapture current");
-      await cleanupIdCapture();
+      // await cleanupIdCapture();
       idCapture.current = await IdCapture.forContext(context.current, settings);
       console.log(idCapture.current, "idCapture current after imp");
       console.log("before listening");
@@ -230,6 +230,8 @@ const IdCaptureComponent = ({
           IdDocumentType.CommonAccessCardBarcode,
         ],
         mrz: [
+          // IdDocumentType.DLVIZ,
+          // IdDocumentType.IdCardVIZ,
           IdDocumentType.VisaMRZ,
           IdDocumentType.PassportMRZ,
           IdDocumentType.SwissDLMRZ,
@@ -245,8 +247,8 @@ const IdCaptureComponent = ({
       const settings = new IdCaptureSettings();
       settings.supportedDocuments = supportedDocumentsByMode[mode];
       if (mode === "viz") {
-        settings.supportedSides = SupportedSides.FrontAndBack;
-        settings.setShouldPassImageTypeToResult(IdImageType.Face, true);
+        // settings.supportedSides = SupportedSides.FrontAndBack;
+        // settings.setShouldPassImageTypeToResult(IdImageType.Face, true);
       }
       return settings;
     },
@@ -268,7 +270,6 @@ const IdCaptureComponent = ({
 
     await configure({
       licenseKey: process.env.NEXT_PUBLIC_SCANDIT_KEY!,
-      // libraryLocation: new URL("library/engine/", document.baseURI).toString(),
       libraryLocation:
         "https://cdn.jsdelivr.net/npm/scandit-web-datacapture-id@6.x/build/engine/",
       moduleLoaders: [idCaptureLoader({ enableVIZDocuments: true })],
@@ -287,7 +288,9 @@ const IdCaptureComponent = ({
     console.log("here9");
     const settings: CameraSettings = IdCapture.recommendedCameraSettings;
     console.log("herea");
+    // if (camera.current != null) {
     await camera.current!.applySettings(settings);
+    // }
     console.log("hereb");
     await context.current!.setFrameSource(camera.current!);
 
@@ -297,7 +300,7 @@ const IdCaptureComponent = ({
     console.log("hered");
     console.log(currentMode.current, "mode");
     if (!currentMode.current) {
-      currentMode.current = "mrz"; // Adjust as needed to get the selected mode
+      currentMode.current = "mrz"; //mrz Adjust as needed to get the selected mode
       console.log("heree");
       const captureSettingFor = createIdCaptureSettingsFor(
         currentMode.current!
@@ -365,13 +368,20 @@ const IdCaptureComponent = ({
 
   return (
     true && (
-      <div style={{ width: "100%", height: "100%", position: "absolute" }}>
+      <div
+        style={{
+          width: "100%",
+          zIndex: 9999,
+          backgroundColor: "white",
+          position: "absolute",
+        }}
+      >
         <div
           ref={dataCaptureViewRef}
           style={{
             zIndex: 9000,
             width: "100%",
-            height: "70%",
+            height: "100%",
           }}
         />
 

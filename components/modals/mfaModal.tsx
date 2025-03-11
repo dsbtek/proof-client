@@ -18,13 +18,38 @@ interface SessionModalProps {
   show: boolean;
   onClose?: (a?: any) => void;
   setLoginRedirect?: any;
+  mobilePhone: any;
 }
 
 interface mfaType {
   otp: string;
 }
 
-const MfaModal = ({ show, onClose, setLoginRedirect }: SessionModalProps) => {
+const formatUSPhoneNumber = (phoneNumber: string) => {
+  // Remove any non-digit characters from the input
+  const digits = phoneNumber.replace(/\D/g, "");
+
+  // Ensure it has at least 10 digits
+  if (digits.length < 10) {
+    throw new Error("Invalid phone number. It should have at least 10 digits.");
+  }
+
+  // Extract the parts of the phone number
+  const areaCode = digits.slice(0, 3); // First 3 digits
+  const centralOfficeCode = digits.slice(3, 6); // Next 3 digits
+  const subscriberNumber = digits.slice(6, 8); // Next 2 digits
+  const hiddenPart = "**";
+
+  // Format the number
+  return `(${areaCode}) ${centralOfficeCode} - ${hiddenPart}${subscriberNumber}`;
+};
+
+const MfaModal = ({
+  show,
+  onClose,
+  setLoginRedirect,
+  mobilePhone,
+}: SessionModalProps) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const initialValues: mfaType = {
@@ -51,11 +76,10 @@ const MfaModal = ({ show, onClose, setLoginRedirect }: SessionModalProps) => {
       const response = await fetch("/api/verifyMfa", {
         method: "POST",
         body: JSON.stringify({
-          phoneNumber: "+2348185261301", //participant_id
+          phoneNumber: mobilePhone, //participant_id
           code: parseInt(values.otp),
         }),
       });
-      console.log(response);
       // setSentOtp(response.data.otp); // Store the sent OTP for validation
       if (response.status === 200) {
         setLoginRedirect(true);
@@ -67,7 +91,7 @@ const MfaModal = ({ show, onClose, setLoginRedirect }: SessionModalProps) => {
   };
 
   return (
-    <Modal show={show} onClose={onClose}>
+    <Modal show={show}>
       <div className="mfa-modal">
         <div className="close-icon-row" onClick={onClose}>
           <SlClose
@@ -76,52 +100,65 @@ const MfaModal = ({ show, onClose, setLoginRedirect }: SessionModalProps) => {
             className="clickable-icon-hover"
           />
         </div>
-        <h1
+        <p>
+          {/* To ensure the security of your account,
+          <br />
+          we have sent a verification code
+          <br />
+          via text message to your
+          <br />
+          phone number (***) *** - **94.
+          <br /> */}
+          Please enter the code sent to your phone.
+        </p>
+        <br />
+        <br />
+        {/* <h1
           className="sm-text"
-          style={{ color: "#009CF9", marginBottom: "16px" }}
+          style={{ color: "#009CF9", marginBottom: "16px" }} `{mobilePhone}`
         >
           Enter Otp
-        </h1>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={mfaSchema}
-          onSubmit={onSubmit}
-        >
-          {({ values, errors, touched, isSubmitting }) => (
-            <Form>
-              <div className="mfa-form">
-                <div>
-                  <TextField
-                    type="pin"
-                    placeholder="Enter Otp"
-                    value={values.otp}
-                    startIcon={
-                      <Image
-                        src="/icons/lock.svg"
-                        alt="proof image"
-                        width={24}
-                        height={24}
-                        loading="lazy"
-                      />
-                    }
-                    endIcon={true}
-                    name="otp"
-                    errors={errors}
-                    touched={touched}
-                  />
-                </div>
+        </h1> */}
+        <div className="mfa-form">
+          <Formik
+            initialValues={initialValues}
+            validationSchema={mfaSchema}
+            onSubmit={onSubmit}
+          >
+            {({ values, errors, touched, isSubmitting, handleSubmit }) => (
+              <>
+                <TextField
+                  type="pin"
+                  placeholder="Enter Otp"
+                  value={values.otp}
+                  startIcon={
+                    <Image
+                      src="/icons/lock.svg"
+                      alt="proof image"
+                      width={24}
+                      height={24}
+                      loading="lazy"
+                    />
+                  }
+                  endIcon={true}
+                  name="otp"
+                  errors={errors}
+                  touched={touched}
+                />
+
                 <Button
                   blue
                   disabled={isSubmitting}
                   type="submit"
                   style={{ height: "42px" }}
+                  onClick={handleSubmit}
                 >
                   Verify
                 </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
+              </>
+            )}
+          </Formik>
+        </div>
       </div>
     </Modal>
   );

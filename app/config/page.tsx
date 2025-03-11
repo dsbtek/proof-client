@@ -49,7 +49,7 @@ function Debug() {
 
     return (
         <DinamicMenuLayout>
-            <AppHeader title="AI Config" />
+            <AppHeader title="AI Config" hasMute={false} />
             <div className='tutorial-container' style={{ marginTop: '20px' }}>
                 <h1 style={{ color: '#009cf9', textDecoration: 'underline' }}>Scoring Matrix</h1>
                 {Object.entries(scoringData).map((scoreArr, index) => (

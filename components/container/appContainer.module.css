@@ -1,0 +1,49 @@
+.appContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh; /* Use viewport height for mobile responsiveness */
+    padding: 12px;
+}
+
+.appContainerHead {
+    width: 100%;
+    background-color: #ffffff;
+    flex: 0 0 auto; /* Fixes the header height */
+}
+
+.appContainerBody {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 0;
+    flex-grow: 1;
+    /* height: 70%; */
+    /*flex: 1;  Takes up available space */
+    overflow-y: auto; /* Allows scrolling if content is too large */
+    display: flex;
+}
+
+.wrapContainer {
+    width: 100%;
+    border-radius: 16px;
+    background-color: #F4F7F8;
+    /* height: 100%; */
+    flex-grow: 1;
+}
+
+.appContainerFooter {
+    width: 100%;
+    background-color: #ffffff;
+    flex: 0 0 auto; /* Fixes the footer height */
+}
+
+@media screen and (min-width: 700px) {
+    .appContainer {
+        padding: 0;
+    }
+
+    .appContainerBody {
+    /* height: 80%; */
+    padding: 0px 20px;
+    }
+}

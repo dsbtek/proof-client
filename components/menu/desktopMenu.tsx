@@ -5,22 +5,23 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-
 import {
   appData,
   appDataDump,
+  setPageRedirect,
   setReDirectToBac,
 } from "@/redux/slices/appConfig";
 import "./menu.css";
 import Button from "../button";
 import { clearTestData } from "@/redux/slices/drugTest";
 import { logout } from "@/redux/slices/auth";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { hasPermission } from "@/utils/utils";
 import DialogBox from "../dialog-box";
 
 const DextopMenu = () => {
-  const { first_name, last_name } = useSelector(appData);
+  const { first_name, last_name, PROOF_Home_Message, PROOF_Home_Logo } =
+    useSelector(appData);
   const pathname = usePathname();
   const user = useSelector(appData);
   const photo = user?.photo;
@@ -29,6 +30,7 @@ const DextopMenu = () => {
   const permissions = user?.permissions;
   const [pendingTest, setPendingTest] = useState<string | null>(null);
   const [pendingTestPrompt, setPendingTestPrompt] = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -38,11 +40,29 @@ const DextopMenu = () => {
   }, []);
 
   const updateRedirection = async () => {
-    dispatch(setReDirectToBac(true));
+    // dispatch(setReDirectToBac(true));
+    dispatch(setPageRedirect("/bac"));
   };
 
+  const toggleExpand = () => {
+    setIsExpanded((prevState) => !prevState);
+  };
+
+  const scrollToView = (to: string) => {
+    const element = document.getElementById(to);
+    element?.scrollIntoView({
+      behavior: "instant",
+      block: "end",
+      inline: "nearest",
+    });
+  };
+
+  const view = useMemo(() => pathname.split("/")[1], [pathname]);
+
+  useEffect(() => scrollToView(view), [view]);
+
   return (
-    <nav className="menu scroller">
+    <nav className="desktop-menu">
       <DialogBox
         show={pendingTestPrompt}
         handleReject={() => setPendingTestPrompt(false)}
@@ -52,27 +72,43 @@ const DextopMenu = () => {
         rejectText="Cancel"
         acceptText="Ok"
       />
-      <Link
-        href="#"
-        className="sub-menu"
-        style={{
-          display: "block",
-          textAlign: "left",
-          borderBottom: "none",
-          height: "fit-content",
-        }}
-      >
+
+      <Link href="#" className="sub-menu_header">
+        <Image
+          src={PROOF_Home_Logo || "/icons/pin-icon.svg"}
+          className="custome-logo"
+          alt="image"
+          width={24}
+          height={24}
+          loading="lazy"
+        />
         <p className="greet-text">{"Hello,"}</p>
-        <p className="user-name">{first_name + " " + last_name}</p>
+        <p className="user-name">
+          {(first_name || "") + " " + (last_name || "")}
+        </p>
       </Link>
-      <br />
-      <div className="menu-items">
+      <>
+        <div
+          className="wrap-msg scroller-test"
+          style={{
+            padding: "12px",
+          }}
+        >
+          {PROOF_Home_Message}
+        </div>
+      </>
+      <div className="menu-items what-new-scroller">
         <Link
+          id="test-collection"
           href={!pendingTest ? "/test-collection" : ""}
           className="sub-menu"
           style={
             pathname === "/test-collection"
-              ? { backgroundColor: "#E5F5FF" }
+              ? {
+                  backgroundColor: "#009cf9",
+                  borderRadius: "16px",
+                  width: "90%",
+                }
               : {}
           }
           onClick={() => pendingTest && setPendingTestPrompt(true)}
@@ -81,7 +117,7 @@ const DextopMenu = () => {
           {pathname === "/test-collection" ? (
             <Image
               className=""
-              src="/icons/test.svg"
+              src="/icons/test-collection-icon.svg"
               alt="captured Image"
               width={5000}
               height={5000}
@@ -101,19 +137,26 @@ const DextopMenu = () => {
             className="menu-text"
             style={
               pathname === "/test-collection"
-                ? { color: "#009CF9" }
+                ? { color: "#ffffff" }
                 : { color: "#0C1617" }
             }
           >
-            Test/Collection
+            Test/ Collection
           </p>
         </Link>
         {pendingTest && (
           <Link
+            id="pending-test"
             href="/pending-test"
             className="sub-menu"
             style={
-              pathname === "/pending-test" ? { backgroundColor: "#E5F5FF" } : {}
+              pathname === "/pending-test"
+                ? {
+                    backgroundColor: "#009cf9",
+                    borderRadius: "16px",
+                    width: "90%",
+                  }
+                : {}
             }
           >
             {pathname === "/pending-test" ? (
@@ -139,7 +182,7 @@ const DextopMenu = () => {
               className="menu-text"
               style={
                 pathname === "/pending-test"
-                  ? { color: "#009CF9" }
+                  ? { color: "#ffffff" }
                   : { color: "#0C1617" }
               }
             >
@@ -147,16 +190,25 @@ const DextopMenu = () => {
             </p>
           </Link>
         )}
-        {hasPermission("Test", permissions) && (
+        {hasPermission("Alcohol BAC test", permissions) && (
           <Link
+            id="bac"
             href={
               photo
                 ? // ? "/identity-profile/sample-facial-capture"
-                "/bac"
+                  "/bac"
                 : "/identity-profile/id-detection/step-1"
             }
             className="sub-menu"
-            style={pathname === "/bac" ? { backgroundColor: "#E5F5FF" } : {}}
+            style={
+              pathname === "/bac"
+                ? {
+                    backgroundColor: "#009cf9",
+                    borderRadius: "16px",
+                    width: "90%",
+                  }
+                : {}
+            }
             onClick={updateRedirection}
           >
             {pathname === "/bac" ? (
@@ -182,7 +234,7 @@ const DextopMenu = () => {
               className="menu-text"
               style={
                 pathname === "/bac"
-                  ? { color: "#009CF9" }
+                  ? { color: "#ffffff" }
                   : { color: "#0C1617" }
               }
             >
@@ -192,14 +244,23 @@ const DextopMenu = () => {
         )}
 
         <Link
+          id="tutorial"
           href="/tutorial"
           className="sub-menu"
-          style={pathname === "/tutorial" ? { backgroundColor: "#E5F5FF" } : {}}
+          style={
+            pathname === "/tutorial"
+              ? {
+                  backgroundColor: "#009cf9",
+                  borderRadius: "16px",
+                  width: "90%",
+                }
+              : {}
+          }
         >
           {pathname === "/tutorial" ? (
             <Image
               className=""
-              src="/icons/tutorial-selected.svg"
+              src="/icons/tutorial-icon.svg"
               alt="captured Image"
               width={5000}
               height={5000}
@@ -219,7 +280,7 @@ const DextopMenu = () => {
             className="menu-text"
             style={
               pathname === "/tutorial"
-                ? { color: "#009CF9" }
+                ? { color: "#ffffff" }
                 : { color: "#0C1617" }
             }
           >
@@ -228,14 +289,23 @@ const DextopMenu = () => {
         </Link>
 
         <Link
+          id="history"
           href={"history"}
           className="sub-menu"
-          style={pathname === "/history" ? { backgroundColor: "#E5F5FF" } : {}}
+          style={
+            pathname === "/history"
+              ? {
+                  backgroundColor: "#009cf9",
+                  borderRadius: "16px",
+                  width: "90%",
+                }
+              : {}
+          }
         >
           {pathname === "/history" ? (
             <Image
               className=""
-              src="/icons/history.svg"
+              src="/icons/history-icon.svg"
               alt="history Icon"
               width={26.25}
               height={27}
@@ -255,7 +325,7 @@ const DextopMenu = () => {
             className="menu-text"
             style={
               pathname === "/history"
-                ? { color: "#009CF9" }
+                ? { color: "#ffffff" }
                 : { color: "#0C1617" }
             }
           >
@@ -264,14 +334,23 @@ const DextopMenu = () => {
         </Link>
 
         <Link
+          id="what-new"
           href={"what-new"}
           className="sub-menu"
-          style={pathname === "/what-new" ? { backgroundColor: "#E5F5FF" } : {}}
+          style={
+            pathname === "/what-new"
+              ? {
+                  backgroundColor: "#009cf9",
+                  borderRadius: "16px",
+                  width: "90%",
+                }
+              : {}
+          }
         >
           {pathname === "/what-new" ? (
             <Image
               className=""
-              src="/icons/whats-new.svg"
+              src="/icons/what-new-icon.svg"
               alt="What`s New Icon"
               width={25}
               height={25}
@@ -291,7 +370,7 @@ const DextopMenu = () => {
             className="menu-text"
             style={
               pathname === "/what-new"
-                ? { color: "#009CF9" }
+                ? { color: "#ffffff" }
                 : { color: "#0C1617" }
             }
           >
@@ -300,14 +379,23 @@ const DextopMenu = () => {
         </Link>
 
         <Link
+          id="settings"
           href="/settings"
           className="sub-menu"
-          style={pathname === "/settings" ? { backgroundColor: "#E5F5FF" } : {}}
+          style={
+            pathname === "/settings"
+              ? {
+                  backgroundColor: "#009cf9",
+                  borderRadius: "16px",
+                  width: "90%",
+                }
+              : {}
+          }
         >
           {pathname === "/settings" ? (
             <Image
               className=""
-              src="/icons/settings-selected.svg"
+              src="/icons/settings-icon.svg"
               alt="captured Image"
               width={5000}
               height={5000}
@@ -327,7 +415,7 @@ const DextopMenu = () => {
             className="menu-text"
             style={
               pathname === "/settings"
-                ? { color: "#009CF9" }
+                ? { color: "#ffffff" }
                 : { color: "#0C1617" }
             }
           >
@@ -336,14 +424,23 @@ const DextopMenu = () => {
         </Link>
 
         <Link
+          id="support"
           href="/support"
           className="sub-menu"
-          style={pathname === "/support" ? { backgroundColor: "#E5F5FF" } : {}}
+          style={
+            pathname === "/support"
+              ? {
+                  backgroundColor: "#009cf9",
+                  borderRadius: "16px",
+                  width: "90%",
+                }
+              : {}
+          }
         >
           {pathname === "/support" ? (
             <Image
               className=""
-              src="/icons/support-selected.svg"
+              src="/icons/support-icon.svg"
               alt="captured Image"
               width={5000}
               height={5000}
@@ -363,7 +460,7 @@ const DextopMenu = () => {
             className="menu-text"
             style={
               pathname === "/support"
-                ? { color: "#009CF9" }
+                ? { color: "#ffffff" }
                 : { color: "#0C1617" }
             }
           >

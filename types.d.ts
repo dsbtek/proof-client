@@ -189,3 +189,9 @@ declare namespace NodeJS {
 
 // Declare the Sentry module
 declare module "@sentry/nextjs";
+
+type ExtendedPermissionName = "camera" | PermissionName;
+
+interface PermissionDescriptor {
+  name: ExtendedPermissionName;
+}

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type IDDetails = {
     first_name: string;
@@ -8,6 +8,10 @@ export type IDDetails = {
     city: string;
     state: string;
     zipcode: string;
+};
+export type TestStepTimestamp = {
+    step: number;
+    time: string;
 };
 
 export type AIConfig = {
@@ -48,6 +52,8 @@ export interface TestState {
     governmentID: string;
     idDetails: IDDetails;
     AIConfig: AIConfig;
+    barcodePip2Url: string;
+    testStepTimestamp: TestStepTimestamp[];
 }
 
 const initialState: TestState = {
@@ -55,35 +61,35 @@ const initialState: TestState = {
     testSteps: [],
     testStepsFiltered: [],
     timerObjs: [],
-    startTime: "",
-    endTime: "",
+    startTime: '',
+    endTime: '',
     uploading: undefined,
     filename: '',
-    barcode: "",
-    confirmationNo: "",
-    signature: "",
-    testClip: "",
-    storage: "",
-    lookAway: "",
-    handsOut: "",
-    trackingNumber: "",
-    shippingLabel: "",
-    barcodeKit: "",
-    detectKit: "",
-    proofId: "",
-    faceCompare: "",
+    barcode: '',
+    confirmationNo: '',
+    signature: '',
+    testClip: '',
+    storage: '',
+    lookAway: '',
+    handsOut: '',
+    trackingNumber: '',
+    shippingLabel: '',
+    barcodeKit: '',
+    detectKit: '',
+    proofId: '',
+    faceCompare: '',
     faceScans: [],
     imageCaptures: [],
-    passport: "",
-    governmentID: "",
+    passport: '',
+    governmentID: '',
     idDetails: {
-        first_name: "",
-        last_name: "",
-        date_of_birth: "",
-        address: "",
-        city: "",
-        state: "",
-        zipcode: "",
+        first_name: '',
+        last_name: '',
+        date_of_birth: '',
+        address: '',
+        city: '',
+        state: '',
+        zipcode: '',
     },
     AIConfig: {
         test_review_threshold: 0.5,
@@ -93,17 +99,23 @@ const initialState: TestState = {
         face_model_selection: 0,
         face_detection_confidence: 0.5,
         noise_filtering_aggressiveness: 1,
-    }
+    },
+    barcodePip2Url: '',
+    testStepTimestamp: [],
 };
 
 const appSlice = createSlice({
-    name: "drugTest",
+    name: 'drugTest',
     initialState,
     reducers: {
         setTestSteps: (state, action: PayloadAction<any[]>) => {
-            state.timerObjs = action.payload.filter((step) => step.step === null);
+            state.timerObjs = action.payload.filter(
+                (step) => step.step === null,
+            );
             if (state.timerObjs.length > 0) {
-                state.testStepsFiltered = action.payload.filter((step) => step.step !== null);
+                state.testStepsFiltered = action.payload.filter(
+                    (step) => step.step !== null,
+                );
             } else {
                 state.testSteps = action.payload;
             }
@@ -125,7 +137,10 @@ const appSlice = createSlice({
         saveTestClip: (state, action: PayloadAction<string>) => {
             state.testClip = action.payload;
         },
-        setUploadStatus: (state, action: PayloadAction<boolean | undefined>) => {
+        setUploadStatus: (
+            state,
+            action: PayloadAction<boolean | undefined>,
+        ) => {
             state.uploading = action.payload;
         },
         saveBarcode: (state, action: PayloadAction<string>) => {
@@ -135,62 +150,109 @@ const appSlice = createSlice({
             state.confirmationNo = action.payload;
         },
         setFilename: (state, action: PayloadAction<string>) => {
-            state.filename = action.payload
+            state.filename = action.payload;
         },
         setStorage: (state, action: PayloadAction<string>) => {
-            state.storage = action.payload
+            state.storage = action.payload;
         },
         setLookAway: (state, action: PayloadAction<string>) => {
-            state.lookAway = action.payload
+            state.lookAway = action.payload;
         },
         setHandsOut: (state, action: PayloadAction<string>) => {
-            state.handsOut = action.payload
+            state.handsOut = action.payload;
         },
         setTrackingNumber: (state, action: PayloadAction<string>) => {
-            state.trackingNumber = action.payload
+            state.trackingNumber = action.payload;
         },
         setShippingLabel: (state, action: PayloadAction<string>) => {
-            state.shippingLabel = action.payload
+            state.shippingLabel = action.payload;
         },
         setBarcodeKit: (state, action: PayloadAction<string>) => {
-            state.barcodeKit = action.payload
+            state.barcodeKit = action.payload;
         },
         setDetectKit: (state, action: PayloadAction<string>) => {
-            state.detectKit = action.payload
+            state.detectKit = action.payload;
         },
         setProofID: (state, action: PayloadAction<string>) => {
-            state.proofId = action.payload
+            state.proofId = action.payload;
         },
         setFaceCompare: (state, action: PayloadAction<string>) => {
-            state.faceCompare = action.payload
+            state.faceCompare = action.payload;
         },
-        setFaceScans: (state, action: PayloadAction<{ [key: string]: string }>) => {
+        setFaceScans: (
+            state,
+            action: PayloadAction<{ [key: string]: string }>,
+        ) => {
             state.faceScans.push(action.payload);
         },
         setImageCaptures: (state, action: PayloadAction<string>) => {
             state.imageCaptures.push(action.payload);
         },
+        setRemoveImageCaptures: (state) => {
+            state.imageCaptures.pop();
+        },
         setPassport: (state, action: PayloadAction<string>) => {
-            state.passport = action.payload
+            state.passport = action.payload;
         },
         setGovernmentID: (state, action: PayloadAction<string>) => {
-            state.governmentID = action.payload
+            state.governmentID = action.payload;
         },
         setIdDetails: (state, action: PayloadAction<IDDetails>) => {
-            state.idDetails = action.payload
+            state.idDetails = action.payload;
         },
         setAIConfig: (state, action: PayloadAction<AIConfig>) => {
-            state.AIConfig = action.payload
+            state.AIConfig = action.payload;
         },
+        setBarcodePip2Url: (state, action: PayloadAction<string>) => {
+            state.barcodePip2Url = action.payload;
+        },
+        setTestStepTimestamp: (
+            state,
+            action: PayloadAction<TestStepTimestamp>,
+        ) => {
+            state.testStepTimestamp.push(action.payload);
+        },
+
         clearTestData: (state) => {
             state = initialState;
-        }
+        },
     },
 });
 
-export const testData = (state: { drugTest: TestState }) => state.drugTest
-export const testingKit = (state: { drugTest: TestState }) => state.drugTest.testingKit;
+export const testData = (state: { drugTest: TestState }) => state.drugTest;
+export const testingKit = (state: { drugTest: TestState }) =>
+    state.drugTest.testingKit;
 
-export const { setTestSteps, setKit, setSig, clearTestData, setStartTime, setEndTime, saveTestClip, setUploadStatus, saveBarcode, setFilename, saveConfirmationNo, setTrackingNumber, setShippingLabel, setBarcodeKit, setDetectKit, setProofID, setFaceCompare, setFaceScans, setImageCaptures, setPassport, setGovernmentID, setIdDetails, setStorage, setHandsOut, setLookAway, setAIConfig } = appSlice.actions;
+export const {
+    setTestSteps,
+    setKit,
+    setSig,
+    clearTestData,
+    setStartTime,
+    setEndTime,
+    saveTestClip,
+    setUploadStatus,
+    saveBarcode,
+    setFilename,
+    saveConfirmationNo,
+    setTrackingNumber,
+    setShippingLabel,
+    setBarcodeKit,
+    setDetectKit,
+    setProofID,
+    setFaceCompare,
+    setFaceScans,
+    setImageCaptures,
+    setPassport,
+    setGovernmentID,
+    setIdDetails,
+    setStorage,
+    setHandsOut,
+    setLookAway,
+    setAIConfig,
+    setBarcodePip2Url,
+    setTestStepTimestamp,
+    setRemoveImageCaptures,
+} = appSlice.actions;
 
 export default appSlice.reducer;

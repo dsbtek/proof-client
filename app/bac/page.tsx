@@ -1,7 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { AgreementHeader, AgreementFooter, CheckBox } from "@/components";
+import {
+  AgreementHeader,
+  AgreementFooter,
+  CheckBox,
+  AppHeader,
+  AppContainer,
+} from "@/components";
 
 const Bac = () => {
   const [checkboxes, setCheckboxes] = useState([
@@ -68,39 +74,43 @@ const Bac = () => {
   const allChecked = checkboxes.every((checkbox) => checkbox.isChecked);
 
   return (
-    <>
-      <div className="container-test-collection">
-        <AgreementHeader title="PROOF BAC TEST" />
-        <div className="agreement-items-wrap what-new-scroller bac-checkList">
-          <p className="get-started-title">
-            By clicking continue below, you agree that you will follow the rules
-            below when taking your breath alcohol test via the GetPROOF
-            Application
-          </p>
-          <div className="checkbox-container">
-            {checkboxes.map((checkbox, index) => (
-              <CheckBox
-                key={checkbox.id}
-                onChange={() => handleCheckboxChange(checkbox.id)}
-                checked={checkbox.isChecked}
-                label={checkbox.label}
-              />
-            ))}
+    <AppContainer
+      header={<AppHeader title="PROOF BAC TEST" hasMute={false} />}
+      body={
+        <div className="container-test-collection">
+          <div className="agreement-items-wrap what-new-scroller bac-checkList">
+            <p className="get-started-title">
+              By clicking continue below, you agree that you will follow the
+              rules below when taking your breath alcohol test via the GetPROOF
+              Application
+            </p>
+            <div className="checkbox-container">
+              {checkboxes.map((checkbox, index) => (
+                <CheckBox
+                  key={checkbox.id}
+                  onChange={() => handleCheckboxChange(checkbox.id)}
+                  checked={checkbox.isChecked}
+                  label={checkbox.label}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-      <AgreementFooter
-        currentNumber={4}
-        outOf={5}
-        onPagination={false}
-        onLeftButton={false}
-        onRightButton={allChecked}
-        btnLeftLink={""}
-        btnRightLink={"/bac/bac-connect-device"}
-        btnLeftText={""}
-        btnRightText={"Next"}
-      />
-    </>
+      }
+      footer={
+        <AgreementFooter
+          currentNumber={4}
+          outOf={5}
+          onPagination={false}
+          onLeftButton={false}
+          onRightButton={allChecked}
+          btnLeftLink={""}
+          btnRightLink={"/bac/bac-connect-device"}
+          btnLeftText={""}
+          btnRightText={"Next"}
+        />
+      }
+    />
   );
 };
 

@@ -1,0 +1,27 @@
+.package-scan-modal {
+        display: flex;
+        flex-direction: column;
+        gap: 4;
+        background-color: white;
+        width: 600px;
+        max-width: 90vw;
+        padding: 24px;
+        border-radius: 24px;
+}
+
+@media screen and (min-width: 700px) {
+    .package-scan-modal {
+        max-width: 40vw;
+        max-height: 100dvh;
+        overflow-y: auto;
+}
+}
+
+@media screen and (max-width: 700px) {
+    .package-scan-modal {
+        width: '100%!important';
+        height: '100%!important';
+        border-radius: 0;
+
+}
+}

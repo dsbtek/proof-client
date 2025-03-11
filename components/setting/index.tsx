@@ -33,14 +33,22 @@ function Setting({
   const isDesktop = useMemo(() => device?.screenWidth > 700, [device]);
   return tel ? (
     <Link className="set-con" href={`tel: ${tel}`}>
-      <FiPhoneCall size={20} color={isDesktop ? "#4E555D" : "#009CF9"} />
+      {/* <FiPhoneCall size={20} color={isDesktop ? "#009CF9" : "#009CF9"} /> */}
+      <Image
+        className="dex-only"
+        src="/icons/tel.svg"
+        alt="inbox"
+        width={20}
+        height={20}
+        loading="lazy"
+      />
       <p className="set-text">{title}</p>
     </Link>
   ) : email ? (
     <Link className="set-con" href={`mailto: ${email}`}>
       <Image
         className="dex-only"
-        src="/icons/inbox.svg"
+        src="/icons/msg.svg"
         alt="inbox"
         width={20}
         height={20}
@@ -50,12 +58,16 @@ function Setting({
       <p className="set-text">{title}</p>
     </Link>
   ) : (
-    <Link className="setting" href={link}>
+    <Link
+      className="setting"
+      href={link}
+      target={openInNewTab ? "_blank" : "_self"}
+    >
       <div className="set-con">
         {icon}
         <p className="set-text">{title}</p>
       </div>
-      <div style={{ cursor: "pointer" }}>
+      {/* <div style={{ cursor: "pointer" }}>
         {isDesktop ? (
           openInNewTab ? (
             <HiArrowUpRight />
@@ -65,7 +77,7 @@ function Setting({
         ) : (
           <AiOutlineRight color="#95A3B4" />
         )}
-      </div>
+      </div> */}
     </Link>
   );
 }

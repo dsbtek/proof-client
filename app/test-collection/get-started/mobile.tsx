@@ -1,17 +1,31 @@
 "use client";
 
-import { AgreementHeader, AgreementFooter } from "@/components";
+import { AgreementHeader, AgreementFooter, AppContainer, AppHeader } from "@/components";
 
 import Image from "next/image";
+import { useRef, useState } from "react";
 
 const GetStarted = () => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [muted, setMuted] = useState(false);
+
+  const toggleMute = () => {
+    setMuted(!muted);
+    if (audioRef.current) {
+      audioRef.current.muted = !muted;
+    }
+  };
   return (
-    <div className="container-test-collection">
-      <AgreementHeader title="Device Setup" />
-      <div className="agreement-items-wrap">
+
+    <AppContainer
+      header={
+        <AppHeader title="Device Setup" hasMute={true}  onClickMute={toggleMute} muted={muted} />
+      }
+      body={
+        <div className="agreement-items-wrap">
         <Image
           className="get-started-img"
-          src="/images/getting-started.svg"
+            src="/images/device-setup-mobile.svg"
           alt="image"
           width={3000}
           height={3000}
@@ -34,8 +48,12 @@ const GetStarted = () => {
             during the collection.
           </li>
         </ul>
+        <audio ref={audioRef} src="/audio/getting_started.mp3" controls={false} muted={muted} autoPlay />
+
       </div>
-      <AgreementFooter
+      }
+      footer={
+        <AgreementFooter
         currentNumber={3}
         outOf={5}
         onPagination={true}
@@ -46,7 +64,8 @@ const GetStarted = () => {
         btnLeftText={"Back"}
         btnRightText={"Next"}
       />
-    </div>
+      }
+    />
   );
 };
 

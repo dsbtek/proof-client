@@ -45,7 +45,7 @@ const WhatNew = () => {
             </p>
           </div>
         ) : (
-          <AppHeader title={"What`s New"} />
+          <AppHeader title={"What`s New"} hasMute={false} />
         )}
         <br /> <br />
         <div

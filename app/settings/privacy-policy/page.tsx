@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import { AppHeader } from "@/components";
+import { AppHeader, Header } from "@/components";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import { GoArrowLeft } from "react-icons/go";
 
 function PrivacyPolicy() {
   const router = useRouter();
@@ -41,7 +42,7 @@ function PrivacyPolicy() {
         </div>
       </div>
       {/* <div className="items-wrap"> */}
-      {device?.screenWidth < 700 && <AppHeader title="Privacy Policy" />}
+      {device?.screenWidth < 700 && <Header title="Privacy Policy" icon1={<GoArrowLeft />} hasMute={false} />}
       <div className="privacy-policy-content">
         <br />
         <h4 className="set-text privacy-headers">Cookie User Notice</h4>

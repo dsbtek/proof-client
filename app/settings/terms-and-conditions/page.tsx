@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { AppHeader, Loader_ } from '@/components';
+import { AppHeader, Header, Loader_ } from '@/components';
+import { GoArrowLeft } from 'react-icons/go';
 
 function TermsAndConditions() {
     const [loading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ function TermsAndConditions() {
 
     return (
         <div className="container">
-            <AppHeader title="Terms & Conditions" />
+            <Header title="Terms & Conditions" icon1={<GoArrowLeft />} hasMute={false} />
 
             {loading && (
                 <Loader_ />

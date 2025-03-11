@@ -41,25 +41,30 @@
 }
 
 .accepted-btn {
-    width: 93px;
-    /* height: 35px; */
-    padding: 8px 20px;
+    padding:  12px 32px;
     border-radius: 8px;
     background: #009cf9;
     border: 1px solid #009cf9;
     color: #ffffff;
     cursor: pointer;
+    border: 1px solid  #C6CED6
+}
+
+.accepted-btn:hover {
+    background-color: #007DC7;
 }
 
 .decline-btn {
-    width: 93px;
-    /* height: 35px; */
-    padding: 8px;
+    padding: 12px 32px;
     border-radius: 8px;
     background: #ffffff;
     color: #777777;
     cursor: pointer;
     border: 1px solid var(--Dark-Grey, #777777)
+}
+
+.decline-btn:hover {
+    background-color: #E5F5FF;
 }
 
 .logout-btn {
@@ -83,7 +88,7 @@
 
 .logout-btn-dextop-menu {
     width: 95%;
-    padding: 24px;
+    padding: 18px;
     border-radius: 8px;
     border: none;
     color: #FF6566;
@@ -91,10 +96,14 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    background: #FFD5D380;
+    background: #FEF2F2;
     font-size: clamp(0.5rem, 2vw, 1rem);
     margin-bottom: 32px;
     margin-top: auto;
+}
+
+.logout-btn-dextop-menu:hover {
+    background-color: #FEE2E2;
 }
 
 .faq-btn {
@@ -108,16 +117,18 @@
 .btn-left {
     display: flex;
     align-items: flex-start;
-    padding: 0 20px;
-    width: 40%;
+    /* padding: 0 20px; */
+    padding: 0;
+    /* width: 40%; */
 }
 
 .btn-right {
     display: flex;
     justify-content: flex-end;
-    padding: 0 20px;
-    width: 40%;
-    width: 30%;
+    /* padding: 0 20px; */
+    padding: 0;
+    /* width: 40%; */
+    /* width: 30%; */
 }
 
 .td-left,
@@ -189,7 +200,7 @@
     width: 100%;
     max-width: 183px;
     height: 44px;
-    border: none;
+    border: 1px solid #C6CED6;
     border-radius: 8px;
     padding: 12px 16px;
     gap: 10px;
@@ -205,7 +216,7 @@
 }
 
 .man-btn {
-    background: #E5FAFF;
+    background: white;
     color: #24527B;
 }
 

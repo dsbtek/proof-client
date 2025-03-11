@@ -1,0 +1,263 @@
+.oral-result-status {
+    width: 15%;
+    height: 100%;
+    background-color: #cd4c36;
+    border-radius: 16px 0px 0px 16px;
+}
+
+.oral-result-status-text {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 70%;
+    background: #ffffff;
+    padding-left: 16px;
+}
+
+.oraltox-result-edit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 15%;
+    border-radius: 0 16px 16px 0px;
+    background: #ffffff;
+    padding: 16px;
+}
+
+.oraltox-result-status-indicator {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    width: 100%;
+    border-radius: 16px;
+    padding-right: 8px;
+}
+
+.oraltox-silhoutte {
+    height: 90%;
+    width: 90%;
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.alco-oraltox-img-result {
+    height: 45%;
+    width: 100%;
+    border-radius: 12px;
+    object-fit: contain;
+}
+.oraltox-result-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #060608;
+    padding: 38px;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    gap: 16px;
+    padding-top: 30%;
+}
+.reult-status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.alco-result-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+    width: 95%;
+    padding: 16px;
+}
+
+.wrap-alco-silhoutte {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 40px;
+    border: 3px solid #ffffff;
+}
+
+.alco-silhoutte {
+    height: 20%;
+    width: 100%;
+}
+
+.alco-canvas {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}
+
+.alco-silhoutte_ {
+    height: 80%;
+    width: 100%;
+    border-top: 3px solid #ffffff;
+}
+
+.aloco-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.frameStyle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border: 1px solid rgb(143, 143, 143);
+    width: 40px;
+    height: 50%;
+    position: absolute;
+    overflow: hidden;
+}
+
+.oraltox-qr-scanner {
+    position: relative;
+    right: 0;
+    /* top: 100px; */
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    border-radius: 0 16px 16px 0;
+    overflow: hidden;
+}
+.wrap-camera {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* height: 100%; */
+    width: 100%;
+    z-index: 20;
+    background-color: #060608;
+}
+.frameStyleOraltox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 90%;
+    position: absolute;
+    overflow: hidden;
+    z-index: 20;
+}
+@media (min-width: 700px) {
+    .wrap-alco-silhoutte {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 40px;
+        border: 3px solid #ffffff;
+    }
+
+    .alco-result-wrap {
+        align-items: unset;
+        justify-content: unset;
+        text-align: left;
+    }
+
+    .oraltox-result-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: #060608;
+        padding: 38px;
+        padding-top: 3%;
+        width: 50%;
+        height: 100%;
+        overflow-y: scroll;
+        gap: 16px;
+    }
+
+    .wrap-camera {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 100%;
+        width: 100%;
+        z-index: 20;
+        background-color: #060608;
+    }
+
+    .oraltox-silhoutte {
+        height: 90%;
+        width: 90%;
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+    }
+
+    .alco-text {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 10px;
+        height: 50%;
+    }
+
+    .alco-silhoutte {
+        position: relative;
+        width: 100%;
+        height: 20%;
+        z-index: 10;
+    }
+
+    .alco-silhoutte_ {
+        height: 80%;
+        width: 100%;
+        border-top: 3px solid #ffffff;
+    }
+
+    .alco-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+    }
+
+    .frameStyle {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        border: 1px solid rgb(143, 143, 143);
+        width: 40px;
+        height: 50%;
+        position: relative;
+        overflow: hidden;
+    }
+    .frameStyleOraltox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 80%;
+        position: absolute;
+        overflow: hidden;
+        z-index: 20;
+    }
+}
+/* 
+@media (min-width: 1200px) {
+    .frameStyleOraltox {
+        height: 80%;
+    }
+}
+
+@media (min-width: 1300px) {
+    .frameStyleOraltox {
+        height: 100%;
+    }
+} */

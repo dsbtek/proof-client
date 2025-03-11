@@ -17,8 +17,8 @@
 
 .sum-warning {
     width: 100%;
-    background: #FEE2E2;
-    border: 1px solid #FCA5A5;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
     border-radius: 8px;
     padding: 16px 12px;
 
@@ -52,14 +52,13 @@
     font-size: 14px;
     line-height: 20px;
     font-weight: 600;
-
 }
 
 .upload-status,
 .test-upload-pass,
 .test-upload-fail {
     width: 100%;
-    color: #FFFFFF;
+    color: #ffffff;
     border-radius: 8px;
     padding: 10px;
 
@@ -74,18 +73,18 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
-    background: #24527B;
-    border: 1px solid #009CF9;
+    background: #24527b;
+    border: 1px solid #009cf9;
 }
 
 .test-upload-pass {
-    background: #10B981;
-    border: 1px solid #2ED086;
+    background: #10b981;
+    border: 1px solid #2ed086;
 }
 
 .test-upload-fail {
-    background: #FF6566;
-    border: 1px solid #FF6566;
+    background: #ff6566;
+    border: 1px solid #ff6566;
 }
 
 .video-preview {
@@ -94,6 +93,7 @@
     align-items: center;
     width: 100%;
     margin: 20px 0;
+    position: relative;
 }
 
 .vid-prev {
@@ -109,6 +109,19 @@
     width: 100%;
     gap: 10px;
 }
+.speed-controls {
+    position: absolute; /* Position absolutely within the video container */
+    bottom: 10%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(
+        -50%,
+        -50%
+    ); /* Offset by 50% of its width and height to truly center it */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; /* Ensure controls are on top of the video */
+}
 
 @media screen and (min-width: 700px) {
     .summary-container {
@@ -119,7 +132,7 @@
         height: 100%;
         width: 100%;
         padding: 0px;
-        background-color: #FAFAFA;
+        background-color: #fafafa;
     }
 
     .wrap-dx {
@@ -149,12 +162,12 @@
         align-items: center;
         height: 70%;
         width: 90%;
-        background-color: #FFFFFF;
+        background-color: #ffffff;
         padding: 16px;
         border-radius: 12px;
     }
 
-    .video-preview {
+    /* .video-preview {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -170,15 +183,91 @@
         object-fit: cover;
         border-radius: 0px;
     }
+    .speed-controls {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      
+      .speed-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 50%;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .speed-btn.selected {
+        background-color: white;
+        color: blue;
+      }
+      
+      .speed-btn:hover {
+        opacity: 0.8;
+      } */
+    .video-preview {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+        height: 100%;
+        margin: 0;
+        background-color: #009cf9;
+        position: relative; /* Set to relative to allow absolute positioning of children */
+    }
 
-.collection-summary-submission-status {
-    position: absolute;
-    width: 50%;
-    height: 25px;
-    left: 10px;
-    bottom: 3%;
-    z-index: 100;
-}
+    .vid-prev {
+        width: 100%;
+        height: 78vh;
+        object-fit: cover;
+        border-radius: 0px;
+    }
 
+    .speed-controls {
+        position: absolute; /* Position absolutely within the video container */
+        bottom: 10%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(
+            -50%,
+            -50%
+        ); /* Offset by 50% of its width and height to truly center it */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10; /* Ensure controls are on top of the video */
+    }
 
+    .speed-btn {
+        background-color: black;
+        color: white;
+        border: none;
+        padding: 20px 20px;
+        margin: 0 10px;
+        border-radius: 50%;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .speed-btn.selected {
+        background-color: white;
+        color: blue;
+    }
+
+    .speed-btn:hover {
+        opacity: 0.8;
+    }
+
+    .collection-summary-submission-status {
+        position: absolute;
+        width: 50%;
+        height: 25px;
+        left: 10px;
+        bottom: 3%;
+        z-index: 100;
+    }
 }

@@ -8,14 +8,14 @@ const DinamicMenuLayout = ({
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <div className="desktop-menu-layout">
-      <div className="desktop-menu">
+      <>
         <DextopMenu />
-      </div>
+      </>
       <div className="menu-page-wrap">
         <div className="page-wrap">{children}</div>
-        <div className="mobile-menu">
-          <Menu />
-        </div>
+      </div>
+      <div className="mobile-menu">
+        <Menu />
       </div>
     </div>
   );

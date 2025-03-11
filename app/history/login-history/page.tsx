@@ -1,35 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { Menu, AppHeader } from '@/components';
-import { historyData } from "@/redux/slices/appConfig";
-import { useSelector } from "react-redux";
+import useGetDeviceInfo from '@/hooks/useGetDeviceInfo';
+import DesktopHistory from '../desktopPage';
+import MobileHistory from './mobile';
 
-const LoginHistory = () => {
-  const loginData = useSelector(historyData);
-  const [loginDataLog] = useState(loginData?.checkinstatus);
+function LoginHistoryPage() {
+    const device = useGetDeviceInfo();
 
-  return (
-    <div className="container">
-      <AppHeader title="History" />
-      <br /> <br />
-      <p className="login-history-title">Dates you Logged In</p>
-      <div className="login-history-container">
+    return (
+        <div>
+            {device?.screenWidth > 700 ? <DesktopHistory /> : <MobileHistory />}
+        </div>
+    );
+}
 
-        {loginDataLog?.length > 0 ?
-          loginDataLog?.map((data: any, index: number) => (
-            <p key={index} className='bac-test-items'>{data?.checkindate}</p>
-          ))
-          :
-          <p>No data available at the moment</p>
-        }
-      </div>
-      <div className='menu-wrapper-style'>
-        <Menu />
-      </div>
-
-    </div>
-  );
-};
-
-export default LoginHistory;
+export default LoginHistoryPage;

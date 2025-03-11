@@ -135,3 +135,11 @@
 .history-search {
     max-width: 22.25rem;
 }
+
+
+@media screen and (max-width: 840px) {
+    .search-filter-upload {
+        flex-direction: column!important;
+        gap: 16px;
+    }
+}

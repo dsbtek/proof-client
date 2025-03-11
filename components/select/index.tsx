@@ -28,7 +28,7 @@ const customStyles: StylesConfig<Option, false> = {
   control: (base, state) => ({
     ...base,
     border: "1px",
-    // boxShadow: "10px 10px 50px 0px #0000000D",
+    boxShadow: "none",
     // borderRadius: "8px",
     borderRadius: 0,
     borderBottom: "2px solid rgba(234, 238, 245, 1)",
@@ -72,7 +72,7 @@ const customStyles: StylesConfig<Option, false> = {
   }),
 };
 
-const SelectComponent: React.FC<SelectProps> = ({
+const SelectComponent = ({
   className,
   disabled,
   link,
@@ -82,7 +82,7 @@ const SelectComponent: React.FC<SelectProps> = ({
   name,
   value,
   onChange,
-}) => {
+}: SelectProps) => {
   return (
     <Select
       classNamePrefix="react-select"

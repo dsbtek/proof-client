@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
     // Extract searchParams from the URL
     const { searchParams } = new URL(req.url);
     const key: RedisKey = searchParams.get('participantId') as RedisKey;
-    console.log("key", key)
     try {
         // Fetch value from Redis using the key
         const value = await redis.get(key);

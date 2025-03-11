@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./SearchInput.css"; // Assuming you're using CSS Modules or a global CSS file
 import { FiSearch } from "react-icons/fi";
 

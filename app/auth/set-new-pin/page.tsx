@@ -6,9 +6,10 @@ import Image from "next/image";
 import { Formik, Form } from 'formik';
 import { useRouter } from "next/navigation";
 
-import { TextField, Button, HeaderText, AppHeader } from "@/components";
+import { TextField, Button, HeaderText, AppHeader, Header } from "@/components";
 import { setPinSchema } from "@/utils/validations";
 import { toast } from "react-toastify";
+import { IoChevronBackOutline } from "react-icons/io5";
 
 interface SetNewPinType {
     pin: number | string;
@@ -52,7 +53,7 @@ function SetNewPin() {
         <div className="desktop-wrap">
             <div className="container">
                 <div className="items-wrap">
-                    <AppHeader title='' />
+                    <Header title='' icon1={<IoChevronBackOutline />} hasMute={false} />
                     <HeaderText
                         title={"Reset PIN"}
                         text={"Verification complete. Please enter your new PIN code."}
@@ -72,7 +73,7 @@ function SetNewPin() {
                                             placeholder="OTP Code"
                                             value={values.pin}
                                             startIcon={
-                                                <Image src="/icons/lock.svg" alt="image" width={24} height={24} loading='lazy' />
+                                                <Image src="/icons/pin-icon.svg" alt="image" width={24} height={24} loading='lazy' />
                                             }
                                             endIcon={true}
                                             name="pin"
@@ -85,7 +86,7 @@ function SetNewPin() {
                                             placeholder="New Pin"
                                             value={values.confirm_pin}
                                             startIcon={
-                                                <Image src="/icons/lock.svg" alt="proof image" width={24} height={24} loading='lazy' />
+                                                <Image src="/icons/pin-icon.svg" alt="proof image" width={24} height={24} loading='lazy' />
                                             }
                                             endIcon={true}
                                             name="confirm_pin"

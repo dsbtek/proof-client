@@ -6,8 +6,15 @@ import Image from "next/image";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 import { appData } from "@/redux/slices/appConfig";
-import { AppHeader, Button, DinamicMenuLayout, Setting } from "@/components";
+import {
+  AppHeader,
+  Button,
+  DinamicMenuLayout,
+  Header,
+  Support_,
+} from "@/components";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import { GoArrowLeft } from "react-icons/go";
 
 function Support() {
   const [FAQs, setFAQs] = useState([]);
@@ -57,8 +64,10 @@ function Support() {
 
   return (
     <DinamicMenuLayout>
-      <div className="tutorial-container support-container">
-        {device?.screenWidth < 700 && <AppHeader title="SUPPORT" />}
+      <div className="tutorial-container support-container scroller-test">
+        {device?.screenWidth < 700 && (
+          <Header title="SUPPORT" icon1={<GoArrowLeft />} hasMute={false} />
+        )}
         <div className="dex-only title-sub-container">
           <h4 className="set-sec-title">Customer Support</h4>
           <p className="settings-title-subtext">
@@ -68,56 +77,72 @@ function Support() {
         </div>
         <div className="support-content">
           <section className="support-section">
-            <Image
-              className="dex-only"
-              src="/icons/billing.svg"
-              alt="billing"
-              width={50}
-              height={50}
-              loading="lazy"
-            />
-            <h4>Billing</h4>
-            <Setting tel="757-987-9800-Ext 1" title="757-987-9800-Ext 1" />
-            <Setting
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                height: "56px",
+                width: "100%",
+                gap: "8px",
+                backgroundColor: "#FFFFFF",
+                padding: "16px",
+                borderRadius: "16px",
+              }}
+            >
+              <Image
+                className="dex-only"
+                src="/icons/billing.svg"
+                alt="billing"
+                width={50}
+                height={50}
+                loading="lazy"
+              />
+              <h4>Billing</h4>
+            </div>
+
+            <Support_ tel="757-987-9800-Ext 1" title="757-987-9800-Ext 1" />
+            <Support_
               email="billing@recoverytrek.com"
               title="billing@recoverytrek.com"
             />
           </section>
           <section className="support-section">
-            <Image
-              className="dex-only"
-              src="/icons/drug_test.svg"
-              alt="drug test"
-              width={50}
-              height={50}
-              loading="lazy"
-            />
-            <h4>Drug Testing, Collection Site</h4>
-            <Setting tel="757-987-9800" title="757-987-9800" />
-            <Setting
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                height: "56px",
+                width: "100%",
+                gap: "8px",
+                backgroundColor: "#FFFFFF",
+                padding: "16px",
+                borderRadius: "16px",
+              }}
+            >
+              <Image
+                className="dex-only"
+                src="/icons/drug_test.svg"
+                alt="drug test"
+                width={50}
+                height={50}
+                loading="lazy"
+              />
+              <h4>Drug Testing, Collection Site</h4>
+            </div>
+            <Support_ tel="757-987-9800" title="757-987-9800" />
+            <Support_
               email="greatsupport@recoverytrek.com"
               title="greatsupport@recoverytrek.com"
             />
           </section>
-          {/* <section className="support-section">
-            <Image
-              className="dex-only"
-              src="/icons/feedback.svg"
-              alt="feedback"
-              width={50}
-              height={50}
-              loading="lazy"
-            />
-            <h4>Proof</h4>
-
-            <Setting
-              email="greatsupport@recoverytrek.com"
-              title="Send Feedback"
-            />
-          </section> */}
         </div>
         {FAQs.length > 0 ? (
-          <div className="" style={{ marginTop: "24px", width: "100%", overflow: "hidden" }}>
+          <div
+            className=""
+            style={{ marginTop: "24px", width: "100%" /*overflow: "hidden"*/ }}
+          >
             <h3 className="set-text">
               FAQs{" "}
               <span className="set-label">
@@ -130,11 +155,11 @@ function Support() {
                   <article
                     className="faq"
                     key={index}
-                    style={
-                      showFAQ && activeTab == index
-                        ? { borderBottom: "1px solid #009CF9" }
-                        : { borderBottom: "1px solid #EAEAEA" }
-                    }
+                    // style={
+                    //   showFAQ && activeTab == index
+                    //     ? { borderBottom: "1px solid #009CF9" }
+                    //     : { borderBottom: "1px solid #EAEAEA" }
+                    // }
                   >
                     <header className="faq-header" onClick={toggleInfo(index)}>
                       <h6 className="faq-title" onClick={toggleInfo(index)}>

@@ -6,13 +6,23 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 
-import { AppHeader, Button, DinamicMenuLayout, Switch } from "@/components";
+import {
+  AppHeader,
+  Button,
+  CheckBoxSwitch,
+  DinamicMenuLayout,
+  Header,
+  Switch,
+} from "@/components";
 import { setCookie } from "@/utils/utils";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import { appData } from "@/redux/slices/appConfig";
+import { GoArrowLeft } from "react-icons/go";
 
 function ApplicationSettings() {
   const welcomeCookie = Cookies.get("welView");
+  const [isGridView, setIsGridView] = useState(false);
+  const [isListView, setIsListView] = useState(false);
   const [checked, setChecked] = useState(
     welcomeCookie === "true" ? true : false
   );
@@ -20,6 +30,17 @@ function ApplicationSettings() {
   const { permissions } = useSelector(appData);
   const appPermissions = permissions ? permissions.split(";") : undefined;
 
+  const handleToggleGridView = () => {
+    setIsGridView(true);
+    setIsListView(false);
+    setChecked(false);
+  };
+
+  const handleToggleListView = () => {
+    setIsListView(true);
+    setIsGridView(false);
+    setChecked(true);
+  };
   const handleSwitch = () => {
     if (welcomeCookie === "false") {
       setCookie("welView", "true", 2000);
@@ -34,11 +55,18 @@ function ApplicationSettings() {
 
   return (
     <DinamicMenuLayout>
-      <div className="tutorial-container application-settings-container ">
+      <div
+        className="tutorial-container application-settings-container "
+        style={{ minHeight: "100%" }}
+      >
         {/* <div className="container"> */}
         {/* <div className="items-wrap"> */}
         {device?.screenWidth < 700 && (
-          <AppHeader title="Application Settings" />
+          <Header
+            title="Application Settings"
+            icon1={<GoArrowLeft />}
+            hasMute={false}
+          />
         )}
         <div className="dex-only back-button" onClick={() => router.back()}>
           <Image
@@ -61,16 +89,26 @@ function ApplicationSettings() {
         <div className="app-toggles">
           <div className="toggle-tutorial">
             <p style={{ width: "80%" }}>Show Welcome Tutorial</p>
-            <Switch onToggle={handleSwitch} checked={checked} />
+            <CheckBoxSwitch
+              onToggle={handleSwitch}
+              checked={checked}
+              showLabel={false}
+            />
           </div>
           {/* <div className="toggle-tutorial">
             <p>Email Notifications</p>
             <Switch onToggle={handleSwitch} checked={checked} />
           </div> */}
         </div>
-        {appPermissions && appPermissions.includes("Admin") && <Button blue onClick={() => router.push('/config')} style={{ marginTop: '50px', width: '10rem', height: '3rem' }}>
-          Configure AI
-        </Button>}
+        {appPermissions && appPermissions.includes("Admin") && (
+          <Button
+            blue
+            onClick={() => router.push("/config")}
+            style={{ marginTop: "50px", width: "10rem", height: "3rem" }}
+          >
+            Configure AI
+          </Button>
+        )}
       </div>
     </DinamicMenuLayout>
   );

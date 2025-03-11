@@ -117,7 +117,7 @@ const DatePicker = ({ title, date, onDateSelect }: Callendar) => {
   }, [isDatePickerVisible]);
 
   return (
-    <div className="date-picker-container">
+    <div className="date-picker-container" style={{ position: "relative" }}>
       <DatePickerBtn
         ref={buttonRef}
         onClick={toggleCallendarView}

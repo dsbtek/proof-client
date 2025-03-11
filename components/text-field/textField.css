@@ -1,6 +1,6 @@
 .input-container {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     width: 100%;
 }
 
@@ -26,7 +26,7 @@
 }
 
 .start-icon {
-    left: 5px;
+    left: 16px;
 }
 
 .end-icon {
@@ -36,12 +36,14 @@
 
 .app-input {
     background-color: #ffffff;
-    height: 50px;
+    height: 64px;
     width: 100%;
     border: 1px solid #e3e6eb;
     border-radius: 12px;
     border-bottom: 2px solid rgba(234, 238, 245, 1);
     box-sizing: border-box;
+    padding-left: 8px;
+    font-size: 16px;
 }
 
 .app-input:focus {
@@ -51,6 +53,7 @@
 
 @media (min-width: 700px) {
     .app-input {
-        background-color: transparent;
+        background-color: #ffffff;
+        font-size: 16px;
     }
 }

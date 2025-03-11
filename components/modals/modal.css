@@ -6,7 +6,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 9990;
+    z-index: 9999;
     width: 100%;
     height: 100%;
     max-width: 100vw;
@@ -108,7 +108,9 @@
 .history-modal {
     background-color: #ffffff;
     width: 416px;
-    min-height: 676px;
+    /* min-height: 676px; */
+    max-height: 100dvh;
+    overflow-y: scroll;
     border-radius: 16px;
     padding: 24px;
     display: flex;
@@ -180,11 +182,12 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 30rem;
+    width: 100%;
     max-width: 80%!important;
-    padding: 16px;
+    padding: 32px;
     background: #ffffff;
     border-radius: 8px;
+    text-align: center;
 }
 
 .mfa-form {
@@ -195,12 +198,29 @@
     display: none!important;
 }
 
+#data-capture-view{
+    height: 100%;
+}
+
+
+
+.scandit-paintboard .scandit-control-widget-camera {
+    z-index: 1000!important;
+}
+/* .whenIdScan.scandit-paintboard canvas{
+    display: none!important;
+}
+.whenNotIdScan.scandit-paintboard canvas{
+    display: flex!important;
+} */
+
 .box{
     position: relative;
-    width: 70%;     /* desired width */
+    width: 85%;     /* desired width */
     /* left: 15%; */
-    top: 35px;
+    /* top: 35px; */
 }
+
 .box:before{
     content: "";
     display: block;
@@ -213,11 +233,17 @@
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 9999;
+    z-index: 800;
     border: 1px solid #00f964;
     border-radius: 12px
 
 }
+
+.fedex{
+    width: 100%;
+    min-height: 200px
+}
+
 @media screen and (min-width: 700px) {
     .bc-content {
         padding: 8px;

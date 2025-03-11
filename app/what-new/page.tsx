@@ -1,5 +1,11 @@
 "use client";
-import { Menu, AppHeader, Button, DinamicMenuLayout } from "@/components";
+import {
+  Menu,
+  AppHeader,
+  Button,
+  DinamicMenuLayout,
+  Header,
+} from "@/components";
 import { appData } from "@/redux/slices/appConfig";
 import { useMemo, useState } from "react";
 
@@ -7,6 +13,7 @@ import { useSelector } from "react-redux";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import dynamic from "next/dynamic";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { GoArrowLeft } from "react-icons/go";
 
 const WhatNew = () => {
   const whatNewData = useSelector(appData);
@@ -35,7 +42,10 @@ const WhatNew = () => {
 
   return (
     <DinamicMenuLayout>
-      <div className="tutorial-container what-new-container">
+      <div
+        className="tutorial-container what-new-container"
+        style={{ minHeight: "100%" }}
+      >
         {device?.screenWidth > 700 ? (
           <div className="what-new-dxtp-header">
             <h1 className="set-sec-title">What&apos;s New</h1>
@@ -45,7 +55,7 @@ const WhatNew = () => {
             </p>
           </div>
         ) : (
-          <AppHeader title={"What`s New"} />
+          <Header title="What's New" icon1={<GoArrowLeft />} hasMute={false} />
         )}
         <br /> <br />
         <div

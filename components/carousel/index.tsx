@@ -26,34 +26,43 @@ function Carousel() {
     }
   };
   return (
-    <div className="carousel">
-      {welcomeData.map(
-        (data, index) =>
-          index === idx && (
-            <CarouselCard
+    <div
+      className="carousel"
+      style={{ overflowY: "auto", overflowX: "hidden" }}
+    >
+      <div style={{ height: "fit-content", minHeight: "10px" }}>
+        {welcomeData.map(
+          (data, index) =>
+            index === idx && (
+              <CarouselCard
+                key={index}
+                image={
+                  !isDesktop && idx === 1
+                    ? "/icons/phone-icon.svg"
+                    : data.imgUri
+                }
+                title={data.title}
+                texts={data.texts}
+              />
+            )
+        )}
+        <div className="pagination">
+          <button className="page-btn" onClick={handleLeftClick}>
+            <IoIosArrowBack size={16} color="#0c1617" />
+          </button>
+          {welcomeData.map((_, index) => (
+            <div
+              className={idx === index ? "active-dot_" : "dot"}
               key={index}
-              image={!isDesktop && idx === 1 ? "/icons/phone-icon.svg" : data.imgUri}
-              title={data.title}
-              texts={data.texts}
-            />
-          )
-      )}
-      <div className="pagination">
-        <button className="page-btn" onClick={handleLeftClick}>
-          <IoIosArrowBack size={16} color="#0c1617" />
-        </button>
-        {welcomeData.map((_, index) => (
-          <div
-            className={idx === index ? "active-dot_" : "dot"}
-            key={index}
-            onClick={() => setIndex(index)}
-          >
-            {""}
-          </div>
-        ))}
-        <button className="page-btn" onClick={handleRightClick}>
-          <IoIosArrowForward size={16} color="#0c1617" />
-        </button>
+              onClick={() => setIndex(index)}
+            >
+              {""}
+            </div>
+          ))}
+          <button className="page-btn" onClick={handleRightClick}>
+            <IoIosArrowForward size={16} color="#0c1617" />
+          </button>
+        </div>
       </div>
     </div>
   );

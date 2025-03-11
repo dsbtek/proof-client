@@ -117,7 +117,10 @@ const ProofPassUploadDesktop = () => {
 
   return (
     <div className="proofpass-upload-container">
-      <AgreementHeader title="PROOFpass Upload" />
+      {/* <AgreementHeader title="PROOFpass Upload" /> */}
+      <div style={{ height: "100px", width: "100%" }}>
+        <AppHeader title="PROOFpass Upload" hasMute={false} />
+      </div>
       <br />
       {!uploadFlag && (
         <div className="form-wrap">

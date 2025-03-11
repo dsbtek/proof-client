@@ -3,12 +3,14 @@
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { setCookie } from "@/utils/utils";
-
+import { appData } from "@/redux/slices/appConfig";
 import WelcomeScreenDesktop from "./welcome-screen/desktop"
 import WelcomeScreenMobile from "./welcome-screen/mobile"
 import useResponsive from "@/hooks/useResponsive";
+import { useSelector } from "react-redux";
 
 function Welcome() {
+  const { PROOF_Home_Message, PROOF_Home_Logo } = useSelector(appData);
   const isDesktop = useResponsive();
   const welcomeCookie = Cookies.get("welView");
   const tokenCookie = Cookies.get("token");
@@ -33,12 +35,16 @@ function Welcome() {
           handleSwitch={handleSwitch}
           tokenCookie={tokenCookie}
           checked={checked}
+          welcomeMsg={PROOF_Home_Message}
+          welcomeLogo={PROOF_Home_Logo}
         />
         :
         <WelcomeScreenMobile
           handleSwitch={handleSwitch}
           tokenCookie={tokenCookie}
-          checked={checked} 
+          checked={checked}
+          welcomeMsg={PROOF_Home_Message}
+          welcomeLogo={PROOF_Home_Logo}
         />
       }
 

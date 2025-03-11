@@ -1,8 +1,7 @@
-'use client'
+"use client";
 import React from "react";
 import { Button } from "@/components";
 import Link from "next/link";
-
 
 interface AgreementFooterProps {
   onPagination: boolean;
@@ -12,8 +11,8 @@ interface AgreementFooterProps {
   onClickBtnRightAction?: () => void;
   currentNumber?: number;
   outOf?: number;
-  btnLeftLink?: string; // Optional link
-  btnRightLink?: string; // Optional link
+  btnLeftLink?: string;
+  btnRightLink?: string;
   btnLeftText?: string;
   btnRightText?: string;
   leftdisabled?: boolean;
@@ -38,47 +37,49 @@ const AgreementFooter = ({
   return (
     <div className="agreement-footer-container">
       <div className="btn-left">
-        {onLeftButton && btnLeftLink != '' ? (
-          <Link href={btnLeftLink ?? ''}>
-            <Button
-              classname="decline-btn"
-              onClick={onClickBtnLeftAction}
-              disabled={leftdisabled}
-            >{btnLeftText ?? ''}</Button>
-          </Link>
-        ) : (
-          onLeftButton && (
+        {onLeftButton && btnLeftLink != "" ? (
+          <Link href={btnLeftLink ?? ""}>
             <Button
               classname="decline-btn"
               onClick={onClickBtnLeftAction}
               disabled={leftdisabled}
             >
-              {btnLeftText ?? ''}
+              {btnLeftText ?? ""}
             </Button>
-          )
-
+          </Link>
+        ) : onLeftButton ? (
+          <Button
+            classname="decline-btn"
+            onClick={onClickBtnLeftAction}
+            disabled={leftdisabled}
+          >
+            {btnLeftText ?? ""}
+          </Button>
+        ) : (
+          <div style={{ width: "90px" }}></div>
         )}
       </div>
-
 
       <div className="paginate">
         {onPagination && (
           <div className="agreement-pagination">
-            <div>{currentNumber}</div> <div>of</div> <div>{outOf}</div>
+            <div style={{ whiteSpace: "nowrap" }}>{currentNumber}</div>
+            &nbsp;
+            <div>of</div>&nbsp;
+            <div>{outOf}</div>
           </div>
         )}
       </div>
 
-
       <div className="btn-right">
-        {onRightButton && btnRightLink != '' ? (
-          <Link href={btnRightLink ?? ''}>
+        {onRightButton && btnRightLink != "" ? (
+          <Link href={btnRightLink ?? ""}>
             <Button
               classname="accepted-btn"
               onClick={onClickBtnRightAction}
               disabled={rightdisabled}
             >
-              {btnRightText ?? ''}
+              {btnRightText ?? ""}
             </Button>
           </Link>
         ) : (
@@ -88,12 +89,11 @@ const AgreementFooter = ({
               onClick={onClickBtnRightAction}
               disabled={rightdisabled}
             >
-              {btnRightText ?? ''}
+              {btnRightText ?? ""}
             </Button>
           )
         )}
       </div>
-
     </div>
   );
 };

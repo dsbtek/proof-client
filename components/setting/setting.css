@@ -1,8 +1,14 @@
 .setting {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 100%;
+    padding: 16px;
+    height: 56px;
+    gap: 8px;
+    border: 1px solid #E3E6EB;
+    border-radius: 16px;
+    cursor:pointer
 }
 
 .set-con {
@@ -10,4 +16,20 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    padding: 16px;
+    height: 56px;
+    width: 100%;
+    border-radius: 16px
+}
+.set-con_ {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 16px;
+    height: 56px;
+    width: 100%;
+    gap: 8px;
+    border: 1px solid #E3E6EB;
+    border-radius: 16px
 }

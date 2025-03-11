@@ -3,8 +3,9 @@
     flex-direction: column;
     gap: 16px;
     padding: 18px;
-    height: 100%;
+    height: 90%;
     width: 100%;
+    overflow: auto;
 }
 
 .welcomeScreenHeader {
@@ -15,8 +16,8 @@
 }
 
 .welcomeScreenText {
-    font-weight: 400px;
-    font-size: 14px;
+    font-weight: 400;
+    font-size: 0.9rem;
     line-height: 22px;
     color: #4e555d;
 }
@@ -72,16 +73,17 @@
     }
 
     .welcomeScreenText {
-        font-size: 18px;
+        font-size: 1rem;
+        font-weight: 400;
     }
     .welcomeScreenNextBtn {
         width: 114px;
     }
     .welcomeScreenPrLogo {
         display: block;
-        position: absolute;
-        top: 36px;
-        left: 2px;
+        /* position: absolute; */
+        /* top: 36px; */
+        /* left: 24px; */
         width: 80px;
         height: 80px;
     }

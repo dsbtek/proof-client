@@ -107,6 +107,7 @@ const PipDocTypeSelect = ({ pipStep, isVisible, onClose }: IPipLoader) => {
             color: "#FFFFFF",
             border: "none",
           }}
+          disabled={!docType}
           onClick={onClose}
         >
           Continue

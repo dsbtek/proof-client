@@ -1,29 +1,37 @@
 import { NextResponse, type NextRequest } from "next/server";
 import Twilio from "twilio";
 
-import axios from "@/utils/axios";
-
-// Get Tutorials Route: facilitates fetching tutorials
 export async function POST(request: NextRequest) {
   const client = Twilio(
     process.env.NEXT_TWILIO_ACCOUNTSID as string,
     process.env.NEXT_TWILIO_AUTHTOKEN as string
   );
 
-  const { phoneNumber, code } = await request.json();
   const VERIFY_SERVICE_SID = process.env.NEXT_VERIFY_SERVICE_SID;
+
   try {
-    await client.verify.v2
+    const { phoneNumber, code } = await request.json();
+
+    if (!phoneNumber || !code) {
+      return NextResponse.json(
+        { error: "Phone number and code are required" },
+        { status: 400 }
+      );
+    }
+
+    const response = await client.verify.v2
       .services(VERIFY_SERVICE_SID as string)
-      .verificationChecks.create({ to: phoneNumber, code })
-      .then((res) => {
-        return NextResponse.json({ data: res }, { status: 200 });
-      })
-      .catch((error) => {
-        return NextResponse.error();
+      .verificationChecks.create({
+        to: phoneNumber,
+        code,
       });
+
+    return NextResponse.json({ data: response }, { status: 200 });
   } catch (error: any) {
-    console.error(error.response?.data?.msg);
-    return NextResponse.error();
+    console.error("Verification failed:", error);
+    return NextResponse.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

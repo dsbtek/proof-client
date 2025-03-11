@@ -40,7 +40,7 @@ const Tutorial = () => {
     "https://proof-drug-tutorial.s3.amazonaws.com/AppTutorial/Video Tutorial/Player.png"
   );
   const [isGridView, setIsGridView] = useState(false);
-  const [isListView, setIsListView] = useState(false);
+  const [isListView, setIsListView] = useState(true);
   const tokenCookie = Cookies.get("token");
   const isDesktop = useResponsive();
 
@@ -59,13 +59,13 @@ const Tutorial = () => {
   const handleToggleGridView = () => {
     setIsGridView(true);
     setIsListView(false);
-    setChecked(false);
+    // setChecked(false);
   };
 
   const handleToggleListView = () => {
     setIsListView(true);
     setIsGridView(false);
-    setChecked(true);
+    // setChecked(true);
   };
 
   const handleSwitch = () => {
@@ -155,22 +155,29 @@ const Tutorial = () => {
               }
             />
             <div className="switch-wrap">
-              <p className="instruction">Select the Tutorial:</p>
-              <Switch onToggle={handleSwitch} showLabel checked={checked} />
+              {/* <p className="instruction">Select the Tutorial:</p> */}
+              <Switch
+                onToggleGridView={handleToggleGridView}
+                onToggleListView={handleToggleListView}
+                switchGridView={isGridView}
+                switchListView={isListView}
+              />
             </div>
           </>
         ) : (
           <DesktopSwitch
-            title="Quick & Easy"
-            description="Ready to Launch Proof Tutorials? Afterwards you can start your Proof Test."
-            onToggleGridView={handleToggleGridView}
-            onToggleListView={handleToggleListView}
-          />
+              title="Quick & Easy"
+              description="Ready to Launch Proof Tutorials? Afterwards you can start your Proof Test."
+              onToggleGridView={handleToggleGridView}
+              onToggleListView={handleToggleListView} 
+              switchGridView={isGridView}
+              switchListView={isListView}          
+            />
         )}
 
         <div className="tutorial-main">
-          {checked ? (
-            <div className="sub-wrap-grid">
+          {isGridView ? (
+            <div className="sub-wrap-grid_tutorial what-new-scroller">
               {!isLoading &&
                 tutorial.app_tutorial !== undefined &&
                 tutorial.app_tutorial
@@ -206,7 +213,7 @@ const Tutorial = () => {
                 )}
             </div>
           ) : (
-            <div className="sub-wrap">
+              <div className="sub-wrap_tutorial what-new-scroller">
               {!isLoading &&
                 tutorial.app_tutorial !== undefined &&
                 tutorial.app_tutorial

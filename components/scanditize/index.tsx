@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { FiEdit } from "react-icons/fi";
 import { TbCapture } from "react-icons/tb";
@@ -10,7 +10,6 @@ import * as SDCBarcode from "scandit-web-datacapture-barcode";
 import Webcam from "react-webcam";
 
 import "../modals/modal.css";
-import Button from "../button";
 import Loader from "../loaders/loader";
 import {
   saveBarcode,
@@ -23,36 +22,61 @@ import { toast } from "react-toastify";
 import { parseAamvaData } from "@/utils/utils";
 import { Loader_ } from "..";
 import useResponsive from "@/hooks/useResponsive";
+import Image from "next/image";
+import ModalScanner from "./views/ModalPackageScanner";
+import DLScanner from "./views/DLScanner";
+import BarcodeScanner from "./views/BarcodeScanner";
 
 const licenseKey = process.env.NEXT_PUBLIC_SCANDIT_KEY;
 
 interface BarcodeCaptureProps {
   show: boolean;
-  barcodeUploaded: boolean | undefined;
-  step?: number;
-  totalSteps?: number;
+  barcodeUploaded?: boolean | undefined;
   scanType: string;
-  recapture(): void;
+  recapture: boolean;
   closeModal(): void;
   onBarcodeScan?(data: string): void;
+  isUsedInModal?: boolean;
+  manualBtn?: boolean;
+  revealScanDetailsInScanner?: boolean;
+  barcode?: string;
+  setBarcode?: React.Dispatch<React.SetStateAction<string>>;
+  captureImageFn?(): void;
+  capturedImage?: HTMLImageElement | null;
+  setEnterManual?: React.Dispatch<React.SetStateAction<boolean>>;
+  qrScan?: boolean;
+  close?: boolean;
+  manualImageCaptureTimer?: number;
+  startManualCaptureFn?: (timeLimit: number) => Promise<void>;
 }
 
 function ScanditScannner({
   show,
-  barcodeUploaded,
-  step,
-  totalSteps,
   scanType,
-  recapture,
+  recapture = false,
   closeModal,
   onBarcodeScan,
+  isUsedInModal = false,
+  manualBtn = true,
+  revealScanDetailsInScanner = true,
+  captureImageFn,
+  capturedImage,
+  setEnterManual,
+  qrScan,
+  close,
+  manualImageCaptureTimer,
+  startManualCaptureFn,
 }: BarcodeCaptureProps) {
   const [enterBarcode, setEnterBarcode] = useState(false);
-  const [scannerLoad, setScannerLoad] = useState(false);
-  const [barcodeValue, setBarcodeValue] = useState("");
-  const [barcode, setBarcode] = useState<string | Record<string, any>>("");
-  const cameraRef = useRef<Webcam | null>(null);
+  const [scannerLoading, setScannerLoading] = useState(false);
+  const [canStartScan, setCanStartScan] = useState(false);
 
+  const [barcode, setBarcode] = useState<string | Record<string, any>>("");
+  const contextRef = useRef<SDCCore.DataCaptureContext | null>(null);
+  const settingsRef = useRef<SDCBarcode.BarcodeCaptureSettings | null>(null);
+  const cameraRef = useRef<SDCCore.Camera | null>(null);
+  const barcodeCaptureContext = useRef<SDCBarcode.BarcodeCapture | null>(null);
+  const viewRef = useRef<SDCCore.DataCaptureView | null>(null);
   const dispatch = useDispatch();
   const isDesktop = useResponsive();
 
@@ -64,12 +88,14 @@ function ScanditScannner({
     scanType === "fedex" && dispatch(setTrackingNumber(barcode as string));
     scanType === "kit" && dispatch(setBarcodeKit(barcode as string));
     scanType === "detect" && dispatch(setDetectKit(barcode as string));
+    setEnterManual && setEnterManual(false);
     closeModal();
   };
 
-  const barcodeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSaveManually = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    await startManualCaptureFn?.(5);
     const barcodeInput = e.target.value;
-    setBarcodeValue(barcodeInput);
+    setBarcode(barcodeInput);
     scanType === "test" && dispatch(saveBarcode(barcodeInput));
     scanType === "fedex" && dispatch(setTrackingNumber(barcodeInput));
     scanType === "kit" && dispatch(setBarcodeKit(barcodeInput));
@@ -77,76 +103,15 @@ function ScanditScannner({
   };
 
   const runScanner = useCallback(async () => {
-    setScannerLoad(true);
-
-    await SDCCore.configure({
-      licenseKey: licenseKey as string,
-      libraryLocation:
-        "https://cdn.jsdelivr.net/npm/scandit-web-datacapture-barcode@6.x/build/engine/",
-      moduleLoaders: [SDCBarcode.barcodeCaptureLoader()],
-    });
-
-    const context = await SDCCore.DataCaptureContext.create();
-    const cameraSettings = SDCBarcode.BarcodeCapture.recommendedCameraSettings;
-
-    const camera = SDCCore.Camera.default;
-    if (camera) {
-      await camera.applySettings(cameraSettings);
-    }
-    await context.setFrameSource(camera);
-    const settings = new SDCBarcode.BarcodeCaptureSettings();
-    const generalScanner = [
-      SDCBarcode.Symbology.Code128,
-      SDCBarcode.Symbology.Aztec,
-      SDCBarcode.Symbology.PDF417,
-      SDCBarcode.Symbology.Code39,
-      SDCBarcode.Symbology.Code32,
-      SDCBarcode.Symbology.Lapa4SC,
-      SDCBarcode.Symbology.USPSIntelligentMail,
-      SDCBarcode.Symbology.QR,
-      SDCBarcode.Symbology.MicroQR,
-      SDCBarcode.Symbology.EAN8,
-      SDCBarcode.Symbology.UPCE,
-      SDCBarcode.Symbology.EAN13UPCA,
-      SDCBarcode.Symbology.Code11,
-      SDCBarcode.Symbology.Code25,
-      SDCBarcode.Symbology.Code93,
-      SDCBarcode.Symbology.Codabar,
-      SDCBarcode.Symbology.InterleavedTwoOfFive,
-      SDCBarcode.Symbology.MSIPlessey,
-      SDCBarcode.Symbology.MaxiCode,
-      SDCBarcode.Symbology.DataMatrix,
-      SDCBarcode.Symbology.DotCode,
-      SDCBarcode.Symbology.RM4SCC,
-      SDCBarcode.Symbology.KIX,
-      SDCBarcode.Symbology.GS1Databar,
-      SDCBarcode.Symbology.GS1DatabarExpanded,
-      SDCBarcode.Symbology.GS1DatabarLimited,
-      SDCBarcode.Symbology.MicroPDF417,
-      SDCBarcode.Symbology.IATATwoOfFive,
-      SDCBarcode.Symbology.MatrixTwoOfFive,
-    ];
-    settings.enableSymbologies(
-      scanType === "id"
-        ? [SDCBarcode.Symbology.PDF417]
-        : scanType === "fedex"
-        ? [SDCBarcode.Symbology.Code128]
-        : generalScanner
-    );
-
-    const symbologySetting = settings.settingsForSymbology(
-      SDCBarcode.Symbology.Code39
-    );
-    symbologySetting.activeSymbolCounts = [
-      7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    ];
+    setScannerLoading(true);
 
     const barcodeCapture = await SDCBarcode.BarcodeCapture.forContext(
-      context,
-      settings
+      contextRef.current!,
+      settingsRef.current! as SDCBarcode.BarcodeCaptureSettings
     );
-    await barcodeCapture.setEnabled(false);
 
+    await barcodeCapture.setEnabled(false);
+    // to-do
     barcodeCapture.addListener({
       didScan: async (barcodeCapture, session) => {
         await barcodeCapture.setEnabled(false);
@@ -156,8 +121,8 @@ function ScanditScannner({
         );
 
         if (scanType === "id" && symbology.readableName === "PDF417") {
-          console.log(barcode!.data);
           const idData: any = parseAamvaData(barcode!.data);
+          console.log(idData, "data");
           const idDetails = {
             first_name: idData["First Name"],
             last_name: idData["Last Name"],
@@ -180,156 +145,226 @@ function ScanditScannner({
           );
         } else {
           setBarcode(barcode!.data!);
+          captureImageFn && captureImageFn();
         }
 
-        // Check if onBarcodeScan function is provided
         if (onBarcodeScan) {
           onBarcodeScan(barcode!.data!);
+          captureImageFn && captureImageFn();
         }
 
         await barcodeCapture.setEnabled(false);
-        await camera.switchToDesiredState(SDCCore.FrameSourceState.Off);
+        await cameraRef.current?.switchToDesiredState(
+          SDCCore.FrameSourceState.Off
+        );
       },
     });
 
-    const view = await SDCCore.DataCaptureView.forContext(context);
+    // create view by passing in context and attach element
+    const view = await SDCCore.DataCaptureView.forContext(contextRef.current);
     view.connectToElement(
       document?.getElementById("data-capture-view") as HTMLElement
     );
     view.addControl(new SDCCore.CameraSwitchControl());
+    if (view) {
+      viewRef.current = view;
+    }
 
+    // baarcode capture overlay
     const barcodeCaptureOverlay =
       await SDCBarcode.BarcodeCaptureOverlay.withBarcodeCaptureForViewWithStyle(
         barcodeCapture,
         view,
         SDCBarcode.BarcodeCaptureOverlayStyle.Frame
       );
-
     const viewfinder = new SDCCore.RectangularViewfinder(
       SDCCore.RectangularViewfinderStyle.Rounded,
       SDCCore.RectangularViewfinderLineStyle.Light
     );
-
     await barcodeCaptureOverlay.setViewfinder(viewfinder);
-
-    await camera.switchToDesiredState(SDCCore.FrameSourceState.On);
-
+    // on camera and enable capture
+    await cameraRef.current?.switchToDesiredState(SDCCore.FrameSourceState.On);
     await barcodeCapture.setEnabled(true);
 
-    setScannerLoad(false);
+    setScannerLoading(false);
   }, [dispatch, onBarcodeScan, scanType]);
 
+  // initializations
   useEffect(() => {
+    (async () => {
+      console.log("we tried rendering here");
+      await SDCCore.configure({
+        licenseKey: licenseKey as string,
+        libraryLocation:
+          "https://cdn.jsdelivr.net/npm/scandit-web-datacapture-barcode@6.x/build/engine/",
+        moduleLoaders: [SDCBarcode.barcodeCaptureLoader()],
+      });
+
+      const context = await SDCCore.DataCaptureContext.create();
+      if (context) {
+        contextRef.current = context;
+      }
+
+      // Set up the camera with front-facing as the default
+      const camera = qrScan
+        ? SDCCore.Camera.atPosition(SDCCore.CameraPosition.WorldFacing)
+        : SDCCore.Camera.atPosition(SDCCore.CameraPosition.UserFacing);
+      await context.setFrameSource(camera);
+
+      if (camera) {
+        cameraRef.current = camera;
+      }
+
+      const settings = new SDCBarcode.BarcodeCaptureSettings();
+      console.log(settings, "settingss over here...");
+
+      const generalScanner = [
+        SDCBarcode.Symbology.Code128,
+        SDCBarcode.Symbology.Aztec,
+        SDCBarcode.Symbology.PDF417,
+        SDCBarcode.Symbology.Code39,
+        SDCBarcode.Symbology.Code32,
+        SDCBarcode.Symbology.Lapa4SC,
+        SDCBarcode.Symbology.USPSIntelligentMail,
+        SDCBarcode.Symbology.QR,
+        SDCBarcode.Symbology.MicroQR,
+        SDCBarcode.Symbology.EAN8,
+        SDCBarcode.Symbology.UPCE,
+        SDCBarcode.Symbology.EAN13UPCA,
+        SDCBarcode.Symbology.Code11,
+        SDCBarcode.Symbology.Code25,
+        SDCBarcode.Symbology.Code93,
+        SDCBarcode.Symbology.Codabar,
+        SDCBarcode.Symbology.InterleavedTwoOfFive,
+        SDCBarcode.Symbology.MSIPlessey,
+        SDCBarcode.Symbology.MaxiCode,
+        SDCBarcode.Symbology.DataMatrix,
+        SDCBarcode.Symbology.DotCode,
+        SDCBarcode.Symbology.RM4SCC,
+        SDCBarcode.Symbology.KIX,
+        SDCBarcode.Symbology.GS1Databar,
+        SDCBarcode.Symbology.GS1DatabarExpanded,
+        SDCBarcode.Symbology.GS1DatabarLimited,
+        SDCBarcode.Symbology.MicroPDF417,
+        SDCBarcode.Symbology.IATATwoOfFive,
+        SDCBarcode.Symbology.MatrixTwoOfFive,
+      ];
+
+      settings.enableSymbologies(
+        scanType === "id"
+          ? [SDCBarcode.Symbology.PDF417]
+          : scanType === "fedex"
+          ? [SDCBarcode.Symbology.Code128]
+          : generalScanner
+      );
+
+      console.log(settings, "settings");
+      if (settings) {
+        settingsRef.current = settings;
+      }
+      console.log(contextRef, "from here context");
+      console.log(settingsRef, "from here settings");
+      setCanStartScan(true);
+    })();
+  }, [scanType, qrScan]);
+
+  // start scanning
+  useEffect(() => {
+    if (canStartScan) {
+      runScanner().catch((error) => {
+        console.error("Scandit Error:", error);
+        toast.error(error);
+      });
+    }
+  }, [runScanner, show, canStartScan]);
+
+  // restart run scanner
+  const recaptureFn = () => {
     runScanner().catch((error) => {
       console.error("Scandit Error:", error);
       toast.error(error);
     });
-  }, [runScanner, show]);
+  };
 
+  // restart run scanner
+  useEffect(() => {
+    if (recapture) {
+      runScanner().catch((error) => {
+        console.error("Scandit Error:", error);
+        toast.error(error);
+      });
+    }
+  }, [recapture, runScanner]);
+
+  //use effect to close camera, clear context and detach from view
+  useEffect(() => {
+    if (close) {
+      (async () =>
+        await cameraRef.current?.switchToDesiredState(
+          SDCCore.FrameSourceState.Off
+        ))();
+      viewRef.current?.detachFromElement();
+      viewRef.current?.setContext(null);
+      cameraRef.current = null;
+      contextRef.current = null;
+      settingsRef.current = null;
+    }
+  }, [close]);
   return (
-    show && (
-      <div className="barcode-cap-modal">
-        {barcodeUploaded && !enterBarcode && barcode === "" && !isDesktop && (
-          <div className="bc-content">
-            {scanType === "id" && step && totalSteps && (
-              <p className="test-steps">{`Step ${step} of ${totalSteps}`}</p>
-            )}
-            {/* {scanType !== 'id' && <div className='bc-upload-stats'>
-                        <h2 style={{ color: '#24527b' }}></h2>
-                        <Button classname='man-btn' onClick={recapture}>Hide Scanner</Button>
-                    </div>} */}
-          </div>
-        )}
-
-        {barcodeUploaded && !enterBarcode && barcode !== "" && (
-          <div className="bc-content">
-            <p className="test-steps">{`Step ${step} of ${totalSteps}`}</p>
-            <div className="sum-text">
-              <h2 style={{ color: "#24527b" }}>{barcode as string}</h2>
-              <Button classname="td-right" onClick={handleSaveBarcode}>
-                Confirm
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {enterBarcode && (
-          <div className="bc-content">
-            <p className="test-steps">{`Step ${step} of ${totalSteps}`}</p>
-            <div className="sum-text">
-              <h4 style={{ color: "#24527b" }}>
-                Enter Barcode without spaces{" "}
-                <span style={{ color: "red" }}>*</span>
-              </h4>
-              <Button
-                classname="td-right"
-                onClick={handleSaveBarcode}
-                disabled={barcodeValue === "" ? true : false}
-              >
-                Confirm
-              </Button>
-            </div>
-            <input
-              className="bc-input"
-              type="text"
-              placeholder="Enter Barcode or N/A, if no text is present."
-              onChange={barcodeInput}
-            />
-          </div>
-        )}
-        <div className="barcode-cap" style={{ background: "#000000" }}>
-          {scannerLoad && <Loader_ />}
-
-          <div
-            // className="id-card-frame-guide"
-            style={{
-              display: "flex",
-              // alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-              // height: "100%",
-
-              position: "absolute",
-            }}
-          >
-            <div className="box">
-              <div className="content"></div>
-            </div>
-          </div>
-
-          <div id="data-capture-view"></div>
-        </div>
-        {!enterBarcode && (
-          <div
-            className="barcode-btns"
-            style={{ flexDirection: "column", alignItems: "center" }}
-          >
-            <Button
-              classname="cap-btn"
-              onClick={() => {
-                runScanner().catch((error) => {
-                  console.error("Scandit Error:", error);
-                  toast.error(error);
-                });
-              }}
-            >
-              <TbCapture /> Rescan
-            </Button>
-            {scanType !== "id" && (
-              <Button classname="man-btn" onClick={() => setEnterBarcode(true)}>
-                <FiEdit /> Enter Manually
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
-    )
+    show &&
+    (!isUsedInModal ? (
+      scanType === "id" ? (
+        <DLScanner
+          scanType={scanType}
+          recapture={recaptureFn}
+          scannerLoading={scannerLoading}
+          barcode={barcode as string}
+          setBarcode={setBarcode}
+          capturedImage={capturedImage}
+          handleSaveBarcode={handleSaveBarcode}
+        />
+      ) : (
+        <BarcodeScanner
+          scanType={scanType}
+          recapture={recaptureFn}
+          scannerLoading={scannerLoading}
+          revealScanDetailsInScanner={revealScanDetailsInScanner}
+          barcode={barcode as string}
+          setBarcode={setBarcode}
+          capturedImage={capturedImage}
+          handleSaveBarcode={handleSaveBarcode}
+          handleSaveManually={handleSaveManually}
+          enterManually={enterBarcode}
+          setEnterManually={setEnterBarcode}
+        />
+      )
+    ) : (
+      <ModalScanner />
+    ))
   );
 }
 
-const Scannner = dynamic(() => Promise.resolve(ScanditScannner), {
+const arePropsEqual = (
+  prevProps: BarcodeCaptureProps,
+  nextProps: BarcodeCaptureProps
+) => {
+  return (
+    prevProps.show === nextProps.show &&
+    prevProps.scanType === nextProps.scanType &&
+    prevProps.barcode === nextProps.barcode &&
+    prevProps.isUsedInModal === nextProps.isUsedInModal &&
+    prevProps.capturedImage === nextProps.capturedImage &&
+    prevProps.qrScan === nextProps.qrScan &&
+    prevProps.close === nextProps.close &&
+    prevProps.manualImageCaptureTimer === nextProps.manualImageCaptureTimer
+  );
+};
+
+const ScanditScannnerMemoized = React.memo(ScanditScannner, arePropsEqual);
+
+const ScanditScanner = dynamic(() => Promise.resolve(ScanditScannnerMemoized), {
   loading: () => <Loader />,
   ssr: false,
 });
 
-export default Scannner;
+export default ScanditScanner;

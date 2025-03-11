@@ -12,12 +12,14 @@ import {
   Button,
   DinamicMenuLayout,
   ChangePinModal,
+  Header,
 } from "@/components";
 import { logout } from "@/redux/slices/auth";
 import { appData, appDataDump, userIdString } from "@/redux/slices/appConfig";
 import { authToken } from "@/redux/slices/auth";
 import { clearTestData } from "@/redux/slices/drugTest";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
+import { GoArrowLeft } from "react-icons/go";
 
 function Settings() {
   const [showPinModal, setShowPinModal] = useState(false);
@@ -39,9 +41,15 @@ function Settings() {
       <ChangePinModal show={showPinModal} onClick={handleShowModal} />
       <DinamicMenuLayout>
         <div className="settings-container">
-          <div className="personal-information-container">
+          <div className="personal-information-container scroller-test">
             <div className="settings-header">
-              {device?.screenWidth < 700 && <AppHeader title="Settings" />}
+              {device?.screenWidth < 700 && (
+                <Header
+                  title="Settings"
+                  icon1={<GoArrowLeft />}
+                  hasMute={false}
+                />
+              )}
               <Button
                 classname="mobile-only logout-btn"
                 onClick={() => {
@@ -128,6 +136,7 @@ function Settings() {
                 }
                 title="Deactivate My Account"
                 link="https://collectwithproof.com/contact-us"
+                openInNewTab
               />
             </section>
             <section className="mobile-only settings-section">
@@ -192,6 +201,7 @@ function Settings() {
                 }
                 title="Deactivate My Account"
                 link="https://collectwithproof.com/contact-us"
+                openInNewTab
               />
             </section>
             <section className="settings-section">
@@ -224,6 +234,7 @@ function Settings() {
                 }
                 title="Terms and Conditions"
                 link="https://www.recoverytrek.com/terms-of-use"
+                openInNewTab
               />
             </section>
           </div>

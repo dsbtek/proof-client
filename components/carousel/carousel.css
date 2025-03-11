@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 70%;
+    /* height: 70%; */
     width: 100%;
     border-radius: 16px;
     padding-bottom: 19px;
@@ -56,7 +56,7 @@
         align-items: center;
         width: 50%;
         height: 100%;
-        /* padding: 16px; */
+        padding: 94px;
         /* background: linear-gradient(90deg, #0091F9 0%, #00CCFA 100%); */
     }
     /* .active-dot {

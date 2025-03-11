@@ -1,37 +1,45 @@
 import { NextResponse, type NextRequest } from "next/server";
 import Twilio from "twilio";
 import * as Sentry from "@sentry/nextjs";
-import axios from "@/utils/axios";
 
-// Get Tutorials Route: facilitates fetching tutorials
 export async function POST(request: NextRequest) {
   const client = Twilio(
     process.env.NEXT_TWILIO_ACCOUNTSID as string,
     process.env.NEXT_TWILIO_AUTHTOKEN as string
   );
 
-  const { phoneNumber } = await request.json();
   const VERIFY_SERVICE_SID = process.env.NEXT_VERIFY_SERVICE_SID;
-  console.log(VERIFY_SERVICE_SID, "boooody");
+
   try {
-    await client.verify.v2
+    const { phoneNumber } = await request.json();
+    if (!phoneNumber) {
+      return NextResponse.json(
+        { error: "Phone number is required" },
+        { status: 400 }
+      );
+    }
+
+    // Log values for debugging
+    console.log("VERIFY_SERVICE_SID:", VERIFY_SERVICE_SID);
+    console.log("Phone number:", phoneNumber);
+
+    // Send verification code
+    const response = await client.verify.v2
       .services(VERIFY_SERVICE_SID as string)
       .verifications.create({
         to: phoneNumber,
         channel: "sms",
-        locale: "en",
-      })
-      .then((res) => {
-        console.log(res, "sssssssssssssmmmmmsssss");
-        return NextResponse.json({ data: res }, { status: 200 });
-      })
-      .catch((error) => {
-        console.log(error);
-        return NextResponse.error();
       });
+
+    console.log("Verification response:", response);
+    return NextResponse.json({ data: response }, { status: 200 });
   } catch (error: any) {
-    console.error(error.response?.data?.msg);
-    Sentry.captureException(error.response?.data?.msg);
-    return NextResponse.error();
+    console.error("Error in sending SMS:", error);
+    Sentry.captureException(error);
+
+    return NextResponse.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

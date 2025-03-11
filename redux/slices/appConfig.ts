@@ -11,6 +11,9 @@ export interface AppState {
   tutorialData: any;
   idCardFacialPercentageScore: string | undefined;
   scanReport: string;
+  pageRedirect: {
+    page: string | null;
+  } | null;
   reDirectToProofPass: boolean;
   reDirectToBac: boolean;
   userId?: string;
@@ -21,7 +24,22 @@ export interface AppState {
   proofPassImageNames: Array<string>;
   extractedFaceImage: string;
   scanReports: Array<{}>;
-  userSessionId: string
+  userSessionId: string;
+  alcoholImg: string;
+  oraltoxImg: string;
+  agreeDisagree: string;
+  alcoStripHistory: string;
+  oraltoxStripHistory: Array<{
+    id: number;
+    "Old Result": string;
+    "New Result": string;
+  }>;
+  alcoholResult: string;
+  oraltoxResult: string;
+  preTestStep: number;
+  preTestTotalSteps: number;
+  alcoOralToxAIResult: Array<{}>;
+  alcoOralToxAIResult_: Object;
 }
 
 const initialState: AppState = {
@@ -34,6 +52,7 @@ const initialState: AppState = {
   idCardFacialPercentageScore: "",
   scanReport: "",
   reDirectToProofPass: false,
+  pageRedirect: null,
   reDirectToBac: false,
   userId: "",
   idFetchError: "",
@@ -43,7 +62,18 @@ const initialState: AppState = {
   proofPassImageNames: [],
   extractedFaceImage: "",
   scanReports: [],
-  userSessionId: ""
+  userSessionId: "",
+  alcoholImg: "",
+  oraltoxImg: "",
+  agreeDisagree: "",
+  alcoStripHistory: "",
+  oraltoxStripHistory: [],
+  alcoholResult: "",
+  oraltoxResult: "",
+  preTestStep: 1,
+  preTestTotalSteps: 0,
+  alcoOralToxAIResult: [],
+  alcoOralToxAIResult_: {},
 };
 
 export const fetchS3Image = createAsyncThunk(
@@ -51,7 +81,9 @@ export const fetchS3Image = createAsyncThunk(
   async (proofIdValue: string, { rejectWithValue }) => {
     try {
       // const response = await retrieveS3image(`${proofIdValue}.png`);
-      const response = await retrieveS3image(`${proofIdValue}.png`);
+      const response = await retrieveS3image(
+        proofIdValue.includes(".png") ? proofIdValue : `${proofIdValue}.png`
+      );
 
       return response as string;
     } catch (error: any) {
@@ -99,6 +131,9 @@ const appSlice = createSlice({
     setReDirectToBac: (state, action: PayloadAction<boolean>) => {
       state.reDirectToBac = action.payload;
     },
+    setPageRedirect: (state, action: PayloadAction<string>) => {
+      state.pageRedirect = { page: action.payload };
+    },
     setHistoryData: (state, action: PayloadAction<unknown>) => {
       state.historyData = action.payload;
     },
@@ -122,9 +157,56 @@ const appSlice = createSlice({
     },
 
     setUserSessionId: (state, action: PayloadAction<string>) => {
-      console.log("Updating userSessionId to: ", action.payload);
-
       state.userSessionId = action.payload;
+    },
+
+    setAlocholImg: (state, action: PayloadAction<string>) => {
+      state.alcoholImg = action.payload;
+    },
+    setOraltoxImg: (state, action: PayloadAction<string>) => {
+      state.oraltoxImg = action.payload;
+    },
+    setAgreeDisagree: (state, action: PayloadAction<string>) => {
+      state.agreeDisagree = action.payload;
+    },
+    setOraltoxStripHistory: (
+      state,
+      action: PayloadAction<
+        Array<{ id: number; "Old Result": string; "New Result": string }>
+      >
+    ) => {
+      state.oraltoxStripHistory = action.payload; // Replaces the entire array
+    },
+    addToOraltoxStripHistory: (
+      state,
+      action: PayloadAction<{
+        id: number;
+        "Old Result": string;
+        "New Result": string;
+      }>
+    ) => {
+      state.oraltoxStripHistory.push(action.payload); // Pushes a single object
+    },
+    setAlcoStripHistory: (state, action: PayloadAction<string>) => {
+      state.alcoStripHistory = action.payload;
+    },
+    setAlocholResult: (state, action: PayloadAction<string>) => {
+      state.alcoholResult = action.payload;
+    },
+    setOraltoxResult: (state, action: PayloadAction<string>) => {
+      state.oraltoxResult = action.payload;
+    },
+    setPreTestStep: (state, action: PayloadAction<number>) => {
+      state.preTestStep = action.payload;
+    },
+    setPreTestTotalSteps: (state, action: PayloadAction<number>) => {
+      state.preTestTotalSteps = action.payload;
+    },
+    setAlcoOraltoxAIResult: (state, action: PayloadAction<Array<Object>>) => {
+      state.alcoOralToxAIResult = action.payload;
+    },
+    setAlcoOraltoxAIResult_: (state, action: PayloadAction<Object>) => {
+      state.alcoOralToxAIResult_ = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -164,6 +246,8 @@ export const ReDirectToProofPass = (state: { appConfig: AppState }) =>
   state.appConfig.reDirectToProofPass;
 export const ReDirectToBac = (state: { appConfig: AppState }) =>
   state.appConfig.reDirectToBac;
+export const pageRedirect = (state: { appConfig: AppState }) =>
+  state.appConfig.pageRedirect;
 export const historyData = (state: { appConfig: AppState }) =>
   state.appConfig.historyData;
 export const proofPassData_ = (state: { appConfig: AppState }) =>
@@ -176,8 +260,35 @@ export const extractedFaceImageString = (state: { appConfig: AppState }) =>
   state.appConfig.extractedFaceImage;
 export const selectScanReports = (state: { appConfig: { scanReports: any } }) =>
   state.appConfig.scanReports;
-export const selectUserSessionId = (state: { appConfig: { userSessionId: string } }) =>
-  state.appConfig.userSessionId;
+export const selectUserSessionId = (state: {
+  appConfig: { userSessionId: string };
+}) => state.appConfig.userSessionId;
+export const alcoholImgStr = (state: { appConfig: { alcoholImg: string } }) =>
+  state.appConfig.alcoholImg;
+export const oraltoxImgStr = (state: { appConfig: { oraltoxImg: string } }) =>
+  state.appConfig.oraltoxImg;
+export const agreeDisagreeStr = (state: {
+  appConfig: { agreeDisagree: string };
+}) => state.appConfig.agreeDisagree;
+export const oraltoxStripHistoryStr = (state: { appConfig: AppState }) =>
+  state.appConfig.oraltoxStripHistory;
+export const alcoStripHistoryStr = (state: { appConfig: AppState }) =>
+  state.appConfig.alcoStripHistory;
+export const alcoholResultStr = (state: {
+  appConfig: { alcoholResult: string };
+}) => state.appConfig.alcoholResult;
+export const oraltoxResultStr = (state: {
+  appConfig: { oraltoxResult: string };
+}) => state.appConfig.oraltoxResult;
+export const preTestStep_ = (state: { appConfig: { preTestStep: number } }) =>
+  state.appConfig.preTestStep;
+export const preTestTotalSteps_ = (state: {
+  appConfig: { preTestTotalSteps: number };
+}) => state.appConfig.preTestTotalSteps;
+export const alcoOraltoxAIRes_ = (state: { appConfig: AppState }) =>
+  state.appConfig.alcoOralToxAIResult;
+export const alcoAIRes_ = (state: { appConfig: AppState }) =>
+  state.appConfig.alcoOralToxAIResult_;
 
 export const {
   setIDFront,
@@ -196,8 +307,21 @@ export const {
   setExtractedFaceImage,
   removeScanReport,
   setReDirectToBac,
+  setPageRedirect,
   setIDType,
-  setUserSessionId
+  setUserSessionId,
+  setAlocholImg,
+  setOraltoxImg,
+  setAgreeDisagree,
+  setAlcoStripHistory,
+  setOraltoxStripHistory,
+  addToOraltoxStripHistory,
+  setAlocholResult,
+  setOraltoxResult,
+  setPreTestStep,
+  setPreTestTotalSteps,
+  setAlcoOraltoxAIResult,
+  setAlcoOraltoxAIResult_,
 } = appSlice.actions;
 
 export default appSlice.reducer;

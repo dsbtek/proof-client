@@ -36,11 +36,12 @@ function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
     useEffect(() => {
         console.log("Current pathname:", pathname); // Debugging line
 
-        // Exempt QR scan link from authentication checks
+        // Exempt Mobile QR scan link from authentication checks
         if (
-            !pathname.includes("/identity-profile/id-detection/mobile-scan-step-2/") && // Adjusted condition to use includes
+            !pathname.includes("/identity-profile/id-detection/mobile-scan-step-2/") &&
+            !pathname.includes("/identity-profile/id-detection/mobile-scan-step-1/") &&
             pathname !== "/sentry-example-page" &&
-            pathname !== "/" &&
+            // pathname !== "/" &&
             pathname !== "/auth/forgot-pin" &&
             pathname !== "/auth/enter-otp" &&
             pathname !== "/auth/set-new-pin" &&
@@ -60,7 +61,7 @@ function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
 
         // Checks if the user reloads the page
         if (
-            pathname !== "/" &&
+            // pathname !== "/" &&
             pathname !== "/auth/forgot-pin" &&
             pathname !== "/auth/enter-otp" &&
             pathname !== "/auth/set-new-pin" &&
@@ -76,7 +77,7 @@ function Auth({ children }: Readonly<{ children: React.ReactNode }>) {
 
         // Checks if the user's session has expired
         if (
-            pathname !== "/" &&
+            // pathname !== "/" &&
             pathname !== "/auth/forgot-pin" &&
             pathname !== "/auth/enter-otp" &&
             pathname !== "/auth/set-new-pin" &&

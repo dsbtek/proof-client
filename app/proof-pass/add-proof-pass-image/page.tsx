@@ -1,30 +1,4 @@
 "use client";
-
-import { useState, useRef, useCallback, useEffect } from "react";
-import Webcam from "react-webcam";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import {
-  DocumentTypeModal,
-  Button,
-  ThumbnailGallery,
-  AppHeader,
-  FileUpload,
-} from "@/components";
-import { useRouter } from "next/navigation";
-import imageCompression from "browser-image-compression";
-import Crypto from "crypto-js";
-import {
-  ScanReportString,
-  proofPassData_,
-  appData,
-  IdCardFacialPercentageScoreString,
-  FacialCaptureString,
-  idFrontString,
-  selectScanReports,
-  setScanReport,
-} from "@/redux/slices/appConfig";
-import { Loader_ } from "@/components";
 import useGetDeviceInfo from "@/hooks/useGetDeviceInfo";
 import DesktopScanLabReport from "./desktop";
 import ScanLabReport from "./mobile";

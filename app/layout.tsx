@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
 import "../public/styles/globals.css";
+import localFont from "next/font/local";
 import { LayoutProvider, Auth } from "@/components";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = localFont({
+  src: "../public/fonts/Inter-VariableFont_opsz,wght.ttf",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "Proof",

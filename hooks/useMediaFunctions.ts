@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 export default function useMediaFunctions() {
   const [mimeType, setMimeType] = useState("");
+  const [stream, setStream] = useState<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -23,12 +24,21 @@ export default function useMediaFunctions() {
     }
   }, []);
   const stopMediaRecorder = () => {
+    console.log("stopped");
     if (mediaRecorderRef.current) {
       const mediaRecorder = mediaRecorderRef.current;
       mediaRecorder.stream.getTracks().forEach((track) => {
         track.stop();
       });
       mediaRecorder.stop();
+      mediaRecorder.ondataavailable = null;
+      intervalRef.current && clearInterval(intervalRef?.current);
+    }
+  };
+  const onAIError = () => {
+    console.log("AI Error");
+    if (mediaRecorderRef.current) {
+      const mediaRecorder = mediaRecorderRef.current;
       mediaRecorder.ondataavailable = null;
       intervalRef.current && clearInterval(intervalRef?.current);
     }
@@ -43,6 +53,7 @@ export default function useMediaFunctions() {
         video: true,
       })
       .then((mediaStream) => {
+        setStream(mediaStream);
         let test = "";
         for (const type of types) {
           const isSupported = MediaRecorder.isTypeSupported(type);
@@ -71,20 +82,64 @@ export default function useMediaFunctions() {
         mediaRecorder?.start();
         intervalRef.current = setInterval(() => {
           console.log(mediaRecorder.state, "test");
-          handleRequestData();
+          mediaRecorder.stop();
+          mediaRecorder.start();
         }, 30000);
       })
       .catch((e) => console.log("error starting media recorder", e))
       .finally(() => setLoading(false));
   };
+
+  interface MediaChunk {
+    id: number;
+    chunk: Blob;
+    timestamp: number;
+  }
+
+  // Save each chunk to IndexedDB in real-time
+  const saveChunkToIndexedDB = (chunk: Blob) => {
+    const request = indexedDB.open("mediaDatabase", 1);
+
+    request.onsuccess = (event: Event) => {
+      const db = (event.target as IDBRequest).result;
+      const transaction = db.transaction(["mediaStore"], "readwrite");
+      const objectStore = transaction.objectStore("mediaStore");
+
+      const mediaFile: MediaChunk = {
+        id: Date.now(),
+        chunk,
+        timestamp: Date.now(),
+      };
+
+      objectStore.add(mediaFile);
+      console.log("Chunk saved to IndexedDB.");
+    };
+
+    request.onerror = (error: Event) => {
+      console.error("Error saving chunk to IndexedDB", error);
+    };
+
+    request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
+      const db = (event.target as IDBRequest).result;
+      db.createObjectStore("mediaStore", { keyPath: "id" });
+    };
+  };
+
   const handleRequestData = () => {
     if (mediaRecorderRef.current) {
       console.log("request data");
       const mediaRecorder = mediaRecorderRef.current;
+      intervalRef.current && clearInterval(intervalRef?.current);
       mediaRecorder.stop();
       mediaRecorder.start();
+      intervalRef.current = setInterval(() => {
+        console.log(mediaRecorder.state, "test");
+        mediaRecorder.stop();
+        mediaRecorder.start();
+      }, 30000);
     }
   };
+
   return {
     mediaRecorderRef,
     videoRef,
@@ -92,7 +147,9 @@ export default function useMediaFunctions() {
     startMediaRecorder,
     stopMediaRecorder,
     handleRequestData,
+    onAIError,
     loading,
+    stream,
   };
 }
 // const handleDownload = (recordedChunks: any) => {

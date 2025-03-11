@@ -1,20 +1,14 @@
 'use client'
 
 import Image from 'next/image';
-import { GoHome } from "react-icons/go";
-import { BsMortarboardFill } from "react-icons/bs";
-import { IoSettingsOutline } from "react-icons/io5";
-import { BsFillPersonCheckFill } from "react-icons/bs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { appData } from "@/redux/slices/appConfig";
 import { useSelector } from "react-redux";
-
 import "./menu.css";
 
 
 const Menu = () => {
-  const { first_name, last_name } = useSelector(appData);
   const pathname = usePathname();
 
   return (

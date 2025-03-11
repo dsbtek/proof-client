@@ -5,8 +5,9 @@
     width: 100vw;
     height: 100vh;
     z-index: 5000;
-    background-color: #0C161780;
+    /* background-color: transparent; */
     position: absolute;
+    background-color: #0C161780;
     /* opacity: 50%; */
 }
 
